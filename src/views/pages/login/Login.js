@@ -34,9 +34,19 @@ const Login = () => {
     if(res.error) {
       alert(res.error)
       return
-    } 
-    localStorage.setItem("token", res.data.token)
-    localStorage.setItem("id", res.data.id)
+    } else {
+      localStorage.setItem("token", res.data.token)
+      localStorage.setItem("id", res.data.id)
+  
+      let res_dados = await Api.getDados()
+  
+      if(!res_dados.error) {
+        localStorage.setItem("funcao", res_dados.data.FuncoesAbordo.nome)
+        localStorage.setItem("trigrama", res_dados.data.Trigrama.trigrama)
+      }
+
+    }
+    
 
     navigate('/dashboard')
   }

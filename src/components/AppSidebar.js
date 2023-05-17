@@ -29,7 +29,7 @@ const AppSidebar = () => {
         dispatch({ type: 'set', sidebarShow: visible })
       }}
     >
-      <CSidebarNav>
+      <CSidebarNav> 
         <img src="./gtt.png" style={{marginLeft: "auto", marginRight: "auto"}} className="mt-2 mb-3" width="20%" />
         <SimpleBar>
           <AppSidebarNav items={navigation} />

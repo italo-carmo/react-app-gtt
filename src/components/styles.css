@@ -1,3 +1,40 @@
+.white-color a {
+    color: #fff !important;
+}
+
 .white-color {
     color: #fff !important;
+}
+
+.bottom-header {
+    display: flex;
+    width:100%;
+    justify-content: space-between;
+}
+
+.card-header {
+    margin-left:10px;
+    margin-right:10px;
+    margin-bottom:20px;
+    background-color: #191c24;
+    flex:1;
+    padding:10px;
+    border-radius: 5px !important;
+    color:#fff;
+    min-height:100px;
+}
+
+.card-background {
+    background-image: url('../../public/kc_flare.jpg');
+    width:100%;
+    background-position: center;
+    background-size: cover;
+    display: flex;
+    align-items: flex-end;
+    flex-direction: column;
+}
+
+.card-model {
+    display: flex;
+    align-items: center;
 }

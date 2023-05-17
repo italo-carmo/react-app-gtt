@@ -1,0 +1,52 @@
+.tabela {
+    display: flex;
+    flex-direction: column;
+}
+
+.aviao-item {
+    background-color: #191c24;
+    padding:10px 30px;
+    color:#fff;
+    min-height:100px;
+    border-bottom: 1px solid #fff;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+}
+
+.aviao-item-topo {
+    background-color: #191c24;
+    padding:10px 30px;
+    color:#fff;
+    border-bottom: 1px solid #fff;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    height:10%;
+}
+
+
+.topo {
+    background-color: #191c24;
+    width: 100%;
+    color:#fff;
+    display: flex;
+    height:10%;
+}
+
+.dia {
+    padding: 10px;
+    flex:1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-left:1px solid #fff;
+}
+
+.missoes {
+    display: flex;
+}
+
+.missao-item {
+    flex:1;
+}
