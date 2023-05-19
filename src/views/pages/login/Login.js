@@ -24,15 +24,17 @@ const Login = () => {
 
   const [email, setEmail] = useState('')
   const [senha, setSenha] = useState('')
+  const [msg, setMsg] = useState(null)
 
   const handleLogin = async () => {
+    setMsg(null)
     if(!email || !senha || email == '' || senha == '') {
-      alert('Todos os campos são obrigatórios')
+      setMsg('Todos os campos são obrigatórios')
       return
     }
     let res = await Api.login(email, senha)
     if(res.error) {
-      alert(res.error)
+      setMsg(res.error)
       return
     } else {
       localStorage.setItem("token", res.data.token)
@@ -99,6 +101,10 @@ const Login = () => {
                     </CRow>
                   </CForm>
                 </CCardBody>
+                {msg && 
+                  <div style={{backgroundColor: '#ff0000', padding: 5, borderRadius:5, color:'#fff',display:'flex', alignItems: 'center', justifyContent:'center', opacity:0.8}}>{msg}</div>
+
+                }
               </CCard>
 
             </CCardGroup>
