@@ -48,5 +48,10 @@ export default () => {
             let json = await request('GET', '/users/1' , null, token)
             return json
         },
+        getMissoesAvioes: async (body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('POST', '/missoes/avioes/lista' , body, token)
+            return json
+        },
     }
 }

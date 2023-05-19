@@ -5,6 +5,7 @@ import {
 
 } from '@coreui/react'
 import { Alert } from '@coreui/coreui'
+import useApi from 'src/services/Api'
 
 
 const Dashboard = () => {
@@ -17,529 +18,17 @@ const Dashboard = () => {
   const [semana, setSemana] = useState([])
   const [firstDay, setFirstDay] = useState(new Date())
   const [hoje, setHoje] = useState(new Date())
+  const [data, setData] = useState({avioes:[]})
 
-  let aviao1 = [
-    {
-      data: '17/05',
-      missoes:[
-        {
-          tipo: 'missao',
-          missao: {
-            id: 1,
-            dep: 'SBAN',
-            horaDep: '1200',
-            pouso: 'SBBR',
-            horaPouso: '1230',
-            tripulacao: ['ITL', 'AIS', 'WSL', 'OTO'],
-            omis:'001'
-          }
-      },
-      {
-        tipo: 'missao',
-        missao: {
-          id: 2,
-          dep: 'SBBR',
-          horaDep: '1430',
-          pouso: 'SBGL',
-          horaPouso: '1600',
-          tripulacao: ['TNT', 'GMR', 'THA', 'MRC'],
-          omis:'001'
-        }
-    },
-    ]
-    },
-    {
-      data: '18/05',
-      missoes:[]
-    },
-    {
-      data: '19/05',
-      missoes:[
-        {
-          tipo: 'missao',
-          missao: {
-            id: 3,
-            dep: 'SBAN',
-            horaDep: '1200',
-            pouso: 'SBBR',
-            horaPouso: '1230',
-            tripulacao: ['ITL', 'AIS', 'WSL', 'OTO'],
-            omis:'002'
-          }
-      },
-      {
-        tipo: 'missao',
-        missao: {
-          id: 4,
-          dep: 'SBBR',
-          horaDep: '1430',
-          pouso: 'SBGL',
-          horaPouso: '1600',
-          tripulacao: ['ITL', 'AIS', 'WSL', 'OTO'],
-          omis:'002'
-        }
-    },]
-    },
-    {
-      data: '20/05',
-      missoes:[]
-    },
-    {
-      data: '21/05',
-      missoes:[]
-    },
-    {
-      data: '22/05',
-      missoes:[
-        {
-          tipo: 'missao',
-          missao: {
-            id: 5,
-            dep: 'SBAN',
-            horaDep: '1200',
-            pouso: 'SBBR',
-            horaPouso: '1230',
-            tripulacao: ['ITL', 'AIS', 'WSL', 'OTO'],
-            omis:'003'
-          }
-      },
-      {
-        tipo: 'missao',
-        missao: {
-          id: 6,
-          dep: 'SBBR',
-          horaDep: '1430',
-          pouso: 'SBGL',
-          horaPouso: '1600',
-          tripulacao: ['ITL', 'AIS', 'WSL', 'OTO'],
-          omis:'003'
-        }
-    },
-    {
-      tipo: 'missao',
-      missao: {
-        id: 7,
-        dep: 'SBBR',
-        horaDep: '1430',
-        pouso: 'SBGL',
-        horaPouso: '1600',
-        tripulacao: ['ITL', 'AIS', 'WSL', 'OTO'],
-        omis:'003'
-      }
-  },
-  {
-    tipo: 'missao',
-    missao: {
-      id: 8,
-      dep: 'SBBR',
-      horaDep: '1430',
-      pouso: 'SBGL',
-      horaPouso: '1600',
-      tripulacao: ['ITL', 'AIS', 'WSL', 'OTO'],
-      omis:'003'
-    }
-}
-  
-  ]
-    },
-    {
-      data: '23/05',
-      missoes:[
-        {
-          tipo: 'missao',
-          missao: {
-            id: 9,
-            dep: 'SBAN',
-            horaDep: '1200',
-            pouso: 'SBBR',
-            horaPouso: '1230',
-            tripulacao: ['ITL', 'AIS', 'WSL', 'OTO'],
-            omis:'004'
-          }
-      },
-      {
-        tipo: 'missao',
-        missao: {
-          id: 10,
-          dep: 'SBBR',
-          horaDep: '1430',
-          pouso: 'SBGL',
-          horaPouso: '1600',
-          tripulacao: ['ITL', 'AIS', 'WSL', 'OTO'],
-          omis:'004'
-        }
-    }]
-    },
-  ]
+  const Api = useApi()
 
-  let aviao2 = [
-    {
-      data: '17/05',
-      missoes:[
-        {
-          tipo: 'missao',
-          missao: {
-            id: 11,
-            dep: 'SBAN',
-            horaDep: '1200',
-            pouso: 'SBBR',
-            horaPouso: '1230',
-            tripulacao: ['ITL', 'AIS', 'WSL', 'OTO']
-          }
-      },
-      {
-        tipo: 'missao',
-        missao: {
-          id: 12,
-          dep: 'SBBR',
-          horaDep: '1430',
-          pouso: 'SBGL',
-          horaPouso: '1600',
-          tripulacao: ['ITL', 'AIS', 'WSL', 'OTO']
-        }
-    },
-    ]
-    },
-    {
-      data: '18/05',
-      missoes:[]
-    },
-    {
-      data: '19/05',
-      missoes:[
-        {
-          tipo: 'missao',
-          missao: {
-            id: 13,
-            dep: 'SBAN',
-            horaDep: '1200',
-            pouso: 'SBBR',
-            horaPouso: '1230',
-            tripulacao: ['ITL', 'AIS', 'WSL', 'OTO']
-          }
-      },
-      {
-        tipo: 'missao',
-        missao: {
-          id: 14,
-          dep: 'SBBR',
-          horaDep: '1430',
-          pouso: 'SBGL',
-          horaPouso: '1600',
-          tripulacao: ['ITL', 'AIS', 'WSL', 'OTO']
-        }
-    },]
-    },
-    {
-      data: '20/05',
-      missoes:[]
-    },
-    {
-      data: '21/05',
-      missoes:[]
-    },
-    {
-      data: '22/05',
-      missoes:[
-        {
-          tipo: 'missao',
-          missao: {
-            id: 15,
-            dep: 'SBAN',
-            horaDep: '1200',
-            pouso: 'SBBR',
-            horaPouso: '1230',
-            tripulacao: ['ITL', 'AIS', 'WSL', 'OTO']
-          }
-      },
-      {
-        tipo: 'missao',
-        missao: {
-          id: 16,
-          dep: 'SBBR',
-          horaDep: '1430',
-          pouso: 'SBGL',
-          horaPouso: '1600',
-          tripulacao: ['ITL', 'AIS', 'WSL', 'OTO']
-        }
-    },]
-    },
-    {
-      data: '23/05',
-      missoes:[
-        {
-          tipo: 'missao',
-          missao: {
-            id: 17,
-            dep: 'SBAN',
-            horaDep: '1200',
-            pouso: 'SBBR',
-            horaPouso: '1230',
-            tripulacao: ['ITL', 'AIS', 'WSL', 'OTO']
-          }
-      },
-      {
-        tipo: 'missao',
-        missao: {
-          id: 18,
-          dep: 'SBBR',
-          horaDep: '1430',
-          pouso: 'SBGL',
-          horaPouso: '1600',
-          tripulacao: ['ITL', 'AIS', 'WSL', 'OTO']
-        }
-    }]
-    },
-  ]
-
-  let aviao3 = [
-    {
-      data: '17/05',
-      missoes:[
-        {
-          tipo: 'missao',
-          missao: {
-            id: 19,
-            dep: 'SBAN',
-            horaDep: '1200',
-            pouso: 'SBBR',
-            horaPouso: '1230',
-            tripulacao: ['ITL', 'AIS', 'WSL', 'OTO']
-          }
-      },
-      {
-        tipo: 'missao',
-        missao: {
-          id: 20,
-          dep: 'SBBR',
-          horaDep: '1430',
-          pouso: 'SBGL',
-          horaPouso: '1600',
-          tripulacao: ['ITL', 'AIS', 'WSL', 'OTO']
-        }
-    },
-    ]
-    },
-    {
-      data: '18/05',
-      missoes:[]
-    },
-    {
-      data: '19/05',
-      missoes:[
-        {
-          tipo: 'missao',
-          missao: {
-            id: 21,
-            dep: 'SBAN',
-            horaDep: '1200',
-            pouso: 'SBBR',
-            horaPouso: '1230',
-            tripulacao: ['ITL', 'AIS', 'WSL', 'OTO']
-          }
-      },
-      {
-        tipo: 'missao',
-        missao: {
-          id:22,
-          dep: 'SBBR',
-          horaDep: '1430',
-          pouso: 'SBGL',
-          horaPouso: '1600',
-          tripulacao: ['ITL', 'AIS', 'WSL', 'OTO']
-        }
-    },]
-    },
-    {
-      data: '20/05',
-      missoes:[]
-    },
-    {
-      data: '21/05',
-      missoes:[]
-    },
-    {
-      data: '22/05',
-      missoes:[
-        {
-          tipo: 'missao',
-          missao: {
-            id: 23,
-            dep: 'SBAN',
-            horaDep: '1200',
-            pouso: 'SBBR',
-            horaPouso: '1230',
-            tripulacao: ['ITL', 'AIS', 'WSL', 'OTO']
-          }
-      },
-      {
-        tipo: 'missao',
-        missao: {
-          id: 24,
-          dep: 'SBBR',
-          horaDep: '1430',
-          pouso: 'SBGL',
-          horaPouso: '1600',
-          tripulacao: ['ITL', 'AIS', 'WSL', 'OTO']
-        }
-    },]
-    },
-    {
-      data: '23/05',
-      missoes:[
-        {
-          tipo: 'missao',
-          missao: {
-            id: 25,
-            dep: 'SBAN',
-            horaDep: '1200',
-            pouso: 'SBBR',
-            horaPouso: '1230',
-            tripulacao: ['ITL', 'AIS', 'WSL', 'OTO']
-          }
-      },
-      {
-        tipo: 'missao',
-        missao: {
-          id: 26,
-          dep: 'SBBR',
-          horaDep: '1430',
-          pouso: 'SBGL',
-          horaPouso: '1600',
-          tripulacao: ['ITL', 'AIS', 'WSL', 'OTO']
-        }
-    }]
-    },
-  ]
-
-  let aviao4 = [
-    {
-      data: '17/05',
-      missoes:[
-        {
-          tipo: 'missao',
-          missao: {
-            id: 27,
-            dep: 'SBAN',
-            horaDep: '1200',
-            pouso: 'SBBR',
-            horaPouso: '1230',
-            tripulacao: ['ITL', 'AIS', 'WSL', 'OTO']
-          }
-      },
-      {
-        tipo: 'missao',
-        missao: {
-          id: 28,
-          dep: 'SBBR',
-          horaDep: '1430',
-          pouso: 'SBGL',
-          horaPouso: '1600',
-          tripulacao: ['ITL', 'AIS', 'WSL', 'OTO']
-        }
-    },
-    ]
-    },
-    {
-      data: '18/05',
-      missoes:[]
-    },
-    {
-      data: '19/05',
-      missoes:[
-        {
-          tipo: 'missao',
-          missao: {
-            id: 29,
-            dep: 'SBAN',
-            horaDep: '1200',
-            pouso: 'SBBR',
-            horaPouso: '1230',
-            tripulacao: ['ITL', 'AIS', 'WSL', 'OTO']
-          }
-      },
-      {
-        tipo: 'missao',
-        missao: {
-          id: 30,
-          dep: 'SBBR',
-          horaDep: '1430',
-          pouso: 'SBGL',
-          horaPouso: '1600',
-          tripulacao: ['ITL', 'AIS', 'WSL', 'OTO']
-        }
-    },]
-    },
-    {
-      data: '20/05',
-      missoes:[]
-    },
-    {
-      data: '21/05',
-      missoes:[]
-    },
-    {
-      data: '22/05',
-      missoes:[
-        {
-          tipo: 'missao',
-          missao: {
-            id: 31,
-            dep: 'SBAN',
-            horaDep: '1200',
-            pouso: 'SBBR',
-            horaPouso: '1230',
-            tripulacao: ['ITL', 'AIS', 'WSL', 'OTO']
-          }
-      },
-      {
-        tipo: 'missao',
-        missao: {
-          id: 32,
-          dep: 'SBBR',
-          horaDep: '1430',
-          pouso: 'SBGL',
-          horaPouso: '1600',
-          tripulacao: ['ITL', 'AIS', 'WSL', 'OTO']
-        }
-    },]
-    },
-    {
-      data: '23/05',
-      missoes:[
-        {
-          tipo: 'missao',
-          missao: {
-            id: 33,
-            dep: 'SBAN',
-            horaDep: '1200',
-            pouso: 'SBBR',
-            horaPouso: '1230',
-            tripulacao: ['ITL', 'AIS', 'WSL', 'OTO']
-          }
-      },
-      {
-        tipo: 'missao',
-        missao: {
-          id: 34,
-          dep: 'SBBR',
-          horaDep: '1430',
-          pouso: 'SBGL',
-          horaPouso: '1600',
-          tripulacao: ['ITL', 'AIS', 'WSL', 'OTO']
-        }
-    }]
-    },
-  ]
-
-
-  let data = {
+  let data2 = {
     avioes:[
       {
         aviao: '2853',
         eventos: [
           {
-            data: '17/05',
+            data: '17/05/2023',
             tipo: 'missao',
             missao: {
               id: 1,
@@ -553,7 +42,7 @@ const Dashboard = () => {
             manutencao: null
         },
         {
-          data: '17/05',
+          data: '17/05/2023',
           tipo: 'missao',
           missao: {
             id: 2,
@@ -567,7 +56,7 @@ const Dashboard = () => {
           manutencao: null
       },
       {
-        data: '17/05',
+        data: '17/05/2023',
         tipo: 'missao',
         missao: {
           id: 2,
@@ -586,7 +75,7 @@ const Dashboard = () => {
         aviao: '2854',
         eventos: [
           {
-            data: '19/05',
+            data: '19/05/2023',
             tipo: 'missao',
             missao: {
               id: 2,
@@ -600,7 +89,7 @@ const Dashboard = () => {
             manutencao: null
         },
         {
-          data: '19/05',
+          data: '19/05/2023',
           tipo: 'missao',
           missao: {
             id: 2,
@@ -619,7 +108,7 @@ const Dashboard = () => {
         aviao: '2855',
        eventos: [
           {
-            data: '17/05',
+            data: '17/05/2023',
             tipo: 'missao',
             missao: {
               id: 1,
@@ -633,7 +122,7 @@ const Dashboard = () => {
             manutencao: null
         },
         {
-          data: '17/05',
+          data: '17/05/2023',
           tipo: 'missao',
           missao: {
             id: 2,
@@ -683,16 +172,27 @@ const Dashboard = () => {
       let hoje_sum_date = new Date(hoje_sum)
       let dia = hoje_sum_date.getDate()
       let mes = (hoje_sum_date.getMonth()+1)
+      let ano = (hoje_sum_date.getFullYear())
       if(dia<=9) {
         dia= '0'+dia
       }
       if(mes<=9) {
         mes= '0'+mes
       }
-      let hoje_sum_formatted = dia+'/'+mes
+      let hoje_sum_formatted = dia+'/'+mes+'/'+ano
       dias.push(hoje_sum_formatted)
     }
     setSemana(dias)
+    getMissoes(dias)
+  }
+
+  const getMissoes = async (dias) => {
+    let inicio = dias[0]
+    let fim = dias[6]
+    let res = await Api.getMissoesAvioes({inicio, fim})
+    if(!res.error) {
+      setData({avioes:res.data})
+    }
   }
 
   const editDates = (data) => {
@@ -739,28 +239,47 @@ const Dashboard = () => {
             {semana.map((item,index)=>{
                 var hoje_dia = hoje.getDate()
                 let hoje_mes = (hoje.getMonth()+1)
+                let hoje_ano = hoje.getFullYear()
                 if(hoje_dia <=9) {
                   hoje_dia = '0'+hoje_dia
                 }
                 if(hoje_mes <=9) {
                   hoje_mes = '0'+hoje_mes
                 }
-                let hoje_string = hoje_dia+'/'+hoje_mes
+                let hoje_string = hoje_dia+'/'+hoje_mes+'/'+hoje_ano
 
-                return <div className='missao' style={{backgroundColor: hoje_string == item ? '#46a31d' : '#000'}}>{item}</div>
+                return <div  className='missao' style={{backgroundColor: hoje_string == item ? '#46a31d' : '#000'}}>{item}</div>
             })}
           </div>
           <div className='missoes'>
             
 
-            {data.avioes.map(item=>{
+            {(data.avioes.length > 0 ) && data.avioes.map(item=>{
               return <div className='missao-item'>
                 <div className='missao aviao'>{item.aviao}</div>
                 {semana.map(i=>{
                  return <div className='item-missao'>
-                      {item.eventos.map(it=>{
+                      {item.eventos.length >0 && item.eventos.map(it=>{
                           if(it.data == i) {
-                            return <div className='missao white'>{it.missao.horaDep}Z {it.missao.dep} - {it.missao.pouso} {it.missao.horaPouso}Z</div>
+                            return <div 
+                            onClick={()=>setCaixaCreateVisible(true)} className='missao white'
+                            onMouseEnter={() => handleMouseEnter(it.missao.id, it.missao.tripulacao)}
+                            onMouseLeave={handleMouseLeave}
+                            >  
+                         {caixaVisible && (id ==it.missao.id)  &&  <div
+                            style={{
+                              position: 'absolute',
+                              top: '100%',
+                              left: '0',
+                              background: 'white',
+                              padding: '10px',
+                              border: '1px solid black',
+                              zIndex: 1, // Definindo uma ordem de empilhamento maior para a div das informações
+                            }}
+                          >
+                            {tripulacao}
+                          </div>}
+                          {it.missao.horaDep} {it.missao.dep} - {it.missao.pouso} {it.missao.horaPouso}</div>
                           }
                       })}
                     </div>
