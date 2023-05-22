@@ -37,12 +37,12 @@ const AppHeader = () => {
     setLoadingDias(true)
     let res = await Api.getDias()
     let trigrama = localStorage.getItem("trigrama")
-    if(!res.error) {
-      let dados_filter = res.data.filter(item=>item.Trigrama == trigrama)
+    if (!res.error) {
+      let dados_filter = res.data.filter(item => item.Trigrama == trigrama)
       setDiasPrevistos(dados_filter[0]['Dias Previstos'])
       setDiasRealizados(dados_filter[0]['Dias Totais'])
-      if(dados_filter[0]['Situação'] == 'COMISSIONADO') {
-        if(dados_filter[0]['Modulo'] == 'SIM') {
+      if (dados_filter[0]['Situação'] == 'COMISSIONADO') {
+        if (dados_filter[0]['Modulo'] == 'SIM') {
           setSituacao('COMISSIONADO COM MÓDULO')
         } else {
           setSituacao('COMISSIONADO SEM MÓDULO')
@@ -54,100 +54,99 @@ const AppHeader = () => {
     } else {
       setLoadingDias(false)
     }
-    
+
   }
 
   const getHoras = async () => {
     setLoadingHoras(true)
-      let res = await Api.getHoras()
+    let res = await Api.getHoras()
 
-      if (!res.error) {
-        setHoras(res.data[0].Horas)
-        setLoadingHoras(false)
-      } else {
-        setLoadingHoras(false)
-      }
-      
+    if (!res.error) {
+      setHoras(res.data[0].Horas)
+      setLoadingHoras(false)
+    } else {
+      setLoadingHoras(false)
+    }
+
   }
 
-  useEffect(()=>{
+  useEffect(() => {
     getHoras()
     getDias()
-  },[])
+  }, [])
 
   return (
-  <div>
-      <CHeader style={{backgroundColor: '#191c24'}} position="sticky" className="mb-4">
-      <CContainer fluid>
-        <CHeaderToggler
-          className="ps-1 white-color"
-          onClick={() => dispatch({ type: 'set', sidebarShow: !sidebarShow })}
-        >
-          <CIcon icon={cilMenu} size="lg" />
-        </CHeaderToggler>
-        <AppBreadcrumb />
-        <CHeaderBrand className="mx-auto d-md-none" to="/">
-          <CIcon icon={logo} height={48} alt="Logo" />
-        </CHeaderBrand>
-        <CHeaderNav className="d-none d-md-flex me-auto">
-        </CHeaderNav>
-        <CHeaderNav>
+    <div>
+      <CHeader style={{ backgroundColor: '#191c24' }} position="sticky" className="mb-4">
+        <CContainer fluid>
+          <CHeaderToggler
+            className="ps-1 white-color"
+            onClick={() => dispatch({ type: 'set', sidebarShow: !sidebarShow })}
+          >
+            <CIcon icon={cilMenu} size="lg" />
+          </CHeaderToggler>
+          <AppBreadcrumb />
+          <CHeaderBrand className="mx-auto d-md-none" to="/">
+            <CIcon icon={logo} height={48} alt="Logo" />
+          </CHeaderBrand>
+          <CHeaderNav className="d-none d-md-flex me-auto">
+          </CHeaderNav>
 
-        </CHeaderNav>
-        <CHeaderNav className="ms-3">
-          <AppHeaderDropdown />
-        </CHeaderNav>
-      </CContainer>
 
-    </CHeader>
-    <div className='bottom-header'>
-      <div className='card-header card-background '>
+          <CHeaderNav className="ms-3">
+            <AppHeaderDropdown />
+          </CHeaderNav>
+        </CContainer>
+
+      </CHeader>
+      <div className='bottom-header'>
+        <div className='card-header card-background '>
           <div >
-            <p style={{color: 'rgba(255,255,255,0.7)'}}>Horas Voadas este ano</p>
+            <p style={{ color: 'rgba(255,255,255,0.7)' }}>Horas Voadas este ano</p>
           </div>
           <div>
-            {loadingHoras && <Loading/>}
+            {loadingHoras && <Loading />}
             <p>{horas}</p>
           </div>
-      </div>
-      <div className='card-header card-model'>
-        <img src='./dollar.png' width="15%"/>
-        <div style={{marginLeft:20}}>
-          <div >
-            <p style={{color: 'rgba(255,255,255,0.7)'}}>Situação</p>
-          </div>
-          <div>
-          {loadingDias && <Loading/>}
-            <p>{situacao}</p>
+        </div>
+        <div className='card-header card-model'>
+          <img src='./dollar.png' width="15%" />
+          <div style={{ marginLeft: 20 }}>
+            <div >
+              <p style={{ color: 'rgba(255,255,255,0.7)' }}>Situação</p>
+            </div>
+            <div>
+              {loadingDias && <Loading />}
+              <p>{situacao}</p>
+            </div>
           </div>
         </div>
-      </div>
-      <div className='card-header card-model'>
-      <img src='./calendar.png' width="15%"/>
-        <div style={{marginLeft:20}}>
-          <div >
-            <p style={{color: 'rgba(255,255,255,0.7)'}}>Dias Previstos</p>
-          </div>
-          <div>
-          {loadingDias && <Loading/>}
-            <p>{diasPrevistos}</p>
+        <div className='card-header card-model'>
+          <img src='./calendar.png' width="15%" />
+          <div style={{ marginLeft: 20 }}>
+            <div >
+              <p style={{ color: 'rgba(255,255,255,0.7)' }}>Dias Previstos</p>
+            </div>
+            <div>
+              {loadingDias && <Loading />}
+              <p>{diasPrevistos}</p>
+            </div>
           </div>
         </div>
-      </div>
-      <div className='card-header card-model'>
-      <img src='./appointment.png' width="15%"/>
-        <div style={{marginLeft:20}}>
-          <div >
-            <p style={{color: 'rgba(255,255,255,0.7)'}}>Dias Realizados</p>
-          </div>
-          <div>
-          {loadingDias && <Loading/>}
-            <p>{diasRealizados}</p>
+        <div className='card-header card-model'>
+          <img src='./appointment.png' width="15%" />
+          <div style={{ marginLeft: 20 }}>
+            <div >
+              <p style={{ color: 'rgba(255,255,255,0.7)' }}>Dias Realizados</p>
+            </div>
+            <div>
+              {loadingDias && <Loading />}
+              <p>{diasRealizados}</p>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
   )
 }
 
