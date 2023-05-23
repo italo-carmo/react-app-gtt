@@ -24,21 +24,33 @@ const Login = () => {
 
   const [email, setEmail] = useState('')
   const [senha, setSenha] = useState('')
+  const [msg, setMsg] = useState(null)
 
   const handleLogin = async () => {
+    setMsg(null)
     if(!email || !senha || email == '' || senha == '') {
-      alert('Todos os campos são obrigatórios')
+      setMsg('Todos os campos são obrigatórios')
       return
     }
     let res = await Api.login(email, senha)
     if(res.error) {
-      alert(res.error)
+      setMsg(res.error)
       return
-    } 
-    localStorage.setItem("token", res.data.token)
-    localStorage.setItem("id", res.data.id)
+    } else {
+      localStorage.setItem("token", res.data.token)
+      localStorage.setItem("id", res.data.id)
+  
+      let res_dados = await Api.getDados()
+  
+      if(!res_dados.error) {
+        localStorage.setItem("funcao", res_dados.data.FuncoesAbordo.nome)
+        localStorage.setItem("trigrama", res_dados.data.Trigrama.trigrama)
+      }
 
-    navigate('/dashboard')
+    }
+    
+
+    navigate('/main')
   }
 
 
@@ -52,9 +64,9 @@ const Login = () => {
                 <CCardBody>
                   <CForm>
                     <div className='box-login' style={{display:'flex', alignItems: 'center', justifyContent: 'space-between'}}>
-                      <img style={{marginRight:20}} src="./gtt.png" width="30px" height="36px"/>
-                      <h1 style={{color:'#fff'}}>1º GTT</h1>
-                      <h3 style={{color:'#fff'}}>Login</h3>
+                      <img style={{marginRight:20}} src="https://www.1gtt.com.br/app/gtt.png" width="30px" height="36px"/>
+                      <h1 className='h1-login' style={{color:'#fff'}}>1º GTT</h1>
+                      <h3 className='h3-login' style={{color:'#fff'}}>Login</h3>
                     </div>
                     <p style={{color:'#fff',opacity:0.7}} className="">Entre na sua conta</p>
                     <CInputGroup className="mb-3">
@@ -89,6 +101,10 @@ const Login = () => {
                     </CRow>
                   </CForm>
                 </CCardBody>
+                {msg && 
+                  <div style={{backgroundColor: '#ff0000', padding: 5, borderRadius:5, color:'#fff',display:'flex', alignItems: 'center', justifyContent:'center', opacity:0.8}}>{msg}</div>
+
+                }
               </CCard>
 
             </CCardGroup>

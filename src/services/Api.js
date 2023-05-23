@@ -32,6 +32,36 @@ export default () => {
         login: async (email, senha) => {
             let json = await request('POST', '/users/login', {email, senha}, null)
             return json
-        }
+        },
+        getDias: async () => {
+            let token = localStorage.getItem('token')
+            let json = await request('GET', '/comissionamento/dias' , null, token)
+            return json
+        },
+        getHoras: async () => {
+            let token = localStorage.getItem('token')
+            let json = await request('GET', '/etapas/user/horas/1' , null, token)
+            return json
+        },
+        getDados: async () => {
+            let token = localStorage.getItem('token')
+            let json = await request('GET', '/users/1' , null, token)
+            return json
+        },
+        getMissoesAvioes: async (body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('POST', '/missoes/avioes/lista' , body, token)
+            return json
+        },
+        getEsforcoAereo: async (body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('GET', '/esforcos' , null, token)
+            return json
+        },
+        getPauDeSebo: async (body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('GET', '/etapas/paudesebo' , null, token)
+            return json
+        },
     }
 }

@@ -1,0 +1,2 @@
+"use strict";(self.webpackChunkApp_GTT=self.webpackChunkApp_GTT||[]).push([[715],{65715:function(t,e,n){n.r(e),n.d(e,{default:function(){return f}});var u=n(72791),c=n(57689),r=n(80184);function f(t){t.black,t.width;return(0,u.useEffect)((function(){localStorage.setItem("token","")}),[]),(0,r.jsx)(r.Fragment,{children:(0,r.jsx)(c.Fg,{to:"/login"})})}}}]);
+//# sourceMappingURL=715.5fc25207.chunk.js.map
