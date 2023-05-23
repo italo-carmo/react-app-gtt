@@ -19,6 +19,7 @@ const Dashboard = () => {
   const [firstDay, setFirstDay] = useState(new Date())
   const [hoje, setHoje] = useState(new Date())
   const [data, setData] = useState({avioes:[]})
+  const [etapaToShow, setEtapaToShow] = useState('')
 
   const Api = useApi()
 
@@ -144,9 +145,10 @@ const Dashboard = () => {
     ]
   }
 
-  const handleMouseEnter = (id,trip) => {
+  const handleMouseEnter = (id,etapa) => {
     setId(id)
-    setTripulacao(trip)
+    setTripulacao(etapa.tripulacao.join('/'))
+    setEtapaToShow(etapa)
     setCaixaVisible(true);
   };
 
@@ -222,15 +224,15 @@ const Dashboard = () => {
     <>
       <CCard className="mb-6" style={{flexDirection: 'column'}}>
         <div style={{display:'flex', alignItems: 'center', justifyContent: 'center', padding:10}}>
-          <div className='calendario'>
+          <div className='calendario' style={{fontSize: '2vw'}}>
             {(firstDay.toLocaleString('pt-BR', { month: 'long' }).toUpperCase())+'/'+(firstDay.getFullYear())}
           </div>
           <div className='botoes'>
-              <div className='item-botao' onClick={()=>handleCheckDate(7, true)}>&lt;&lt;</div>
-              <div className='item-botao' onClick={()=>handleCheckDate(1, true)}>&lt;</div>
-              <div className='item-botao' style={{marginLeft:5, marginRight:5}} onClick={getHoje}>HOJE</div>
-              <div className='item-botao' onClick={()=>handleCheckDate(1, false)}>&gt;</div>
-              <div className='item-botao' onClick={()=>handleCheckDate(7, false)}>&gt;&gt;</div>
+              <div className='item-botao' style={{fontSize: '2vw'}}  onClick={()=>handleCheckDate(7, true)}>&lt;&lt;</div>
+              <div className='item-botao' style={{fontSize: '2vw'}} onClick={()=>handleCheckDate(1, true)}>&lt;</div>
+              <div className='item-botao' style={{marginLeft:5, marginRight:5, fontSize: '2vw'}} onClick={getHoje}>HOJE</div>
+              <div className='item-botao' style={{fontSize: '2vw'}} onClick={()=>handleCheckDate(1, false)}>&gt;</div>
+              <div className='item-botao' style={{fontSize: '2vw'}} onClick={()=>handleCheckDate(7, false)}>&gt;&gt;</div>
           </div>
           </div>
          <div style={{display: 'flex', flexDirection:'column', width:'100%'}}>
@@ -263,7 +265,7 @@ const Dashboard = () => {
                           if(it.data == i) {
                             return <div 
                             onClick={()=>setCaixaCreateVisible(true)} className='missao white'
-                            onMouseEnter={() => handleMouseEnter(it.missao.id, it.missao.tripulacao)}
+                            onMouseEnter={() => handleMouseEnter(it.missao.id, it.missao)}
                             onMouseLeave={handleMouseLeave}
                             >  
                          {caixaVisible && (id ==it.missao.id)  &&  <div
@@ -271,13 +273,16 @@ const Dashboard = () => {
                               position: 'absolute',
                               top: '100%',
                               left: '0',
-                              background: 'white',
+                              background: '#000',
+                              color: '#fff',
                               padding: '10px',
                               border: '1px solid black',
                               zIndex: 1, // Definindo uma ordem de empilhamento maior para a div das informações
                             }}
                           >
-                            {tripulacao}
+                            <p>OMIS: {etapaToShow.omis}</p>
+                            <p>Tripulação: {tripulacao}</p>
+                            
                           </div>}
                           {it.missao.horaDep} {it.missao.dep} - {it.missao.pouso} {it.missao.horaPouso}</div>
                           }

@@ -101,6 +101,7 @@
     align-items: center;
     border-right: 1px solid #fff;
     border-bottom: 1px solid #fff;
+    font-size: 1vw;
 }
 
 .bottom-table {
