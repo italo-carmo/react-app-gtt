@@ -53,5 +53,15 @@ export default () => {
             let json = await request('POST', '/missoes/avioes/lista' , body, token)
             return json
         },
+        getEsforcoAereo: async (body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('GET', '/esforcos' , null, token)
+            return json
+        },
+        getPauDeSebo: async (body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('GET', '/etapas/paudesebo' , null, token)
+            return json
+        },
     }
 }

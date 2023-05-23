@@ -22,6 +22,14 @@
     border-radius: 5px !important;
     color:#fff;
     min-height:100px;
+
+    @media (max-width:600px) {
+        margin-left:5px;
+        margin-right:5px;
+        margin-bottom:5px;
+        min-height:60px;
+        padding:5px;
+    }
 }
 
 .card-background {
@@ -37,4 +45,11 @@
 .card-model {
     display: flex;
     align-items: center;
+}
+
+.div-nome-card {
+    margin-left:20px;
+    @media (max-width:600px) {
+        margin-left:10px;
+    }
 }

@@ -22,11 +22,8 @@ const Dashboard = () => {
   const [semana, setSemana] = useState([])
   const [firstDay, setFirstDay] = useState(new Date())
   const [hoje, setHoje] = useState(new Date())
-  const [data, setData] = useState({ avioes: [] })
-
-  const handleDateChange = (date) => {
-    setSelectedDate(date);
-  };
+  const [data, setData] = useState({avioes:[]})
+  const [etapaToShow, setEtapaToShow] = useState('')
 
   const Api = useApi()
 
@@ -152,9 +149,10 @@ const Dashboard = () => {
     ]
   }
 
-  const handleMouseEnter = (id, trip) => {
+  const handleMouseEnter = (id,etapa) => {
     setId(id)
-    setTripulacao(trip)
+    setTripulacao(etapa.tripulacao.join('/'))
+    setEtapaToShow(etapa)
     setCaixaVisible(true);
   };
 
@@ -276,27 +274,30 @@ const Dashboard = () => {
             {(data.avioes.length > 0) && data.avioes.map(item => {
               return <div className='missao-item'>
                 <div className='missao aviao'>{item.aviao}</div>
-                {semana.map(i => {
-                  return <div className='item-missao'>
-                    {item.eventos.length > 0 && item.eventos.map(it => {
-                      if (it.data == i) {
-                        return <div
-                          onClick={() => setCaixaCreateVisible(true)} className='missao white'
-                          onMouseEnter={() => handleMouseEnter(it.missao.id, it.missao.tripulacao)}
-                          onMouseLeave={handleMouseLeave}
-                        >
-                          {caixaVisible && (id == it.missao.id) && <div
+                {semana.map(i=>{
+                 return <div className='item-missao'>
+                      {item.eventos.length >0 && item.eventos.map(it=>{
+                          if(it.data == i) {
+                            return <div 
+                            onClick={()=>setCaixaCreateVisible(true)} className='missao white'
+                            onMouseEnter={() => handleMouseEnter(it.missao.id, it.missao)}
+                            onMouseLeave={handleMouseLeave}
+                            >  
+                         {caixaVisible && (id ==it.missao.id)  &&  <div
                             style={{
                               position: 'absolute',
                               top: '100%',
                               left: '0',
-                              background: 'white',
+                              background: '#000',
+                              color: '#fff',
                               padding: '10px',
                               border: '1px solid black',
                               zIndex: 1, // Definindo uma ordem de empilhamento maior para a div das informações
                             }}
                           >
-                            {tripulacao}
+                            <p>OMIS: {etapaToShow.omis}</p>
+                            <p>Tripulação: {tripulacao}</p>
+                            
                           </div>}
                           {it.missao.horaDep} {it.missao.dep} - {it.missao.pouso} {it.missao.horaPouso}</div>
                       }

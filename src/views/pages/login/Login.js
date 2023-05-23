@@ -50,7 +50,7 @@ const Login = () => {
     }
     
 
-    navigate('/dashboard')
+    navigate('/main')
   }
 
 
@@ -64,9 +64,9 @@ const Login = () => {
                 <CCardBody>
                   <CForm>
                     <div className='box-login' style={{display:'flex', alignItems: 'center', justifyContent: 'space-between'}}>
-                      <img style={{marginRight:20}} src="./gtt.png" width="30px" height="36px"/>
-                      <h1 style={{color:'#fff'}}>1º GTT</h1>
-                      <h3 style={{color:'#fff'}}>Login</h3>
+                      <img style={{marginRight:20}} src="https://www.1gtt.com.br/app/gtt.png" width="30px" height="36px"/>
+                      <h1 className='h1-login' style={{color:'#fff'}}>1º GTT</h1>
+                      <h3 className='h3-login' style={{color:'#fff'}}>Login</h3>
                     </div>
                     <p style={{color:'#fff',opacity:0.7}} className="">Entre na sua conta</p>
                     <CInputGroup className="mb-3">

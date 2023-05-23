@@ -70,7 +70,11 @@ const AppHeader = () => {
 
   }
 
-  useEffect(() => {
+  function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+  }
+
+  useEffect(()=>{
     getHoras()
     getDias()
   }, [])
@@ -102,47 +106,46 @@ const AppHeader = () => {
       <div className='bottom-header'>
         <div className='card-header card-background '>
           <div >
-            <p style={{ color: 'rgba(255,255,255,0.7)' }}>Horas Voadas este ano</p>
+            <p style={{color: 'rgba(255,255,255,0.7)', fontSize:'1.5vw',  backgroundColor: 'rgba(0,0,0, 0.7)', padding:2, borderRadius:3}}>Horas Voadas este ano</p>
           </div>
           <div>
-            {loadingHoras && <Loading />}
-            <p>{horas}</p>
+            {loadingHoras && <Loading/>}
+            <p style={{fontSize:'1.3vw',  backgroundColor: 'rgba(0,0,0, 0.7)', padding:2, borderRadius:3}}>{horas}</p>
+          </div>
+      </div>
+      <div className='card-header card-model'>
+        <img src='https://www.1gtt.com.br/app/dollar.png' width="15%"/>
+        <div className='div-nome-card'>
+          <div >
+            <p style={{color: 'rgba(255,255,255,0.7)', fontSize:'1.8vw'}}>Situação</p>
+          </div>
+          <div>
+          {loadingDias && <Loading/>}
+            <p style={{fontSize:'1.5vw'}}>{capitalizeFirstLetter(situacao)}</p>
           </div>
         </div>
-        <div className='card-header card-model'>
-          <img src='./dollar.png' width="15%" />
-          <div style={{ marginLeft: 20 }}>
-            <div >
-              <p style={{ color: 'rgba(255,255,255,0.7)' }}>Situação</p>
-            </div>
-            <div>
-              {loadingDias && <Loading />}
-              <p>{situacao}</p>
-            </div>
+      </div>
+      <div className='card-header card-model'>
+      <img src='https://www.1gtt.com.br/app/calendar.png' width="15%"/>
+        <div className='div-nome-card'>
+          <div >
+            <p style={{color: 'rgba(255,255,255,0.7)', fontSize:'1.8vw'}}>Dias Previstos</p>
+          </div>
+          <div>
+          {loadingDias && <Loading/>}
+            <p style={{fontSize:'2.5vw'}}>{diasPrevistos}</p>
           </div>
         </div>
-        <div className='card-header card-model'>
-          <img src='./calendar.png' width="15%" />
-          <div style={{ marginLeft: 20 }}>
-            <div >
-              <p style={{ color: 'rgba(255,255,255,0.7)' }}>Dias Previstos</p>
-            </div>
-            <div>
-              {loadingDias && <Loading />}
-              <p>{diasPrevistos}</p>
-            </div>
+      </div>
+      <div className='card-header card-model'>
+      <img src='https://www.1gtt.com.br/app/appointment.png' width="15%"/>
+        <div className='div-nome-card'>
+          <div >
+            <p style={{color: 'rgba(255,255,255,0.7)', fontSize:'1.8vw'}}>Dias Realizados</p>
           </div>
-        </div>
-        <div className='card-header card-model'>
-          <img src='./appointment.png' width="15%" />
-          <div style={{ marginLeft: 20 }}>
-            <div >
-              <p style={{ color: 'rgba(255,255,255,0.7)' }}>Dias Realizados</p>
-            </div>
-            <div>
-              {loadingDias && <Loading />}
-              <p>{diasRealizados}</p>
-            </div>
+          <div>
+          {loadingDias && <Loading/>}
+            <p style={{fontSize:'2.5vw'}}>{diasRealizados}</p>
           </div>
         </div>
       </div>
