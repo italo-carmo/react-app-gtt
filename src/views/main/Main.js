@@ -6,6 +6,9 @@ import {
 } from '@coreui/react'
 import { Alert } from '@coreui/coreui'
 import useApi from 'src/services/Api'
+import DatePicker from 'react-datepicker'
+import "react-datepicker/dist/react-datepicker.css";
+import { forwardRef } from 'react'
 
 
 const Dashboard = () => {
@@ -216,25 +219,43 @@ const Dashboard = () => {
     setFirstDay(hoje)
   }
 
+  const handleCreate = () => {
+    setCaixaCreateVisible(true)
+  }
+
   useEffect(()=>{
     getDias(firstDay)
   },[firstDay])
 
+  const ExampleCustomInput = forwardRef(({ value, onClick }, ref) => (
+    <button className="calendario" onClick={onClick} ref={ref}>
+      {(firstDay.toLocaleString('pt-BR', { month: 'long' }).toUpperCase()) + '/' + firstDay.getFullYear()}
+    </button>
+  ));
+
   return (
     <>
       <CCard className="mb-6" style={{flexDirection: 'column'}}>
-        <div style={{display:'flex', alignItems: 'center', justifyContent: 'center', padding:10}}>
-          <div className='calendario' style={{fontSize: '2vw'}}>
-            {(firstDay.toLocaleString('pt-BR', { month: 'long' }).toUpperCase())+'/'+(firstDay.getFullYear())}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 10 }}>
+          <div className=''>
+          <DatePicker 
+          selected={firstDay}
+          timeInputLabel={(firstDay.toLocaleString('pt-BR', { month: 'long' }).toUpperCase()) + '/' + firstDay.getFullYear()}
+          onChange={(date) => setFirstDay(date)}
+          customInput={<ExampleCustomInput />}
+          />
           </div>
           <div className='botoes'>
-              <div className='item-botao' style={{fontSize: '2vw'}}  onClick={()=>handleCheckDate(7, true)}>&lt;&lt;</div>
-              <div className='item-botao' style={{fontSize: '2vw'}} onClick={()=>handleCheckDate(1, true)}>&lt;</div>
-              <div className='item-botao' style={{marginLeft:5, marginRight:5, fontSize: '2vw'}} onClick={getHoje}>HOJE</div>
-              <div className='item-botao' style={{fontSize: '2vw'}} onClick={()=>handleCheckDate(1, false)}>&gt;</div>
-              <div className='item-botao' style={{fontSize: '2vw'}} onClick={()=>handleCheckDate(7, false)}>&gt;&gt;</div>
+          <button className="calendario" onClick={() => handleCheckDate(7, true)}>&lt;&lt;</button>
+          <button className="calendario" onClick={() => handleCheckDate(1, true)}>&lt;</button>
+          <button className="calendario" onClick={getHoje}>HOJE</button>
+          <button className="calendario" onClick={() => handleCheckDate(1, false)}>&gt;</button>
+          <button className="calendario" onClick={() => handleCheckDate(7, false)}>&gt;&gt;</button>
           </div>
+          <div>
+            <button onClick={handleCreate} className='criar'>Criar Missão</button>
           </div>
+        </div>
          <div style={{display: 'flex', flexDirection:'column', width:'100%'}}>
           <div className='topo'>
             <div className='missao'>Avião</div>
@@ -299,7 +320,13 @@ const Dashboard = () => {
             <div style={{display: 'flex', justifyContent:'flex-end',margin:10, cursor: 'pointer'}}>
               <div onClick={()=>setCaixaCreateVisible(false)} style={{color:'#fff'}}>X</div>
             </div>
-          OIIII
+            <div className='criar-div'>
+              <h3 style={{color:'#fff'}}>Criar Missão</h3>
+            </div>
+            <div className='add-etapa'>
+                <h5 style={{color:'#fff', marginTop:50}}>Etapas:</h5>
+                <img src='https://www.1gtt.com.br/app/add-white.png' width={20} height={20} />
+            </div>
         </div>
         }
        
