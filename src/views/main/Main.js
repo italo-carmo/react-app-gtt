@@ -11,7 +11,6 @@ import "react-datepicker/dist/react-datepicker.css";
 import { forwardRef } from 'react'
 
 
-
 const Dashboard = () => {
 
   const [tripulacao, setTripulacao] = useState([])
@@ -220,7 +219,11 @@ const Dashboard = () => {
     setFirstDay(hoje)
   }
 
-  useEffect(() => {
+  const handleCreate = () => {
+    setCaixaCreateVisible(true)
+  }
+
+  useEffect(()=>{
     getDias(firstDay)
   }, [firstDay]);
 
@@ -230,11 +233,12 @@ const Dashboard = () => {
     </button>
   ));
 
+
   return (
     <>
-      <CCard className="mb-6" style={{ flexDirection: 'column' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 10 }}>
-          <div className='calendario'>
+      <CCard className="mb-6" style={{flexDirection: 'column'}}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 10 }}>
+          <div className=''>
           <DatePicker 
           selected={firstDay}
           timeInputLabel={(firstDay.toLocaleString('pt-BR', { month: 'long' }).toUpperCase()) + '/' + firstDay.getFullYear()}
@@ -249,8 +253,11 @@ const Dashboard = () => {
           <button className="calendario" onClick={() => handleCheckDate(1, false)}>&gt;</button>
           <button className="calendario" onClick={() => handleCheckDate(7, false)}>&gt;&gt;</button>
           </div>
+          <div>
+            <button onClick={handleCreate} className='criar'>Criar Missão</button>
+          </div>
         </div>
-        <div style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
+         <div style={{display: 'flex', flexDirection:'column', width:'100%'}}>
           <div className='topo'>
             <div className='missao'>Avião</div>
             {semana.map((item, index) => {
@@ -306,18 +313,23 @@ const Dashboard = () => {
                 })}
               </div>
             })}
-          </div>
-        </div>
-
-        {
-          caixaCreateVisible && <div className='modal-create'>
-            <div style={{ display: 'flex', justifyContent: 'flex-end', margin: 10, cursor: 'pointer' }}>
-              <div onClick={() => setCaixaCreateVisible(false)} style={{ color: '#fff' }}>X</div>
             </div>
-            OIIII
-          </div>
-        }
-
+         </div>
+        
+        {
+          caixaCreateVisible &&  <div className='modal-create'>
+            <div style={{display: 'flex', justifyContent:'flex-end',margin:10, cursor: 'pointer'}}>
+              <div onClick={()=>setCaixaCreateVisible(false)} style={{color:'#fff'}}>X</div>
+            </div>
+            <div className='criar-div'>
+              <h3 style={{color:'#fff'}}>Criar Missão</h3>
+            </div>
+            <div className='add-etapa'>
+                <h5 style={{color:'#fff', marginTop:50}}>Etapas:</h5>
+                <img src='https://www.1gtt.com.br/app/add-white.png' width={20} height={20} />
+            </div>
+        </div>
+}
 
       </CCard>
 
