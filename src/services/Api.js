@@ -63,5 +63,15 @@ export default () => {
             let json = await request('GET', '/etapas/paudesebo' , null, token)
             return json
         },
+        getDistanciaAerodromos: async (body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('POST', '/coordenadas' , body, token)
+            return json
+        },
+        getAeronaves: async (body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('GET', '/aeronaves' , null, token)
+            return json
+        },
     }
 }
