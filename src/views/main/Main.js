@@ -211,8 +211,11 @@ const Dashboard = () => {
     etapas_copy.eventos.push(evento)
     setEtapas(etapas_copy)
     getNewEtapa(icaoDestinoAdd, dataEtapaPouso)
-    getDias(firstDay)
   }
+
+  useEffect(()=>{
+    getDias(firstDay)
+  }, [etapas])
 
   useEffect(()=>{
     getHorarioPouso()
@@ -288,11 +291,11 @@ const Dashboard = () => {
                       {item.eventos.length >0 && item.eventos.map(it=>{
                           if(it.data == i) {
                             return <div 
-                            onClick={()=>setCaixaCreateVisible(true)} className='missao white'
+                            onClick={()=>setCaixaCreateVisible(true)} className='missao-white white'
                             onMouseEnter={() => handleMouseEnter(it.missao.id, it.missao)}
                             onMouseLeave={handleMouseLeave}
                             >  
-                         {caixaVisible && (id ==it.missao.id)  &&  <div
+                         {caixaVisible && (id ==it.missao.id) && (it.missao.id != null)  &&  <div
                             style={{
                               position: 'absolute',
                               top: '100%',
@@ -411,7 +414,26 @@ const Dashboard = () => {
             }
 
             {etapas.eventos.map((item, index)=>{
-              return <EtapaItem index={index} dep={item.missao.dep} pouso={item.missao.pouso} horaDep={item.missao.horaDep} horaPouso={item.missao.horaPouso} />
+              return <EtapaItem 
+                      edit={()=>{
+
+                      }} 
+                      del={()=>{
+                        let etapas_copy = {...etapas}
+                        
+                        let eventos_filter = etapas_copy.eventos.filter((it, id) => {
+                          if(id != index) {
+                            return it
+                          }
+                        })
+                        etapas_copy.eventos = eventos_filter
+                        setEtapas(etapas_copy)
+                      }} 
+                      index={index} 
+                      dep={item.missao.dep} 
+                      pouso={item.missao.pouso} 
+                      horaDep={item.missao.horaDep} 
+                      horaPouso={item.missao.horaPouso} />
             })}
        
         </div>

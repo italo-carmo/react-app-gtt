@@ -5,4 +5,15 @@
     display: flex;
     align-items: center;
     border-radius: 10px;
+    justify-content: space-between;
+}
+
+.botoes-etapa {
+    display: flex;
+    align-items: center;
+}
+
+.botoes-etapa img {
+   margin-left: 10px;
+   cursor: pointer;
 }
