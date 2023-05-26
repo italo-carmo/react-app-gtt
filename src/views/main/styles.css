@@ -104,6 +104,16 @@
     font-size: 1vw;
 }
 
+.missao-white {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-right: 1px solid #fff;
+    border-bottom: 1px solid #fff;
+    font-size: 1vw;
+}
+
 .bottom-table {
     display: flex;
 }
@@ -125,6 +135,7 @@
     border-radius: 5px;
     position: relative;
     cursor: pointer;
+    height:30%;
 }
 
 .modal-create {
@@ -172,8 +183,50 @@
 }
 
 .add-etapa {
-    margin-left:20px;
+    margin-top:50px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+}
+
+.form-add {
+    display: flex;
+    justify-content: space-between;
+    margin-top:10px;
+}
+
+input {
+    border-radius: 10px;
+    padding-left:10px;
+}
+
+.form-area {
+    background-color: #fff;
+    padding:10px;
+    margin-top:30px;
+    border-radius: 10px;
+}
+
+.botoes-add-etapa {
+    display: flex;
+    justify-content: space-between;
+    margin-top:20px;
+}
+
+.adicionar {
+    background-color: #28a745;
+    border:0;
+    color: #fff;
+    border-radius: 10px;
+}
+
+.cancelar {
+    background-color: #dc3545;
+    border:0;
+    color: #fff;
+    border-radius: 10px;
+}
+
+.aviao {
+
 }
