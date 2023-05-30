@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const MaskedInput = ({ maxLength, value, onChange, erro }) => {
+const MaskedInput = ({ maxLength, value, onChange, erro, onKeyPress}) => {
   const handleInputChange = (event) => {
     const inputValue = event.target.value.toUpperCase().replace(/[^A-Z]/g, '').substring(0, maxLength);
     onChange(inputValue);
@@ -13,6 +13,7 @@ const MaskedInput = ({ maxLength, value, onChange, erro }) => {
       onChange={handleInputChange}
       maxLength={maxLength}
       style={{border: erro ? '1px solid #ff0000' : '1px solid #000'}}
+      onKeyPress={onKeyPress}
     />
   );
 };

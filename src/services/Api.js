@@ -68,9 +68,24 @@ export default () => {
             let json = await request('POST', '/coordenadas' , body, token)
             return json
         },
-        getAeronaves: async (body) => {
+        getAeronaves: async () => {
             let token = localStorage.getItem('token')
             let json = await request('GET', '/aeronaves' , null, token)
+            return json
+        },
+        createMissao: async () => {
+            let token = localStorage.getItem('token')
+            let json = await request('POST', '/missoes' , null, token)
+            return json
+        },
+        createEtapa: async (body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('POST', '/etapas' , body, token)
+            return json
+        },
+        getAerodromo: async (icao) => {
+            let token = localStorage.getItem('token')
+            let json = await request('GET', `/aerodromos/icao/${icao}` , null, token)
             return json
         },
     }
