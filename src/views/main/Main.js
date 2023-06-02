@@ -48,6 +48,7 @@ const Dashboard = () => {
   const [aeronaves, setAeronaves] = useState([])
   const [loadingExcluir, setLoadingExcluir] = useState(false)
   const [loadingSave, setLoadingSave] = useState(false)
+  const [idMissaoEdit, setIdMissaoEdit] = useState('')
 
   const Api = useApi()
 
@@ -63,12 +64,22 @@ const Dashboard = () => {
   };
 
   const handleEditMission = (missao) => {
+    setLoadingExcluir(false)
+    setLoadingSave(false)
     setEditMission(true)
+    setEditEtapa(false)
+    let id_missao = missao.eventos[0].missao.id_missao
+    setIdMissaoEdit(id_missao)
+    console.log(id_missao)
     let etapas_copy = {...etapas}
     etapas_copy.eventos = missao.eventos
     setEtapas(etapas_copy)
     setCaixaCreateVisible(true)
     setAeronaveMissao(missao.aviao)
+    let index = aeronaves.findIndex(i=>i.aeronave == missao.aviao)
+    if(index >=0) {
+      setIdAeronaveMissao(aeronaves[index].id)
+    }
   }
 
   const handleKeyPress = (event) => {
@@ -91,7 +102,6 @@ const Dashboard = () => {
   }
 
   const getDias = (hoje) => {
-    console.log('getDias')
     let hoje_copy = new Date(hoje)
     hoje_copy.setDate(hoje_copy.getDate() - 3);
     let dias = []
@@ -119,7 +129,6 @@ const Dashboard = () => {
   }
 
   const getMissoes = async (dias) => {
-    console.log('get Missoes')
     let inicio = dias[0]
     let fim = dias[6]
     let res = await Api.getMissoesAvioes({inicio, fim})
@@ -158,6 +167,9 @@ const Dashboard = () => {
   }
 
   const handleCreate = () => {
+    setLoadingExcluir(false)
+    setLoadingSave(false)
+    setEditMission(false)
     setCaixaCreateVisible(true)
   }
 
@@ -167,6 +179,7 @@ const Dashboard = () => {
     setDataEtapa('')
     setDataEtapaPouso('')
     setAddEtapa(false)
+    setEditEtapa(false)
   }
 
   const getHorarioPouso = async () => {
@@ -196,7 +209,6 @@ const Dashboard = () => {
   }
 
   const getNewEtapa = (icaoDep, horarioDep) => {
-    console.log('Horario dep: '+horarioDep)
     setIcaoDestinoAdd('')
     let new_date = new Date(horarioDep)
     new_date.setMinutes(new_date.getMinutes()+120)
@@ -207,6 +219,230 @@ const Dashboard = () => {
     setDataEtapa(new_date)
     setIcaoOrigemAdd(icaoDep)
     setDataEtapaPouso(new_date)
+  }
+
+ 
+
+  const handleTrocaAviao = () => {
+    if(etapas.eventos.length > 0) {
+
+      let data_copy = {...data}
+
+      data_copy.avioes.forEach((item, idx)=>{
+      if(item.eventos.length > 0) {
+        let new_item = item.eventos.filter(i=>{
+          let index = etapas.eventos.findIndex(it=>it.missao.id==i.missao.id)
+          if(index<0) {
+            return i
+          }
+        })
+        data_copy.avioes[idx].eventos = new_item
+      }
+      })
+
+      let index_data = data_copy.avioes.findIndex(i=>i.aviao == aeronaveMissao)
+      if(index_data >= 0) {
+        etapas.eventos.forEach(i=>{
+          data_copy.avioes[index_data].eventos.push(i)
+        })
+      }
+      setData(data_copy)
+    }
+  }
+
+  const handleSaveMissao =  async() => {
+    setLoadingSave(true)
+    if(!editMission) {
+      if(aeronaveMissao == '' || etapas.eventos.length == 0) {
+        alert('Todos os campos são obrigatórios!')
+        setLoadingSave(false)
+        return
+      }
+      let res = await Api.createMissao()
+      if(!res.error) {
+         let id_missao = res.data.id
+         etapas.eventos.forEach(async (item, index)=>{
+           var res_dep = await Api.getAerodromo(item.missao.dep)
+           var res_pouso = await Api.getAerodromo(item.missao.pouso)
+           let data_item = {
+             dep: item.missao.depISO,
+             pouso: item.missao.pousoISO,
+             id_missao: id_missao,
+             id_aeronave: idAeronaveMissao,
+             id_dep: res_dep.data.id,
+             id_pouso: res_pouso.data.id,
+           }
+           let res_etapa = await Api.createEtapa(data_item)
+         
+           if(res_etapa.error) {
+             alert(res.etapa.error)
+             return
+           } 
+           if(index == (etapas.eventos.length -1)){
+            getDias(firstDay)
+            handleLimparMissao()
+            setCaixaCreateVisible(false)
+            setLoadingSave(false)
+           }
+         })
+         setLoadingSave(false)
+       } else {
+        setLoadingSave(false)
+        alert(res.error)
+       }
+    } 
+    getDias(firstDay)
+  }
+
+
+  const handleEditSaveMission = async () => { 
+    setLoadingSave(true)
+    var id_missao = idMissaoEdit
+    
+    let etapas_map = etapas.eventos.map(async (i)=>{
+        let item = {}
+        var res_dep = await Api.getAerodromo(i.missao.dep)
+        var res_pouso = await Api.getAerodromo(i.missao.pouso)
+        item.dep = i.missao.depISO
+        item.pouso = i.missao.pousoISO
+        item.id_aeronave = idAeronaveMissao
+        item.id_dep = res_dep.data.id
+        item.id_pouso = res_pouso.data.id
+        if(i.missao.edicao) {
+          item.id = null
+        } else {
+          item.id = i.missao.id
+        }
+        return item
+      })
+    
+    let etapas_final = await Promise.all(etapas_map)
+    let dados = {etapas:etapas_final, id_missao}
+    console.log(dados)
+    let res = await Api.updateMissao(dados)
+    if(res.error) {
+      setLoadingSave(false)
+      alert(res.error)
+      return
+    }
+    handleLimparMissao()
+    setCaixaCreateVisible(false)
+    getDias(firstDay)
+  }
+
+  const handleExcluir = async () => {
+    setLoadingExcluir(true)
+    const confirmacao = window.confirm('Deseja mesmo excluir essa missão?');
+    if (confirmacao) {
+      let id = etapas.eventos[0].missao.id_missao
+      let res = await Api.deleteMissao(id)
+      if(res.error) {
+        setLoadingExcluir(false)
+        alert(res.error)
+        return
+      }
+      setLoadingExcluir(false)
+      handleLimparMissao()
+      setCaixaCreateVisible(false)
+      getDias(firstDay)
+    }
+    setLoadingExcluir(false)
+
+  }
+
+  const handleLimparMissao = () => {
+    setEtapas({aviao: '', eventos:[]})
+
+    let data_copy = {...data}
+    let index = data_copy.avioes.findIndex(i=>i.aviao == aeronaveMissao)
+
+    if(index>=0) {
+      data_copy.avioes[index].eventos =  data_copy.avioes[index].eventos.filter(item=>{
+        if(!item.missao.edicao) {
+          return item
+        }
+      })
+    }
+
+    setData(data_copy)
+
+    setIcaoDestinoAdd('')
+    setIcaoOrigemAdd('')
+    setDataEtapa(new Date())
+    setDataEtapaPouso(new Date())
+    setAeronaveMissao( '')
+    setEditMission(false)
+    setEditEtapa(false)
+    getDias(firstDay)
+  }
+
+  const handleEditEtapa = () => {
+    setErrorEtapaAdd('')
+    if(icaoDestinoAdd == '' || icaoOrigemAdd == '' || dataEtapa == '' || dataEtapaPouso == '') {
+      setErrorEtapaAdd('Todos os campos são obrigatórios')
+      return
+    }
+    if(aeronaveMissao == '') {
+      setErrorEtapaAdd('A aeronave é obrigatória')
+      return
+    }
+
+    var offset_dep = dataEtapa.getTimezoneOffset();
+    // Convertendo a data para UTC
+    dataEtapa.setMinutes(dataEtapa.getMinutes() - offset_dep);
+    var offset_pouso = dataEtapaPouso.getTimezoneOffset();
+    // Convertendo a data para UTC
+    dataEtapaPouso.setMinutes(dataEtapaPouso.getMinutes() - offset_pouso);
+
+    let data_dep_string = dataEtapa.toISOString()
+    let data_pouso_string = dataEtapaPouso.toISOString()
+    let [data_dep, hora_dep] = data_dep_string.split('T')
+    let [data_pouso, hora_pouso] = data_pouso_string.split('T')
+
+    let [ano_dep, mes_dep, dia_dep] = data_dep.split('-')
+
+    let [hora_dep_split, minuto_dep, segundo_dep] = hora_dep.split(':')
+    let [hora_pouso_split, minuto_pouso, segundo_pouso] = hora_pouso.split(':')
+
+    let etapas_copy = {...etapas}
+    let data_copy = {...data}
+
+    let find_item = etapas_copy.eventos[indexEditEtapa]
+
+    let evento = {
+      data: `${dia_dep}/${mes_dep}/${ano_dep}`,
+      tipo: "missao",
+      missao: {
+        id: find_item.missao.id,
+        dep: icaoOrigemAdd,
+        horaDep: `${hora_dep_split}:${minuto_dep}Z`,
+        pouso: icaoDestinoAdd,
+        horaPouso:  `${hora_pouso_split}:${minuto_pouso}Z`,
+        depISO:dataEtapa,
+        pousoISO: dataEtapaPouso,
+        tripulacao: [],
+        omis: '',
+        edicao: find_item.missao.edicao
+      },
+      manutencao: null
+    }
+    etapas_copy.eventos[indexEditEtapa] = evento
+    setEtapas(etapas_copy)
+
+    var index = data_copy.avioes.findIndex(i=>i.aviao == aeronaveMissao)
+    if(index >=0) {
+      let index_data = data_copy.avioes[index].eventos.findIndex(i=>i.missao.id == find_item.missao.id)
+      if(index_data >=0) {
+        data_copy.avioes[index].eventos[index_data] = evento
+        setData(data_copy)
+      }
+    }
+
+    let last_icao = etapas_copy.eventos[etapas_copy.eventos.length -1].missao.pouso
+    let last_pouso = etapas_copy.eventos[etapas_copy.eventos.length -1].missao.pousoISO
+    setEditEtapa(false)
+    setIndexEditEtapa('')
+    getNewEtapa(last_icao, last_pouso)
   }
 
   const handleAddEtapa = async () => {
@@ -267,188 +503,6 @@ const Dashboard = () => {
     setEtapas(etapas_copy)
 
     getNewEtapa(icaoDestinoAdd, dataEtapaPouso)
-  }
-
-  const handleTrocaAviao = () => {
-    if(etapas.eventos.length > 0) {
-
-      let data_copy = {...data}
-
-      data_copy.avioes.forEach((item, idx)=>{
-      if(item.eventos.length > 0) {
-        let new_item = item.eventos.filter(i=>{
-          let index = etapas.eventos.findIndex(it=>it.missao.id==i.missao.id)
-          if(index<0) {
-            return i
-          }
-        })
-        data_copy.avioes[idx].eventos = new_item
-      }
-      })
-
-      let index_data = data_copy.avioes.findIndex(i=>i.aviao == aeronaveMissao)
-      if(index_data >= 0) {
-        etapas.eventos.forEach(i=>{
-          data_copy.avioes[index_data].eventos.push(i)
-        })
-      }
-      setData(data_copy)
-    }
-  }
-
-  const handleSaveMissao =  async() => {
-    setLoadingSave(true)
-    if(!editMission) {
-      let res = await Api.createMissao()
-      if(!res.error) {
-         let id_missao = res.data.id
-         etapas.eventos.forEach(async (item, index)=>{
-           var res_dep = await Api.getAerodromo(item.missao.dep)
-           var res_pouso = await Api.getAerodromo(item.missao.pouso)
-           let data_item = {
-             dep: item.missao.depISO,
-             pouso: item.missao.pousoISO,
-             id_missao: id_missao,
-             id_aeronave: idAeronaveMissao,
-             id_dep: res_dep.data.id,
-             id_pouso: res_pouso.data.id,
-           }
-           let res_etapa = await Api.createEtapa(data_item)
-         
-           if(res_etapa.error) {
-             alert(res.etapa.error)
-             return
-           } 
-           if(index == (etapas.eventos.length -1)){
-            getDias(firstDay)
-            handleLimparMissao()
-            setCaixaCreateVisible(false)
-            setLoadingSave(false)
-           }
-         })
-         setLoadingSave(false)
-       } else {
-        setLoadingSave(false)
-        alert(res.error)
-       }
-    } else {
-      let etapas_final = []
-      etapas.eventos.forEach(async (item)=>{
-        var res_dep = await Api.getAerodromo(item.missao.dep)
-        var res_pouso = await Api.getAerodromo(item.missao.pouso)
-        etapas_final.push({    
-          id: item.missao.id,
-          dep: item.missao.depISO,
-          pouso: item.missao.pousoISO,
-          id_missao: item.missao.id_missao,
-          id_aeronave: aeronaveSelected.idAeronaveMissao,
-          id_dep: res_dep.data.id,
-          id_pouso: res_pouso.data.id,
-        })
-      })
-      
-    }
-    getDias(firstDay)
-  }
-
-  const handleExcluir = async () => {
-    setLoadingExcluir(true)
-    const confirmacao = window.confirm('Deseja mesmo excluir essa missão?');
-    if (confirmacao) {
-      let id = etapas.eventos[0].missao.id_missao
-      let res = await Api.deleteMissao(id)
-      if(res.error) {
-        setLoadingExcluir(false)
-        alert(res.error)
-        return
-      }
-      setLoadingExcluir(false)
-      handleLimparMissao()
-      setCaixaCreateVisible(false)
-      getDias(firstDay)
-    }
-    setLoadingExcluir(false)
-
-  }
-
-  const handleLimparMissao = () => {
-    setEtapas({aviao: '', eventos:[]})
-
-    let data_copy = {...data}
-    let index = data_copy.avioes.findIndex(i=>i.aviao == aeronaveMissao)
-
-    if(index>=0) {
-      data_copy.avioes[index].eventos =  data_copy.avioes[index].eventos.filter(item=>{
-        if(!item.missao.edicao) {
-          return item
-        }
-      })
-    }
-
-    setData(data_copy)
-
-    setIcaoDestinoAdd('')
-    setIcaoOrigemAdd('')
-    setDataEtapa(new Date())
-    setDataEtapaPouso(new Date())
-    setAeronaveMissao( '')
-    setEditMission(false)
-    getDias(firstDay)
-  }
-
-  const handleEditEtapa = () => {
-    setErrorEtapaAdd('')
-    if(icaoDestinoAdd == '' || icaoOrigemAdd == '' || dataEtapa == '' || dataEtapaPouso == '') {
-      setErrorEtapaAdd('Todos os campos são obrigatórios')
-      return
-    }
-    if(aeronaveMissao == '') {
-      setErrorEtapaAdd('A aeronave é obrigatória')
-      return
-    }
-
-    var offset_dep = dataEtapa.getTimezoneOffset();
-    // Convertendo a data para UTC
-    dataEtapa.setMinutes(dataEtapa.getMinutes() - offset_dep);
-    var offset_pouso = dataEtapaPouso.getTimezoneOffset();
-    // Convertendo a data para UTC
-    dataEtapaPouso.setMinutes(dataEtapaPouso.getMinutes() - offset_pouso);
-
-    let data_dep_string = dataEtapa.toISOString()
-    let data_pouso_string = dataEtapaPouso.toISOString()
-    let [data_dep, hora_dep] = data_dep_string.split('T')
-    let [data_pouso, hora_pouso] = data_pouso_string.split('T')
-
-    let [ano_dep, mes_dep, dia_dep] = data_dep.split('-')
-
-    let [hora_dep_split, minuto_dep, segundo_dep] = hora_dep.split(':')
-    let [hora_pouso_split, minuto_pouso, segundo_pouso] = hora_pouso.split(':')
-
-    let evento = {
-      data: `${dia_dep}/${mes_dep}/${ano_dep}`,
-      tipo: "missao",
-      missao: {
-        id: null,
-        dep: icaoOrigemAdd,
-        horaDep: `${hora_dep_split}:${minuto_dep}Z`,
-        pouso: icaoDestinoAdd,
-        horaPouso:  `${hora_pouso_split}:${minuto_pouso}Z`,
-        depISO:dataEtapa,
-        pousoISO: dataEtapaPouso,
-        tripulacao: [],
-        omis: ''
-      },
-      manutencao: null
-    }
-
-    let etapas_copy = {...etapas}
-    etapas_copy.eventos[indexEditEtapa] = evento
-    setEtapas(etapas_copy)
-    let last_icao = etapas_copy.eventos[etapas_copy.eventos.length -1].missao.pouso
-    let last_pouso = etapas_copy.eventos[etapas_copy.eventos.length -1].missao.pousoISO
-    setEditEtapa(false)
-    setIndexEditEtapa('')
-    getNewEtapa(last_icao, last_pouso)
   }
 
   const getDadosEditEtapa = (index) => {
@@ -594,7 +648,7 @@ const Dashboard = () => {
               <div onClick={handleCloseModal} style={{color:'#fff'}}>X</div>
             </div>
             <div className='criar-div'>
-              <h3 style={{color:'#fff'}}>Criar Missão</h3>
+              <h3 style={{color:'#fff'}}>{editMission ? 'Editar' :  'Criar'} Missão</h3>
             </div>
             <div style={{display: 'flex', justifyContent: 'space-between', marginTop:20, alignItems: 'center'}}>
               <h5 style={{color:'#fff'}}>Avião:</h5>
@@ -611,7 +665,20 @@ const Dashboard = () => {
             </div>
             <div className='add-etapa'>
                 <h5 style={{color:'#fff'}}>Etapas:</h5>
-                <img onClick={()=>setAddEtapa(!addEtapa)} style={{cursor: 'pointer'}} src='https://www.1gtt.com.br/app/add-white.png' width={20} height={20} />
+                <img onClick={()=>{
+                  if(!editEtapa && addEtapa) {
+                    setAddEtapa(false)
+                  }
+                  if(!editEtapa && !addEtapa) {
+                    setAddEtapa(true)
+                    let icao = etapas.eventos[etapas.eventos.length - 1].missao.pouso
+                    let horarioPouso = etapas.eventos[etapas.eventos.length - 1].missao.pousoISO
+                    getNewEtapa(icao, horarioPouso)
+                  }
+                  if(editEtapa) {
+                    setEditEtapa(false)
+                  }
+                  }} style={{cursor: 'pointer'}} src='https://www.1gtt.com.br/app/add-white.png' width={20} height={20} />
             </div>
             {(addEtapa || editEtapa) && 
                  <div className='form-area'>
@@ -707,13 +774,16 @@ const Dashboard = () => {
             })}
     <div className='botoes-add-etapa' style={{marginTop:30}}>
     <button className='cancelar' style={{fontSize: '1vw'}} onClick={handleLimparMissao}>Limpar</button>
-      {loadingSave ? <LoadingSpinner/> : <button className='adicionar' style={{fontSize: '1vw'}} onClick={handleSaveMissao}>Criar Missão</button>}
+      {loadingSave ? <LoadingSpinner/> : <button className='adicionar' style={{fontSize: '1vw'}} onClick={editMission ? handleEditSaveMission : handleSaveMissao}>{editMission ? 'Editar Missão' : 'Criar Missão'}</button>}
     </div>
 
     <div className='botoes-add-etapa' style={{marginTop:30, justifyContent:'center'}}>
-      {loadingExcluir ? <LoadingSpinner /> :
-        <button className='cancelar' style={{fontSize: '1.3vw'}} onClick={handleExcluir}>Excluir Missão</button>
+      {loadingExcluir && <LoadingSpinner />}
+      {
+        editMission ? <button className='cancelar' style={{fontSize: '1.3vw'}} onClick={handleExcluir}>Excluir Missão</button>
+         :  <></>
       }
+
     </div>
         </div>
        

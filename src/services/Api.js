@@ -93,5 +93,10 @@ export default () => {
             let json = await request('DELETE', `/missoes/${id}` , null, token)
             return json
         },
+        updateMissao: async (body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('PUT', `/etapas` , body, token)
+            return json
+        },
     }
 }
