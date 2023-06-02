@@ -16,6 +16,8 @@ import DateMaskedInput from 'src/components/masked-date'
 import moment from 'moment';
 import 'moment-timezone';
 import EtapaItem from 'src/components/etapaItemAdd'
+import LoadingSpinner from 'src/components/Loading'
+
 moment.tz.setDefault('Etc/UTC');
 
 const Dashboard = () => {
@@ -44,6 +46,8 @@ const Dashboard = () => {
   const [aeronaveMissao, setAeronaveMissao] = useState([])
   const [idAeronaveMissao,setIdAeronaveMissao] = useState('')
   const [aeronaves, setAeronaves] = useState([])
+  const [loadingExcluir, setLoadingExcluir] = useState(false)
+  const [loadingSave, setLoadingSave] = useState(false)
 
   const Api = useApi()
 
@@ -59,13 +63,12 @@ const Dashboard = () => {
   };
 
   const handleEditMission = (missao) => {
-    console.log(missao)
     setEditMission(true)
     let etapas_copy = {...etapas}
     etapas_copy.eventos = missao.eventos
     setEtapas(etapas_copy)
     setCaixaCreateVisible(true)
-    
+    setAeronaveMissao(missao.aviao)
   }
 
   const handleKeyPress = (event) => {
@@ -88,6 +91,7 @@ const Dashboard = () => {
   }
 
   const getDias = (hoje) => {
+    console.log('getDias')
     let hoje_copy = new Date(hoje)
     hoje_copy.setDate(hoje_copy.getDate() - 3);
     let dias = []
@@ -115,9 +119,11 @@ const Dashboard = () => {
   }
 
   const getMissoes = async (dias) => {
+    console.log('get Missoes')
     let inicio = dias[0]
     let fim = dias[6]
     let res = await Api.getMissoesAvioes({inicio, fim})
+
     if(!res.error) {
       let missoes = res.data
       /*let index_missoes = missoes.findIndex(i=>i.aviao == etapas.aviao)
@@ -190,6 +196,7 @@ const Dashboard = () => {
   }
 
   const getNewEtapa = (icaoDep, horarioDep) => {
+    console.log('Horario dep: '+horarioDep)
     setIcaoDestinoAdd('')
     let new_date = new Date(horarioDep)
     new_date.setMinutes(new_date.getMinutes()+120)
@@ -258,17 +265,44 @@ const Dashboard = () => {
     }
     setData(data_copy)
     setEtapas(etapas_copy)
-    console.log('DATA:')
-    console.log(data_copy)
+
     getNewEtapa(icaoDestinoAdd, dataEtapaPouso)
   }
 
+  const handleTrocaAviao = () => {
+    if(etapas.eventos.length > 0) {
+
+      let data_copy = {...data}
+
+      data_copy.avioes.forEach((item, idx)=>{
+      if(item.eventos.length > 0) {
+        let new_item = item.eventos.filter(i=>{
+          let index = etapas.eventos.findIndex(it=>it.missao.id==i.missao.id)
+          if(index<0) {
+            return i
+          }
+        })
+        data_copy.avioes[idx].eventos = new_item
+      }
+      })
+
+      let index_data = data_copy.avioes.findIndex(i=>i.aviao == aeronaveMissao)
+      if(index_data >= 0) {
+        etapas.eventos.forEach(i=>{
+          data_copy.avioes[index_data].eventos.push(i)
+        })
+      }
+      setData(data_copy)
+    }
+  }
+
   const handleSaveMissao =  async() => {
+    setLoadingSave(true)
     if(!editMission) {
       let res = await Api.createMissao()
       if(!res.error) {
          let id_missao = res.data.id
-         etapas.eventos.forEach(async (item)=>{
+         etapas.eventos.forEach(async (item, index)=>{
            var res_dep = await Api.getAerodromo(item.missao.dep)
            var res_pouso = await Api.getAerodromo(item.missao.pouso)
            let data_item = {
@@ -285,9 +319,17 @@ const Dashboard = () => {
              alert(res.etapa.error)
              return
            } 
+           if(index == (etapas.eventos.length -1)){
+            getDias(firstDay)
+            handleLimparMissao()
+            setCaixaCreateVisible(false)
+            setLoadingSave(false)
+           }
          })
-         getMissoes()
-         alert('Missão cadastrada com sucesso!')
+         setLoadingSave(false)
+       } else {
+        setLoadingSave(false)
+        alert(res.error)
        }
     } else {
       let etapas_final = []
@@ -304,8 +346,28 @@ const Dashboard = () => {
           id_pouso: res_pouso.data.id,
         })
       })
-      console.log(etapas_final)
+      
     }
+    getDias(firstDay)
+  }
+
+  const handleExcluir = async () => {
+    setLoadingExcluir(true)
+    const confirmacao = window.confirm('Deseja mesmo excluir essa missão?');
+    if (confirmacao) {
+      let id = etapas.eventos[0].missao.id_missao
+      let res = await Api.deleteMissao(id)
+      if(res.error) {
+        setLoadingExcluir(false)
+        alert(res.error)
+        return
+      }
+      setLoadingExcluir(false)
+      handleLimparMissao()
+      setCaixaCreateVisible(false)
+      getDias(firstDay)
+    }
+    setLoadingExcluir(false)
 
   }
 
@@ -331,6 +393,7 @@ const Dashboard = () => {
     setDataEtapaPouso(new Date())
     setAeronaveMissao( '')
     setEditMission(false)
+    getDias(firstDay)
   }
 
   const handleEditEtapa = () => {
@@ -415,6 +478,10 @@ const Dashboard = () => {
   /*useEffect(()=>{
     getDias(firstDay)
   }, [etapas])*/
+
+  useEffect(()=>{
+    handleTrocaAviao()
+  },[aeronaveMissao])
 
   useEffect(()=>{
     getHorarioPouso()
@@ -640,10 +707,14 @@ const Dashboard = () => {
             })}
     <div className='botoes-add-etapa' style={{marginTop:30}}>
     <button className='cancelar' style={{fontSize: '1vw'}} onClick={handleLimparMissao}>Limpar</button>
-      <button className='adicionar' style={{fontSize: '1vw'}} onClick={handleSaveMissao}>Salvar</button>
+      {loadingSave ? <LoadingSpinner/> : <button className='adicionar' style={{fontSize: '1vw'}} onClick={handleSaveMissao}>Criar Missão</button>}
     </div>
 
-       
+    <div className='botoes-add-etapa' style={{marginTop:30, justifyContent:'center'}}>
+      {loadingExcluir ? <LoadingSpinner /> :
+        <button className='cancelar' style={{fontSize: '1.3vw'}} onClick={handleExcluir}>Excluir Missão</button>
+      }
+    </div>
         </div>
        
     

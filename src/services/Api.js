@@ -88,5 +88,10 @@ export default () => {
             let json = await request('GET', `/aerodromos/icao/${icao}` , null, token)
             return json
         },
+        deleteMissao: async (id) => {
+            let token = localStorage.getItem('token')
+            let json = await request('DELETE', `/missoes/${id}` , null, token)
+            return json
+        },
     }
 }
