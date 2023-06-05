@@ -101,7 +101,8 @@ const Dashboard = () => {
     }
   }
 
-  const getDias = (hoje) => {
+  const   getDias = (hoje, reseta = false) => {
+    console.log('get dias')
     let hoje_copy = new Date(hoje)
     hoje_copy.setDate(hoje_copy.getDate() - 3);
     let dias = []
@@ -125,10 +126,10 @@ const Dashboard = () => {
       dias.push(hoje_sum_formatted)
     }
     setSemana(dias)
-    getMissoes(dias)
+    getMissoes(dias, reseta)
   }
 
-  const getMissoes = async (dias) => {
+  const getMissoes = async (dias, reseta = false) => {
     let inicio = dias[0]
     let fim = dias[6]
     let res = await Api.getMissoesAvioes({inicio, fim})
@@ -141,6 +142,17 @@ const Dashboard = () => {
             missoes[index_missoes].eventos.push(it)
           })
         }*/
+
+      if(!reseta) {
+        if(etapas.eventos.length > 0) {
+          let index = missoes.findIndex(i=>i.aviao ==aeronaveMissao)
+          if(index >=0) {
+            etapas.eventos.forEach(it=>{
+              missoes[index].eventos.push(it)
+            })
+          }
+        }
+      }
       setData({avioes:missoes})
     }
   }
@@ -277,13 +289,19 @@ const Dashboard = () => {
            if(res_etapa.error) {
              alert(res.etapa.error)
              return
-           } 
-           if(index == (etapas.eventos.length -1)){
-            getDias(firstDay)
-            handleLimparMissao()
-            setCaixaCreateVisible(false)
-            setLoadingSave(false)
+           } else {
+            if(index == (etapas.eventos.length -1)){
+              setData({avioes:[]})
+              console.log('setou data')
+              handleLimparMissao()
+              getDias(firstDay, true)
+              setCaixaCreateVisible(false)
+              setLoadingSave(false)
+              console.log(etapas)
+              console.log(data)
+             }
            }
+    
          })
          setLoadingSave(false)
        } else {
@@ -324,10 +342,12 @@ const Dashboard = () => {
       setLoadingSave(false)
       alert(res.error)
       return
+    } else {
+      handleLimparMissao()
+      setCaixaCreateVisible(false)
+      getDias(firstDay, true)
     }
-    handleLimparMissao()
-    setCaixaCreateVisible(false)
-    getDias(firstDay)
+
   }
 
   const handleExcluir = async () => {
@@ -342,15 +362,17 @@ const Dashboard = () => {
         return
       }
       setLoadingExcluir(false)
+      setData({avioes:[]})
       handleLimparMissao()
       setCaixaCreateVisible(false)
-      getDias(firstDay)
+      getDias(firstDay, true)
     }
     setLoadingExcluir(false)
 
   }
 
   const handleLimparMissao = () => {
+    console.log('limpou missoes')
     setEtapas({aviao: '', eventos:[]})
 
     let data_copy = {...data}
@@ -671,9 +693,12 @@ const Dashboard = () => {
                   }
                   if(!editEtapa && !addEtapa) {
                     setAddEtapa(true)
-                    let icao = etapas.eventos[etapas.eventos.length - 1].missao.pouso
-                    let horarioPouso = etapas.eventos[etapas.eventos.length - 1].missao.pousoISO
-                    getNewEtapa(icao, horarioPouso)
+                    if(etapas.eventos.length > 0) {
+                      let icao = etapas.eventos[etapas.eventos.length - 1].missao.pouso
+                      let horarioPouso = etapas.eventos[etapas.eventos.length - 1].missao.pousoISO
+                      getNewEtapa(icao, horarioPouso)
+  
+                    }
                   }
                   if(editEtapa) {
                     setEditEtapa(false)
