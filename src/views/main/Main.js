@@ -56,6 +56,8 @@ const Dashboard = () => {
   const [trigrama, setTrigrama] = useState('')
   const [omis, setOmis] = useState('')
   const [comentarios, setComentarios] = useState('')
+  const [ofragSelected, setOfragSelected] = useState('')
+  const [ofrags, setOfrags] = useState([])
 
   const Api = useApi()
 
@@ -147,9 +149,8 @@ const Dashboard = () => {
   }
 
   const getDias = (hoje, reseta = false) => {
-    console.log('get dias')
     let hoje_copy = new Date(hoje)
-    hoje_copy.setDate(hoje_copy.getDate() - 3);
+    hoje_copy.setDate(hoje_copy.getDate() - 1);
     let dias = []
     for(var i=0;i<=6;i++) {
       if(i!=0){
@@ -172,6 +173,74 @@ const Dashboard = () => {
     }
     setSemana(dias)
     getMissoes(dias, reseta)
+  }
+
+  const getOfrags = async () => {
+    let res = await Api.getOfrags()
+    console.log(res.data)
+    if(!res.error) {
+      setOfrags(res.data.reverse())
+    }
+  }
+
+  const getOfrag = async () => {
+    setErrorEtapaAdd('')
+    if(aeronaveMissao == '') {
+      setErrorEtapaAdd('A aeronave é obrigatória')
+      return
+    }
+    if(ofragSelected != '') {
+      let res = await Api.getOfrag(ofragSelected)
+      
+      if(!res.error) {
+        let etapas_get = []
+        var data_copy = {...data}
+
+        res.data.missoes[0].rotaOfrag.etapas.forEach(item=>{
+          let [data, horas] = item.dataHoraDecolagem.split('T')
+          let [ano, mes, dia] = data.split('-')
+          let [hora, minuto, segundo] = horas.split(':')
+
+          if(item.dataHoraPouso) {
+            var [dataPouso, horasPouso] = item.dataHoraPouso.split('T')
+            var [anoPouso, mesPouso, diaPouso] = dataPouso.split('-')
+            var [horaPouso, minutoPouso, segundoPouso] = horasPouso.split(':')
+          }
+
+          let evento = {
+            data: `${dia}/${mes}/${ano}`,
+            tipo: "missao",
+            missao: {
+              id: Math.floor(Math.random() * 10000) + 1,
+              dep: item.codigoIcaoOrigem,
+              horaDep: `${hora}:${minuto}Z`,
+              pouso: item.codigoIcaoDestino,
+              horaPouso:  item.dataHoraPouso ? `${horaPouso}:${minutoPouso}Z` : '',
+              depISO: item.dataHoraDecolagem,
+              pousoISO: item.dataHoraPouso,
+              tripulacao: [],
+              omis: '',
+              edicao: true
+            },
+            manutencao: null
+          }
+
+          var index = data_copy.avioes.findIndex(i=>i.aviao == aeronaveMissao)
+          if(index >=0) {
+            data_copy.avioes[index].eventos.push(evento)
+          }
+          etapas_get.push(evento)
+        })
+        if(etapas_get.length > 0) {
+          let etapas_copy = {...etapas}
+          etapas_copy.eventos = etapas_get
+          setEtapas(etapas_copy)
+          setErrorEtapaAdd('')
+          setData(data_copy)
+        }
+      }
+    }
+
   }
 
   const getMissoes = async (dias, reseta = false) => {
@@ -631,9 +700,6 @@ const Dashboard = () => {
     setDataEtapaPouso(etapa.missao.pousoISO)
   }
 
-  /*useEffect(()=>{
-    getDias(firstDay)
-  }, [etapas])*/
 
   useEffect(()=>{
     handleTrocaAviao()
@@ -643,11 +709,15 @@ const Dashboard = () => {
     getHorarioPouso()
   },[icaoDestinoAdd, icaoOrigemAdd, dataEtapa])
   
+  useEffect(()=>{
+    getAeronaves()
+    getOfrags()
+  })
 
   useEffect(()=>{
     getDias(firstDay)
-    getAeronaves()
   },[firstDay])
+
 
   const ExampleCustomInput = forwardRef(({ value, onClick }, ref) => (
     <button className="calendario" onClick={onClick} ref={ref}>
@@ -752,13 +822,7 @@ const Dashboard = () => {
             <div className='criar-div'>
               <h3 style={{color:'#fff'}}>{editMission ? 'Editar' :  'Criar'} Missão</h3>
             </div>
-            <div style={{display: 'flex', justifyContent: 'space-between', marginTop:20, alignItems: 'center'}}>
-              <span style={{color:'#fff'}}>Número da OMIS:</span>
-              <div style={{color: '#fff'}}>
-              <MaskedNumeroOmis value={omis} onChange={setOmis}/>
-                <span style={{marginLeft:5}}>{'/ '+new Date().getFullYear().toString().substring(2,4)}</span>
-              </div>
-            </div>
+
             <div style={{display: 'flex', justifyContent: 'space-between', marginTop:20, alignItems: 'center'}}>
               <span style={{color:'#fff'}}>Avião:</span>
               {aeronaves.map(item=>{
@@ -772,6 +836,33 @@ const Dashboard = () => {
                 }} style={{backgroundColor: aeronaveMissao == item.aeronave ? '#28a745' : '#FFF' , color: aeronaveMissao == item.aeronave ? '#fff' : '#000'}} className='botao-aviao'>{item.aeronave}</button>
               })}
             </div>
+
+            <div style={{display: 'flex', justifyContent: 'space-between', marginTop:20, alignItems: 'center'}}>
+              <span style={{color:'#fff'}}>OMIS:</span>
+              <div style={{color: '#fff'}}>
+              <MaskedNumeroOmis value={omis} onChange={setOmis}/>
+                <span style={{marginLeft:5}}>{'/ '+new Date().getFullYear().toString().substring(2,4)}</span>
+              </div>
+            </div>
+
+            <div style={{display: 'flex', justifyContent: 'space-between', marginTop:20, alignItems: 'center'}}>
+              <span style={{color:'#fff'}}>OFRAG:</span>
+              <div style={{color: '#fff'}}>
+                <select style={{borderRadius:5}} value={ofragSelected} onChange={(e)=>{
+
+                  setOfragSelected(e.target.value)
+                  }}>
+                  <option value="">Selecione uma opção</option>
+                  {(ofrags.length > 0) ?  ofrags.map((option, index) => (
+                    <option key={index} value={option.id}>
+                      {option.numero}
+                    </option>
+                  )) : null}
+                </select>
+                {ofragSelected != '' ? <button onClick={getOfrag} className='cumprir'>Cumprir</button> : null}
+              </div>
+            </div>
+
             <div className='add-etapa'>
                 <span style={{color:'#fff'}}>Etapas:</span>
                 <img onClick={()=>{

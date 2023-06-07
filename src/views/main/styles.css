@@ -188,6 +188,7 @@
     color:#fff;
     border-radius: 5px;
     cursor: pointer;
+    border:0;
 }
 
 .botoes {
@@ -199,6 +200,16 @@
     border-radius: 5px;
     padding: 5px;
     cursor: pointer;
+}
+
+.cumprir {
+    background-color: #28a745;
+    padding: 3px;
+    color:#fff;
+    border-radius: 5px;
+    cursor: pointer;
+    border:0;
+    margin-left:5px;
 }
 
 .item-botao {
@@ -286,14 +297,14 @@ input {
     background-color: #28a745;
     border:0;
     color: #fff;
-    border-radius: 10px;
+    border-radius: 5px;
 }
 
 .cancelar {
     background-color: #dc3545;
     border:0;
     color: #fff;
-    border-radius: 10px;
+    border-radius: 5px;
 }
 
 .text-missao {

@@ -118,5 +118,15 @@ export default () => {
             let json = await request('PUT', '/escalas' , body, token)
             return json
         },
+        getOfrags: async () => {
+            let token = localStorage.getItem('token')
+            let json = await request('GET', `/ofrag` , null, token)
+            return json
+        },
+        getOfrag: async (id) => {
+            let token = localStorage.getItem('token')
+            let json = await request('GET', `/ofrag/id/${id}` , null, token)
+            return json
+        },
     }
 }

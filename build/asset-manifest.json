@@ -1,16 +1,16 @@
 {
   "files": {
     "main.css": "https://1gtt.com.br/app/static/css/main.41755ca5.css",
-    "main.js": "https://1gtt.com.br/app/static/js/main.3635c6cd.js",
+    "main.js": "https://1gtt.com.br/app/static/js/main.b761d5ec.js",
     "static/css/803.264f0157.chunk.css": "https://1gtt.com.br/app/static/css/803.264f0157.chunk.css",
-    "static/js/803.6449513a.chunk.js": "https://1gtt.com.br/app/static/js/803.6449513a.chunk.js",
+    "static/js/803.8fe627ac.chunk.js": "https://1gtt.com.br/app/static/js/803.8fe627ac.chunk.js",
     "static/css/430.fd16b3e1.chunk.css": "https://1gtt.com.br/app/static/css/430.fd16b3e1.chunk.css",
-    "static/js/430.41c3b681.chunk.js": "https://1gtt.com.br/app/static/js/430.41c3b681.chunk.js",
+    "static/js/430.3f2c336a.chunk.js": "https://1gtt.com.br/app/static/js/430.3f2c336a.chunk.js",
     "static/js/1.e61f4b97.chunk.js": "https://1gtt.com.br/app/static/js/1.e61f4b97.chunk.js",
     "static/js/188.320e867f.chunk.js": "https://1gtt.com.br/app/static/js/188.320e867f.chunk.js",
     "static/js/496.2022d0db.chunk.js": "https://1gtt.com.br/app/static/js/496.2022d0db.chunk.js",
-    "static/css/392.dccd912c.chunk.css": "https://1gtt.com.br/app/static/css/392.dccd912c.chunk.css",
-    "static/js/392.c0ec9132.chunk.js": "https://1gtt.com.br/app/static/js/392.c0ec9132.chunk.js",
+    "static/css/190.b0c45468.chunk.css": "https://1gtt.com.br/app/static/css/190.b0c45468.chunk.css",
+    "static/js/190.3d8f7ace.chunk.js": "https://1gtt.com.br/app/static/js/190.3d8f7ace.chunk.js",
     "static/css/834.38e7027c.chunk.css": "https://1gtt.com.br/app/static/css/834.38e7027c.chunk.css",
     "static/js/834.70d31cf3.chunk.js": "https://1gtt.com.br/app/static/js/834.70d31cf3.chunk.js",
     "static/css/87.abe7fd35.chunk.css": "https://1gtt.com.br/app/static/css/87.abe7fd35.chunk.css",
@@ -28,16 +28,16 @@
     "static/media/8.jpg": "https://1gtt.com.br/app/static/media/8.35ee8919ea545620a475.jpg",
     "index.html": "https://1gtt.com.br/app/index.html",
     "main.41755ca5.css.map": "https://1gtt.com.br/app/static/css/main.41755ca5.css.map",
-    "main.3635c6cd.js.map": "https://1gtt.com.br/app/static/js/main.3635c6cd.js.map",
+    "main.b761d5ec.js.map": "https://1gtt.com.br/app/static/js/main.b761d5ec.js.map",
     "803.264f0157.chunk.css.map": "https://1gtt.com.br/app/static/css/803.264f0157.chunk.css.map",
-    "803.6449513a.chunk.js.map": "https://1gtt.com.br/app/static/js/803.6449513a.chunk.js.map",
+    "803.8fe627ac.chunk.js.map": "https://1gtt.com.br/app/static/js/803.8fe627ac.chunk.js.map",
     "430.fd16b3e1.chunk.css.map": "https://1gtt.com.br/app/static/css/430.fd16b3e1.chunk.css.map",
-    "430.41c3b681.chunk.js.map": "https://1gtt.com.br/app/static/js/430.41c3b681.chunk.js.map",
+    "430.3f2c336a.chunk.js.map": "https://1gtt.com.br/app/static/js/430.3f2c336a.chunk.js.map",
     "1.e61f4b97.chunk.js.map": "https://1gtt.com.br/app/static/js/1.e61f4b97.chunk.js.map",
     "188.320e867f.chunk.js.map": "https://1gtt.com.br/app/static/js/188.320e867f.chunk.js.map",
     "496.2022d0db.chunk.js.map": "https://1gtt.com.br/app/static/js/496.2022d0db.chunk.js.map",
-    "392.dccd912c.chunk.css.map": "https://1gtt.com.br/app/static/css/392.dccd912c.chunk.css.map",
-    "392.c0ec9132.chunk.js.map": "https://1gtt.com.br/app/static/js/392.c0ec9132.chunk.js.map",
+    "190.b0c45468.chunk.css.map": "https://1gtt.com.br/app/static/css/190.b0c45468.chunk.css.map",
+    "190.3d8f7ace.chunk.js.map": "https://1gtt.com.br/app/static/js/190.3d8f7ace.chunk.js.map",
     "834.38e7027c.chunk.css.map": "https://1gtt.com.br/app/static/css/834.38e7027c.chunk.css.map",
     "834.70d31cf3.chunk.js.map": "https://1gtt.com.br/app/static/js/834.70d31cf3.chunk.js.map",
     "87.abe7fd35.chunk.css.map": "https://1gtt.com.br/app/static/css/87.abe7fd35.chunk.css.map",
@@ -54,6 +54,6 @@
   },
   "entrypoints": [
     "static/css/main.41755ca5.css",
-    "static/js/main.3635c6cd.js"
+    "static/js/main.b761d5ec.js"
   ]
 }
