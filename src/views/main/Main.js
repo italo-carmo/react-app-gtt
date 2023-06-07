@@ -11,6 +11,8 @@ import DatePicker, {registerLocale} from 'react-datepicker'
 import "react-datepicker/dist/react-datepicker.css";
 import { forwardRef } from 'react'
 import MaskedInputIcao from '../../components/masked-input-icao'
+import MaskedInputTrigrama from '../../components/masked-trigrama'
+import MaskedNumeroOmis from '../../components/masked-numero-omis'
 import TimeMaskedInput from 'src/components/masked-hours'
 import DateMaskedInput from 'src/components/masked-date'
 import moment from 'moment';
@@ -23,6 +25,7 @@ moment.tz.setDefault('Etc/UTC');
 const Dashboard = () => {
 
   const [tripulacao,setTripulacao] = useState([])
+  const [tripulacaoShow,setTripulacaoShow] = useState([])
   const [id,setId] = useState([])
   const [caixaVisible, setCaixaVisible] = useState(false)
   const [caixaCreateVisible, setCaixaCreateVisible] = useState(false)
@@ -42,6 +45,7 @@ const Dashboard = () => {
   const [dataEtapaPouso, setDataEtapaPouso] = useState(new Date())
   const [erroIcaoOrigem, setErroIcaoOrigem] = useState(false)
   const [erroIcaoPouso, setErroIcaoPouso] = useState(false)
+  const [errorTripulante, setErrorTripulante] = useState(false)
   const [etapas, setEtapas] = useState({aviao: '', eventos:[]})
   const [aeronaveMissao, setAeronaveMissao] = useState([])
   const [idAeronaveMissao,setIdAeronaveMissao] = useState('')
@@ -49,12 +53,20 @@ const Dashboard = () => {
   const [loadingExcluir, setLoadingExcluir] = useState(false)
   const [loadingSave, setLoadingSave] = useState(false)
   const [idMissaoEdit, setIdMissaoEdit] = useState('')
+  const [trigrama, setTrigrama] = useState('')
+  const [omis, setOmis] = useState('')
+  const [comentarios, setComentarios] = useState('')
 
   const Api = useApi()
 
   const handleMouseEnter = (id,etapa) => {
     setId(id)
-    setTripulacao(etapa.tripulacao.join('/'))
+    
+    let trip_show = etapa.tripulacao.map(item=>{
+      return item.trigrama
+    })
+
+    setTripulacaoShow(trip_show.join('/'))
     setEtapaToShow(etapa)
     setCaixaVisible(true);
   };
@@ -70,8 +82,22 @@ const Dashboard = () => {
     setEditEtapa(false)
     let id_missao = missao.eventos[0].missao.id_missao
     setIdMissaoEdit(id_missao)
-    console.log(id_missao)
+
     let etapas_copy = {...etapas}
+    let tripulacao_get = []
+
+    missao.eventos[0].missao.tripulacao.forEach(item=>{
+      tripulacao_get.push(item)
+    })
+    let comentarios_get = missao.eventos[0].comentarios
+
+    setComentarios(comentarios_get)
+
+    let omis_get = missao.eventos[0].missao.omis
+    setOmis(omis_get)
+
+    setTripulacao(tripulacao_get)
+
     etapas_copy.eventos = missao.eventos
     setEtapas(etapas_copy)
     setCaixaCreateVisible(true)
@@ -93,6 +119,25 @@ const Dashboard = () => {
     }
   };
 
+  const handleKeyPressTripulante = async (event) => {
+    setErrorTripulante(false)
+    if (event.key === 'Enter') {
+      
+      let tripulacao_copy = [...tripulacao]
+      let res = await Api.getTrigrama(trigrama)
+      console.log(res)
+      if(!res.error) {
+        tripulacao_copy.push({id: res.data.id_user, trigrama: res.data.trigrama, funcao: res.data.Usuario.FuncoesAbordo.nome})
+        setTripulacao(tripulacao_copy)
+        setTrigrama('')
+      } else {
+        setErrorTripulante(res.error)
+      }
+    }
+  };
+
+  
+
   const handleCloseModal = () => {
     const confirmacao = window.confirm('Deseja mesmo sair? Todos os dados adicionados até o momento serão perdidos');
     if (confirmacao) {
@@ -101,7 +146,7 @@ const Dashboard = () => {
     }
   }
 
-  const   getDias = (hoje, reseta = false) => {
+  const getDias = (hoje, reseta = false) => {
     console.log('get dias')
     let hoje_copy = new Date(hoje)
     hoje_copy.setDate(hoje_copy.getDate() - 3);
@@ -136,13 +181,6 @@ const Dashboard = () => {
 
     if(!res.error) {
       let missoes = res.data
-      /*let index_missoes = missoes.findIndex(i=>i.aviao == etapas.aviao)
-       if(index_missoes >=0) {
-        etapas.eventos.forEach(it=>{
-            missoes[index_missoes].eventos.push(it)
-          })
-        }*/
-
       if(!reseta) {
         if(etapas.eventos.length > 0) {
           let index = missoes.findIndex(i=>i.aviao ==aeronaveMissao)
@@ -270,6 +308,7 @@ const Dashboard = () => {
         setLoadingSave(false)
         return
       }
+
       let res = await Api.createMissao()
       if(!res.error) {
          let id_missao = res.data.id
@@ -292,7 +331,7 @@ const Dashboard = () => {
            } else {
             if(index == (etapas.eventos.length -1)){
               setData({avioes:[]})
-              console.log('setou data')
+
               handleLimparMissao()
               getDias(firstDay, true)
               setCaixaCreateVisible(false)
@@ -303,6 +342,14 @@ const Dashboard = () => {
            }
     
          })
+         let id_militares = []
+         tripulacao.forEach(item=>{
+          id_militares.push(item.id)
+         })
+         let escala = {id_missao, id_militares}
+
+         await Api.createEscala(escala)
+
          setLoadingSave(false)
        } else {
         setLoadingSave(false)
@@ -336,13 +383,35 @@ const Dashboard = () => {
     
     let etapas_final = await Promise.all(etapas_map)
     let dados = {etapas:etapas_final, id_missao}
-    console.log(dados)
-    let res = await Api.updateMissao(dados)
+    
+    let res = await Api.updateEtapas(dados)
     if(res.error) {
       setLoadingSave(false)
       alert(res.error)
       return
     } else {
+      let id_militares = []
+      tripulacao.forEach(item=>{
+       id_militares.push(item.id)
+      })
+      let escala = {id_missao, id_militares}
+
+      await Api.updateEscala(escala)
+
+      let item = {}
+      if(omis != '') {
+        let ano = new Date().getFullYear().toString().substring(2,4)
+        item.numero = parseInt(ano)*1000 + parseInt(omis) 
+      }
+
+      if(comentarios != '') {
+        item.comentarios = comentarios
+      }
+
+      if(item.omis || item.comentarios) {
+        await Api.updateMissao(item, id_missao)
+      }
+
       handleLimparMissao()
       setCaixaCreateVisible(false)
       getDias(firstDay, true)
@@ -371,8 +440,17 @@ const Dashboard = () => {
 
   }
 
+  const handleDeleteTrip = (id) => {
+    let tripulacao_copy = [...tripulacao]
+    tripulacao_copy = tripulacao_copy.filter(item=>{
+      if(item.id != id) {
+        return item
+      }
+    })
+    setTripulacao(tripulacao_copy)
+  }
+
   const handleLimparMissao = () => {
-    console.log('limpou missoes')
     setEtapas({aviao: '', eventos:[]})
 
     let data_copy = {...data}
@@ -393,9 +471,11 @@ const Dashboard = () => {
     setDataEtapa(new Date())
     setDataEtapaPouso(new Date())
     setAeronaveMissao( '')
+    setComentarios('')
+    setOmis('')
     setEditMission(false)
     setEditEtapa(false)
-    getDias(firstDay)
+    getDias(firstDay, true)
   }
 
   const handleEditEtapa = () => {
@@ -649,8 +729,8 @@ const Dashboard = () => {
                               zIndex: 1, // Definindo uma ordem de empilhamento maior para a div das informações
                             }}
                           >
-                            <p>OMIS: {etapaToShow.omis}</p>
-                            <p>Tripulação: {tripulacao}</p>
+                            <p style={{fontSize: '1vw'}}>OMIS: {etapaToShow.omis}</p>
+                            <p style={{fontSize: '1vw'}}>Tripulação: {tripulacaoShow}</p>
                             
                           </div>}
                           <div className='text-missao'>{it.missao.horaDep} {it.missao.dep}</div>  
@@ -673,7 +753,14 @@ const Dashboard = () => {
               <h3 style={{color:'#fff'}}>{editMission ? 'Editar' :  'Criar'} Missão</h3>
             </div>
             <div style={{display: 'flex', justifyContent: 'space-between', marginTop:20, alignItems: 'center'}}>
-              <h5 style={{color:'#fff'}}>Avião:</h5>
+              <span style={{color:'#fff'}}>Número da OMIS:</span>
+              <div style={{color: '#fff'}}>
+              <MaskedNumeroOmis value={omis} onChange={setOmis}/>
+                <span style={{marginLeft:5}}>{'/ '+new Date().getFullYear().toString().substring(2,4)}</span>
+              </div>
+            </div>
+            <div style={{display: 'flex', justifyContent: 'space-between', marginTop:20, alignItems: 'center'}}>
+              <span style={{color:'#fff'}}>Avião:</span>
               {aeronaves.map(item=>{
                 return <button onClick={()=>{
                   setAeronaveMissao(item.aeronave)
@@ -682,11 +769,11 @@ const Dashboard = () => {
                   etapas_copy.aviao = item.aeronave
               
                   setEtapas(etapas_copy)
-                }} style={{backgroundColor: aeronaveMissao == item.aeronave ? '#28a745' : '#FFF' , color: aeronaveMissao == item.aeronave ? '#fff' : '#000' }} className='calendario'>{item.aeronave}</button>
+                }} style={{backgroundColor: aeronaveMissao == item.aeronave ? '#28a745' : '#FFF' , color: aeronaveMissao == item.aeronave ? '#fff' : '#000'}} className='botao-aviao'>{item.aeronave}</button>
               })}
             </div>
             <div className='add-etapa'>
-                <h5 style={{color:'#fff'}}>Etapas:</h5>
+                <span style={{color:'#fff'}}>Etapas:</span>
                 <img onClick={()=>{
                   if(!editEtapa && addEtapa) {
                     setAddEtapa(false)
@@ -797,6 +884,101 @@ const Dashboard = () => {
                       horaDep={item.missao.horaDep} 
                       horaPouso={item.missao.horaPouso} />
             })}
+
+    <div className='add-trip'>
+    <span style={{color:'#fff'}}>Tripulação:</span>
+    <MaskedInputTrigrama maxLength={3} value={trigrama} onChange={setTrigrama} onKeyPress={handleKeyPressTripulante} />
+
+    {errorTripulante &&
+    <div style={{marginTop:10}} class="alert alert-danger" role="alert">
+          {errorTripulante}
+      </div>}
+    <div className='tripulante-row'>
+      <span style={{color:'#fff'}} className='tripulante'>Pilotos:</span>
+    </div>
+    <div className='caixa-tripulante'>
+      {tripulacao.map(item=>{
+        if (item.funcao == 'Piloto') {
+          return (
+            <div className='tripulante-item' >
+            {item.trigrama}
+            <img style={{marginLeft:5, cursor: 'pointer'}} onClick={()=>handleDeleteTrip(item.id)} src='https://www.1gtt.com.br/app/close.png' width='15px'/>
+          </div>
+          )
+        }
+        })}
+    </div>
+
+    <div className='tripulante-row'>
+      <span style={{color:'#fff'}} className='tripulante'>Mecânicos:</span>
+    </div>
+    <div className='caixa-tripulante'>
+      {tripulacao.map(item=>{
+        if (item.funcao == 'Mecânico de Voo') {
+          return (
+            <div className='tripulante-item' >
+            {item.trigrama}
+            <img style={{marginLeft:5, cursor: 'pointer'}} onClick={()=>handleDeleteTrip(item.id)} src='https://www.1gtt.com.br/app/close.png' width='15px'/>
+          </div>
+          )
+        }
+        })}
+    </div>
+
+    <div className='tripulante-row'>
+      <span style={{color:'#fff'}} className='tripulante'>Loadmasters:</span>
+    </div>
+    <div className='caixa-tripulante'>
+      {tripulacao.map(item=>{
+        if (item.funcao == 'Loadmaster') {
+          return (
+            <div className='tripulante-item' >
+            {item.trigrama}
+            <img style={{marginLeft:5, cursor: 'pointer'}} onClick={()=>handleDeleteTrip(item.id)} src='https://www.1gtt.com.br/app/close.png' width='15px'/>
+          </div>
+          )
+        }
+        })}
+    </div>
+
+    <div className='tripulante-row'>
+      <span style={{color:'#fff'}} className='tripulante'>Comissários:</span>
+    </div>
+    <div className='caixa-tripulante'>
+      {tripulacao.map(item=>{
+        if (item.funcao == 'Comissário') {
+          return (
+            <div className='tripulante-item' >
+            {item.trigrama}
+            <img style={{marginLeft:5, cursor: 'pointer'}} onClick={()=>handleDeleteTrip(item.id)} src='https://www.1gtt.com.br/app/close.png' width='15px'/>
+          </div>
+          )
+        }
+        })}
+    </div>
+
+    <div className='tripulante-row'>
+      <span style={{color:'#fff'}} className='tripulante'>OE-3:</span>
+    </div>
+    <div className='caixa-tripulante'>
+      {tripulacao.map(item=>{
+        if (item.funcao == 'O3') {
+          return (
+            <div className='tripulante-item' >
+            {item.trigrama}
+            <img style={{marginLeft:5, cursor: 'pointer'}} onClick={()=>handleDeleteTrip(item.id)} src='https://www.1gtt.com.br/app/close.png' width='15px'/>
+          </div>
+          )
+        }
+        })}
+    </div>
+
+    </div>
+    <div style={{marginTop: 30, display: 'flex', flexDirection: 'column'}}>
+      <span style={{color:'#fff'}}>Comentários: </span>
+      <textarea value={comentarios} onChange={(e)=>setComentarios(e.target.value)} style={{borderRadius: 10, padding:5}}></textarea>
+    </div>
+
     <div className='botoes-add-etapa' style={{marginTop:30}}>
     <button className='cancelar' style={{fontSize: '1vw'}} onClick={handleLimparMissao}>Limpar</button>
       {loadingSave ? <LoadingSpinner/> : <button className='adicionar' style={{fontSize: '1vw'}} onClick={editMission ? handleEditSaveMission : handleSaveMissao}>{editMission ? 'Editar Missão' : 'Criar Missão'}</button>}

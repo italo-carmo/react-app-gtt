@@ -93,9 +93,29 @@ export default () => {
             let json = await request('DELETE', `/missoes/${id}` , null, token)
             return json
         },
-        updateMissao: async (body) => {
+        updateEtapas: async (body) => {
             let token = localStorage.getItem('token')
             let json = await request('PUT', `/etapas` , body, token)
+            return json
+        },
+        updateMissao: async (body, id) => {
+            let token = localStorage.getItem('token')
+            let json = await request('PUT', `/missoes/${id}` , body, token)
+            return json
+        },
+        getTrigrama: async (trigrama) => {
+            let token = localStorage.getItem('token')
+            let json = await request('GET', `/trigramas/dados/${trigrama}` , null, token)
+            return json
+        },
+        createEscala: async (body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('POST', '/escalas' , body, token)
+            return json
+        },
+        updateEscala: async (body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('PUT', '/escalas' , body, token)
             return json
         },
     }
