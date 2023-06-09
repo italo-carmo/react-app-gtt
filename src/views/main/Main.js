@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import styles from './styles.css'
 import {
   CButton,
@@ -40,11 +40,13 @@ const Dashboard = () => {
   const [addEtapa, setAddEtapa] = useState(false)
   const [icaoOrigemAdd, setIcaoOrigemAdd] = useState('')
   const [icaoDestinoAdd, setIcaoDestinoAdd] = useState('')
+  const [icaoAltAdd, setIcaoAltAdd] = useState('')
   const [errorEtapaAdd, setErrorEtapaAdd] = useState('')
   const [dataEtapa, setDataEtapa] = useState(new Date())
   const [dataEtapaPouso, setDataEtapaPouso] = useState(new Date())
   const [erroIcaoOrigem, setErroIcaoOrigem] = useState(false)
   const [erroIcaoPouso, setErroIcaoPouso] = useState(false)
+  const [erroIcaoAlt, setErroIcaoAlt] = useState(false)
   const [errorTripulante, setErrorTripulante] = useState(false)
   const [etapas, setEtapas] = useState({aviao: '', eventos:[]})
   const [aeronaveMissao, setAeronaveMissao] = useState([])
@@ -58,6 +60,9 @@ const Dashboard = () => {
   const [comentarios, setComentarios] = useState('')
   const [ofragSelected, setOfragSelected] = useState('')
   const [ofrags, setOfrags] = useState([])
+
+  const inputPousoRef = useRef(null)
+  const inputAltRef = useRef(null)
 
   const Api = useApi()
 
@@ -82,6 +87,7 @@ const Dashboard = () => {
     setLoadingSave(false)
     setEditMission(true)
     setEditEtapa(false)
+    console.log(missao)
     let id_missao = missao.eventos[0].missao.id_missao
     setIdMissaoEdit(id_missao)
 
@@ -112,13 +118,27 @@ const Dashboard = () => {
 
   const handleKeyPress = (event) => {
     if (event.key === 'Enter') {
+
       if(editEtapa) {
         handleEditEtapa()
       } else {
-        handleAddEtapa();
+        handleAddEtapaAndFocus();
       }
    
     }
+  };
+
+  const handleAddEtapaAndFocus = async () => {
+    let res = await handleAddEtapa();
+    if(res) {
+      setTimeout(() => {
+        const inputPouso = document.getElementById('icao-pouso');
+        if (inputPouso) {
+          inputPouso.focus();
+        }
+      }, 0);
+    }
+
   };
 
   const handleKeyPressTripulante = async (event) => {
@@ -177,7 +197,6 @@ const Dashboard = () => {
 
   const getOfrags = async () => {
     let res = await Api.getOfrags()
-    console.log(res.data)
     if(!res.error) {
       setOfrags(res.data.reverse())
     }
@@ -187,6 +206,10 @@ const Dashboard = () => {
     setErrorEtapaAdd('')
     if(aeronaveMissao == '') {
       setErrorEtapaAdd('A aeronave é obrigatória')
+      return
+    }
+    if(editMission) {
+      setErrorEtapaAdd('Exclua essa OMIS e criei outra para cumprir com OFRAG')
       return
     }
     if(ofragSelected != '') {
@@ -305,9 +328,11 @@ const Dashboard = () => {
     if(dataEtapa != '' && dataEtapaPouso != '' && icaoOrigemAdd.length == 4 && icaoDestinoAdd.length == 4 ) {
       setErroIcaoOrigem(false)
       setErroIcaoPouso(false)
+      setErroIcaoAlt(false)
       setErrorEtapaAdd('')
       let res = await Api.getDistanciaAerodromos({origem:icaoOrigemAdd, destino:icaoDestinoAdd})
       if(!res.error) {
+
         let distancia = res.data.distancia
         let minutos = Math.round((distancia*60)/400)
         minutos = Math.ceil(minutos / 5) * 5
@@ -329,6 +354,7 @@ const Dashboard = () => {
 
   const getNewEtapa = (icaoDep, horarioDep) => {
     setIcaoDestinoAdd('')
+    setIcaoAltAdd('')
     let new_date = new Date(horarioDep)
     new_date.setMinutes(new_date.getMinutes()+120)
     var offset = new_date.getTimezoneOffset();
@@ -338,6 +364,9 @@ const Dashboard = () => {
     setDataEtapa(new_date)
     setIcaoOrigemAdd(icaoDep)
     setDataEtapaPouso(new_date)
+    if (inputAltRef.current) {
+    inputPousoRef.current.focus();
+    }
   }
 
  
@@ -384,6 +413,7 @@ const Dashboard = () => {
          etapas.eventos.forEach(async (item, index)=>{
            var res_dep = await Api.getAerodromo(item.missao.dep)
            var res_pouso = await Api.getAerodromo(item.missao.pouso)
+           var res_alt = await Api.getAerodromo(item.missao.alternativa)
            let data_item = {
              dep: item.missao.depISO,
              pouso: item.missao.pousoISO,
@@ -391,6 +421,7 @@ const Dashboard = () => {
              id_aeronave: idAeronaveMissao,
              id_dep: res_dep.data.id,
              id_pouso: res_pouso.data.id,
+             id_alternativa: res_alt.data.id
            }
            let res_etapa = await Api.createEtapa(data_item)
          
@@ -405,8 +436,6 @@ const Dashboard = () => {
               getDias(firstDay, true)
               setCaixaCreateVisible(false)
               setLoadingSave(false)
-              console.log(etapas)
-              console.log(data)
              }
            }
     
@@ -437,11 +466,13 @@ const Dashboard = () => {
         let item = {}
         var res_dep = await Api.getAerodromo(i.missao.dep)
         var res_pouso = await Api.getAerodromo(i.missao.pouso)
+        var res_alt = await Api.getAerodromo(i.missao.alternativa)
         item.dep = i.missao.depISO
         item.pouso = i.missao.pousoISO
         item.id_aeronave = idAeronaveMissao
         item.id_dep = res_dep.data.id
         item.id_pouso = res_pouso.data.id
+        item.id_alternativa = res_alt.data.id
         if(i.missao.edicao) {
           item.id = null
         } else {
@@ -537,19 +568,21 @@ const Dashboard = () => {
 
     setIcaoDestinoAdd('')
     setIcaoOrigemAdd('')
+    setIcaoAltAdd('')
     setDataEtapa(new Date())
     setDataEtapaPouso(new Date())
     setAeronaveMissao( '')
     setComentarios('')
     setOmis('')
+    setOfragSelected('')
     setEditMission(false)
     setEditEtapa(false)
     getDias(firstDay, true)
   }
 
-  const handleEditEtapa = () => {
+  const handleEditEtapa = async () => {
     setErrorEtapaAdd('')
-    if(icaoDestinoAdd == '' || icaoOrigemAdd == '' || dataEtapa == '' || dataEtapaPouso == '') {
+    if(icaoDestinoAdd == '' || icaoOrigemAdd == '' || icaoAltAdd == '' || dataEtapa == '' || dataEtapaPouso == '') {
       setErrorEtapaAdd('Todos os campos são obrigatórios')
       return
     }
@@ -557,6 +590,15 @@ const Dashboard = () => {
       setErrorEtapaAdd('A aeronave é obrigatória')
       return
     }
+
+    let res_alt = await Api.getAerodromo(icaoAltAdd)
+    if(res_alt.error) {
+      setErrorEtapaAdd(res_alt.error)
+      setErroIcaoAlt(true)
+      return 
+    }
+
+    setErroIcaoAlt(false)
 
     var offset_dep = dataEtapa.getTimezoneOffset();
     // Convertendo a data para UTC
@@ -589,6 +631,7 @@ const Dashboard = () => {
         horaDep: `${hora_dep_split}:${minuto_dep}Z`,
         pouso: icaoDestinoAdd,
         horaPouso:  `${hora_pouso_split}:${minuto_pouso}Z`,
+        alternativa: icaoAltAdd,
         depISO:dataEtapa,
         pousoISO: dataEtapaPouso,
         tripulacao: [],
@@ -618,7 +661,7 @@ const Dashboard = () => {
 
   const handleAddEtapa = async () => {
     setErrorEtapaAdd('')
-    if(icaoDestinoAdd == '' || icaoOrigemAdd == '' || dataEtapa == '' || dataEtapaPouso == '') {
+    if(icaoDestinoAdd == '' || icaoOrigemAdd == '' || icaoAltAdd == '' || dataEtapa == '' || dataEtapaPouso == '') {
       setErrorEtapaAdd('Todos os campos são obrigatórios')
       return
     }
@@ -626,6 +669,14 @@ const Dashboard = () => {
       setErrorEtapaAdd('A aeronave é obrigatória')
       return
     }
+    let res_alt = await Api.getAerodromo(icaoAltAdd)
+    if(res_alt.error) {
+      setErrorEtapaAdd(res_alt.error)
+      setErroIcaoAlt(true)
+      return null
+    }
+    setErroIcaoAlt(false)
+    setErroIcaoPouso(false)
     var offset_dep = dataEtapa.getTimezoneOffset();
     // Convertendo a data para UTC
     dataEtapa.setMinutes(dataEtapa.getMinutes() - offset_dep);
@@ -652,6 +703,7 @@ const Dashboard = () => {
         horaDep: `${hora_dep_split}:${minuto_dep}Z`,
         pouso: icaoDestinoAdd,
         horaPouso:  `${hora_pouso_split}:${minuto_pouso}Z`,
+        alternativa: icaoAltAdd,
         depISO:dataEtapa,
         pousoISO: dataEtapaPouso,
         tripulacao: [],
@@ -674,6 +726,7 @@ const Dashboard = () => {
     setEtapas(etapas_copy)
 
     getNewEtapa(icaoDestinoAdd, dataEtapaPouso)
+    return true
   }
 
   const getDadosEditEtapa = (index) => {
@@ -682,6 +735,7 @@ const Dashboard = () => {
     //console.log(etapas_copy)
     setIcaoOrigemAdd(etapa.missao.dep)
     setIcaoDestinoAdd(etapa.missao.pouso)
+    setIcaoAltAdd(etapa.missao.alternativa)
 
     if(typeof(etapa.missao.depISO) == 'string') {
       etapa.missao.depISO = new Date(etapa.missao.depISO)
@@ -712,7 +766,7 @@ const Dashboard = () => {
   useEffect(()=>{
     getAeronaves()
     getOfrags()
-  })
+  },[])
 
   useEffect(()=>{
     getDias(firstDay)
@@ -859,7 +913,7 @@ const Dashboard = () => {
                     </option>
                   )) : null}
                 </select>
-                {ofragSelected != '' ? <button onClick={getOfrag} className='cumprir'>Cumprir</button> : null}
+                {(ofragSelected != '' && !editMission) ? <button onClick={getOfrag} className='cumprir'>Cumprir</button> : null}
               </div>
             </div>
 
@@ -916,7 +970,11 @@ const Dashboard = () => {
                  </div>
                  <div className='form-add'>
                    <span style={{color:'#000'}}>ICAO de Destino: </span>
-                   <MaskedInputIcao onKeyPress={handleKeyPress} erro={erroIcaoPouso} maxLength={4} value={icaoDestinoAdd} onChange={setIcaoDestinoAdd}/>
+                   <MaskedInputIcao ref={inputPousoRef} id='icao-pouso' onKeyPress={handleKeyPress} erro={erroIcaoPouso} maxLength={4} value={icaoDestinoAdd} onChange={setIcaoDestinoAdd}/>
+                 </div>
+                 <div className='form-add'>
+                   <span style={{color:'#000'}}>ICAO de Alternativa: </span>
+                   <MaskedInputIcao ref={inputAltRef} onKeyPress={handleKeyPress} erro={erroIcaoAlt} maxLength={4} value={icaoAltAdd} onChange={setIcaoAltAdd}/>
                  </div>
                  <div className='form-add'>
                    <span style={{color:'#000'}}>Pouso: </span>
