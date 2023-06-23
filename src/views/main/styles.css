@@ -128,6 +128,14 @@
     color:#fff;
 }
 
+#select-box * {
+    background-color: #fff;
+}
+
+option {
+    background-color: #fff;
+}
+
 .white {
     background-color: #fff;
     margin: 5px;
@@ -136,7 +144,6 @@
     border-radius: 5px;
     position: relative;
     cursor: pointer;
-    height:40%;
 }
 
 .modal-create {

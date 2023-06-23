@@ -73,9 +73,9 @@ export default () => {
             let json = await request('GET', '/aeronaves' , null, token)
             return json
         },
-        createMissao: async () => {
+        createMissao: async (body) => {
             let token = localStorage.getItem('token')
-            let json = await request('POST', '/missoes' , null, token)
+            let json = await request('POST', '/missoes' , body, token)
             return json
         },
         createEtapa: async (body) => {
@@ -128,5 +128,17 @@ export default () => {
             let json = await request('GET', `/ofrag/id/${id}` , null, token)
             return json
         },
+        getCombMinimo: async (body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('POST', '/planejamento/combustivel/aproximado' , body, token)
+            return json
+        },
+        getUltimaMissao: async () => {
+            let token = localStorage.getItem('token')
+            let json = await request('GET', '/missoes/ultima/missao' , null, token)
+            return json
+        },
+
+        
     }
 }

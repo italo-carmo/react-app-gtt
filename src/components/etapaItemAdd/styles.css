@@ -8,6 +8,14 @@
     justify-content: space-between;
 }
 
+.complete {
+    background-color:#28a745;
+}
+
+.complete-text {
+    color:#fff !important;
+}
+
 .botoes-etapa {
     display: flex;
     align-items: center;

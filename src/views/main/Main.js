@@ -13,6 +13,7 @@ import { forwardRef } from 'react'
 import MaskedInputIcao from '../../components/masked-input-icao'
 import MaskedInputTrigrama from '../../components/masked-trigrama'
 import MaskedNumeroOmis from '../../components/masked-numero-omis'
+import MaskedCombustivel from '../../components/masked-combustivel'
 import TimeMaskedInput from 'src/components/masked-hours'
 import DateMaskedInput from 'src/components/masked-date'
 import moment from 'moment';
@@ -47,6 +48,8 @@ const Dashboard = () => {
   const [erroIcaoOrigem, setErroIcaoOrigem] = useState(false)
   const [erroIcaoPouso, setErroIcaoPouso] = useState(false)
   const [erroIcaoAlt, setErroIcaoAlt] = useState(false)
+  const [errorCumprir, setErrorCumprir] = useState('')
+  const [cumprir, setCumprir] = useState(false)
   const [errorTripulante, setErrorTripulante] = useState(false)
   const [etapas, setEtapas] = useState({aviao: '', eventos:[]})
   const [aeronaveMissao, setAeronaveMissao] = useState([])
@@ -54,15 +57,19 @@ const Dashboard = () => {
   const [aeronaves, setAeronaves] = useState([])
   const [loadingExcluir, setLoadingExcluir] = useState(false)
   const [loadingSave, setLoadingSave] = useState(false)
+  const [loadingCumprir, setLoadingCumprir] = useState(false)
   const [idMissaoEdit, setIdMissaoEdit] = useState('')
   const [trigrama, setTrigrama] = useState('')
   const [omis, setOmis] = useState('')
   const [comentarios, setComentarios] = useState('')
   const [ofragSelected, setOfragSelected] = useState('')
   const [ofrags, setOfrags] = useState([])
+  const [combustivel, setCombustivel] = useState(0)
+  const [disabledOmis, setDisabledOmis] = useState(true)
 
   const inputPousoRef = useRef(null)
   const inputAltRef = useRef(null)
+  const divRef = useRef(null);
 
   const Api = useApi()
 
@@ -83,14 +90,14 @@ const Dashboard = () => {
   };
 
   const handleEditMission = (missao) => {
+    console.log(missao)
     setLoadingExcluir(false)
     setLoadingSave(false)
     setEditMission(true)
     setEditEtapa(false)
-    console.log(missao)
     let id_missao = missao.eventos[0].missao.id_missao
     setIdMissaoEdit(id_missao)
-
+    setOfragSelected(missao.eventos[0].id_documento)
     let etapas_copy = {...etapas}
     let tripulacao_get = []
 
@@ -204,12 +211,13 @@ const Dashboard = () => {
 
   const getOfrag = async () => {
     setErrorEtapaAdd('')
+    setErrorCumprir('')
     if(aeronaveMissao == '') {
-      setErrorEtapaAdd('A aeronave é obrigatória')
+      setErrorCumprir('A aeronave é obrigatória')
       return
     }
     if(editMission) {
-      setErrorEtapaAdd('Exclua essa OMIS e criei outra para cumprir com OFRAG')
+      setErrorCumprir('Exclua essa OMIS e crie outra para cumprir com OFRAG')
       return
     }
     if(ofragSelected != '') {
@@ -259,6 +267,8 @@ const Dashboard = () => {
           etapas_copy.eventos = etapas_get
           setEtapas(etapas_copy)
           setErrorEtapaAdd('')
+          setLoadingCumprir(false)
+          setCumprir(true)
           setData(data_copy)
         }
       }
@@ -308,11 +318,15 @@ const Dashboard = () => {
     setFirstDay(hoje)
   }
 
-  const handleCreate = () => {
+  const handleCreate = async () => {
     setLoadingExcluir(false)
     setLoadingSave(false)
     setEditMission(false)
     setCaixaCreateVisible(true)
+    let res = await Api.getUltimaMissao()
+    if(!res.error) {
+      setOmis((parseInt(res.data[0].numero) + 1).toString())
+    }
   }
 
   const handleCancel = () => {
@@ -355,6 +369,7 @@ const Dashboard = () => {
   const getNewEtapa = (icaoDep, horarioDep) => {
     setIcaoDestinoAdd('')
     setIcaoAltAdd('')
+    setCombustivel(0)
     let new_date = new Date(horarioDep)
     new_date.setMinutes(new_date.getMinutes()+120)
     var offset = new_date.getTimezoneOffset();
@@ -400,20 +415,52 @@ const Dashboard = () => {
 
   const handleSaveMissao =  async() => {
     setLoadingSave(true)
-    if(!editMission) {
-      if(aeronaveMissao == '' || etapas.eventos.length == 0) {
-        alert('Todos os campos são obrigatórios!')
-        setLoadingSave(false)
-        return
+    if(aeronaveMissao == '' || etapas.eventos.length == 0) {
+      alert('Todos os campos são obrigatórios!')
+      setLoadingSave(false)
+      return
+    }
+    let erroEncontrado = false; 
+
+      etapas.eventos.forEach(item=>{
+        if(!item.missao.pousoISO || !item.missao.depISO || !item.missao.alternativa || item.missao.alternativa == '') {
+          erroEncontrado = true;
+          return
+        }
+      })
+
+      if (erroEncontrado) {
+        setLoadingSave(false);
+        alert('Horários de DEP e POUSO e ICAO de ALTERNATIVA são obrigatórios!')
+        return; // interrompe a execução da função
       }
 
-      let res = await Api.createMissao()
+
+    if(!editMission) {
+      let item = {}
+      if(omis != '') {
+        item.numero = omis
+      }
+      if(ofragSelected != '') {
+        item.id_documento = ofragSelected
+      }
+      let res = await Api.createMissao(item)
       if(!res.error) {
          let id_missao = res.data.id
          etapas.eventos.forEach(async (item, index)=>{
            var res_dep = await Api.getAerodromo(item.missao.dep)
            var res_pouso = await Api.getAerodromo(item.missao.pouso)
-           var res_alt = await Api.getAerodromo(item.missao.alternativa)
+           var comb = 0
+           var id_alt = null
+           if(item.missao.alternativa) {
+            var res_alt = await Api.getAerodromo(item.missao.alternativa)
+            var id_alt = res_alt.data.id
+            var res_comb = await Api.getCombMinimo(item.missao.dep, item.missao.pouso, item.missao.alternativa)
+            if(!res_comb.error) {
+              var comb = res.data.combustivel
+            }
+           }
+
            let data_item = {
              dep: item.missao.depISO,
              pouso: item.missao.pousoISO,
@@ -421,7 +468,8 @@ const Dashboard = () => {
              id_aeronave: idAeronaveMissao,
              id_dep: res_dep.data.id,
              id_pouso: res_pouso.data.id,
-             id_alternativa: res_alt.data.id
+             id_alternativa: id_alt,
+             combustivel_minimo: (item.missao.combustivel_minimo != '') ? item.missao.combustivel_minimo : comb
            }
            let res_etapa = await Api.createEtapa(data_item)
          
@@ -430,12 +478,12 @@ const Dashboard = () => {
              return
            } else {
             if(index == (etapas.eventos.length -1)){
-              setData({avioes:[]})
-
-              handleLimparMissao()
-              getDias(firstDay, true)
+              //setData({avioes:[]})
+              //handleLimparMissao()
+             // getDias(firstDay, true)
               setCaixaCreateVisible(false)
               setLoadingSave(false)
+              setTimeout(()=>{window.location.reload();},"2000")
              }
            }
     
@@ -454,25 +502,45 @@ const Dashboard = () => {
         alert(res.error)
        }
     } 
-    getDias(firstDay)
+  }
+
+  const getCombustivelMinimo = async (dep, pouso, alternativa) => {
+    console.log(dep, pouso, alternativa)
+    if(dep != '' && pouso!= '' && alternativa != '' && dep.length == 4 && pouso.length == 4 && alternativa.length == 4) {
+      let res = await Api.getCombMinimo({dep, pouso, alternativa})
+      if(!res.error) {
+        setCombustivel(res.data.combustivel)
+      } 
+    }
   }
 
 
   const handleEditSaveMission = async () => { 
     setLoadingSave(true)
     var id_missao = idMissaoEdit
-    
+    if(omis != '') {
+      let item = {numero: omis}
+      if(ofragSelected != '') {
+        item.id_documento = ofragSelected
+      }
+      await Api.updateMissao(item, id_missao)
+    }
     let etapas_map = etapas.eventos.map(async (i)=>{
         let item = {}
         var res_dep = await Api.getAerodromo(i.missao.dep)
         var res_pouso = await Api.getAerodromo(i.missao.pouso)
-        var res_alt = await Api.getAerodromo(i.missao.alternativa)
+        var id_alt = null
+        if(i.missao.alternativa) {
+         var res_alt = await Api.getAerodromo(i.missao.alternativa)
+         var id_alt = res_alt.data.id
+        }
         item.dep = i.missao.depISO
         item.pouso = i.missao.pousoISO
         item.id_aeronave = idAeronaveMissao
         item.id_dep = res_dep.data.id
         item.id_pouso = res_pouso.data.id
-        item.id_alternativa = res_alt.data.id
+        item.id_alternativa = id_alt
+        item.combustivel_minimo = i.missao.combustivel_minimo
         if(i.missao.edicao) {
           item.id = null
         } else {
@@ -554,7 +622,7 @@ const Dashboard = () => {
     setEtapas({aviao: '', eventos:[]})
 
     let data_copy = {...data}
-    let index = data_copy.avioes.findIndex(i=>i.aviao == aeronaveMissao)
+    /*let index = data_copy.avioes.findIndex(i=>i.aviao == aeronaveMissao)
 
     if(index>=0) {
       data_copy.avioes[index].eventos =  data_copy.avioes[index].eventos.filter(item=>{
@@ -562,7 +630,7 @@ const Dashboard = () => {
           return item
         }
       })
-    }
+    }*/
 
     setData(data_copy)
 
@@ -577,6 +645,8 @@ const Dashboard = () => {
     setOfragSelected('')
     setEditMission(false)
     setEditEtapa(false)
+    setTripulacao([])
+    setCombustivel(0)
     getDias(firstDay, true)
   }
 
@@ -636,6 +706,7 @@ const Dashboard = () => {
         pousoISO: dataEtapaPouso,
         tripulacao: [],
         omis: '',
+        combustivel_minimo: combustivel,
         edicao: find_item.missao.edicao
       },
       manutencao: null
@@ -708,6 +779,7 @@ const Dashboard = () => {
         pousoISO: dataEtapaPouso,
         tripulacao: [],
         omis: '',
+        combustivel_minimo: combustivel,
         edicao: true
       },
       manutencao: null
@@ -735,8 +807,8 @@ const Dashboard = () => {
     //console.log(etapas_copy)
     setIcaoOrigemAdd(etapa.missao.dep)
     setIcaoDestinoAdd(etapa.missao.pouso)
-    setIcaoAltAdd(etapa.missao.alternativa)
-
+    setIcaoAltAdd(etapa.missao.alternativa ? etapa.missao.alternativa : '')
+    setCombustivel(etapa.missao.combustivel_minimo ? etapa.missao.combustivel_minimo : 0)
     if(typeof(etapa.missao.depISO) == 'string') {
       etapa.missao.depISO = new Date(etapa.missao.depISO)
     }
@@ -747,11 +819,16 @@ const Dashboard = () => {
     // Convertendo a data para UTC
     etapa.missao.depISO.setMinutes(etapa.missao.depISO.getMinutes() + offset_dep);
 
-    var offset_pouso = etapa.missao.pousoISO.getTimezoneOffset();
+    if(etapa.missao.pousoISO) {
+      var offset_pouso = etapa.missao.pousoISO.getTimezoneOffset();
+      etapa.missao.pousoISO.setMinutes(etapa.missao.pousoISO.getMinutes() + offset_pouso);
+      setDataEtapaPouso(etapa.missao.pousoISO)
+    }else {
+      getHorarioPouso()
+    }
     // Convertendo a data para UTC
-    etapa.missao.pousoISO.setMinutes(etapa.missao.pousoISO.getMinutes() + offset_pouso);
+
     setDataEtapa(etapa.missao.depISO)
-    setDataEtapaPouso(etapa.missao.pousoISO)
   }
 
 
@@ -762,6 +839,10 @@ const Dashboard = () => {
   useEffect(()=>{
     getHorarioPouso()
   },[icaoDestinoAdd, icaoOrigemAdd, dataEtapa])
+
+  useEffect(()=>{
+    getCombustivelMinimo(icaoOrigemAdd, icaoDestinoAdd, icaoAltAdd)
+  },[icaoDestinoAdd, icaoOrigemAdd, icaoAltAdd])
   
   useEffect(()=>{
     getAeronaves()
@@ -869,7 +950,7 @@ const Dashboard = () => {
             </div>
          </div>
 
-          <div className={caixaCreateVisible ? 'modal-create-visible' : 'modal-create'}>
+          <div ref={divRef} className={caixaCreateVisible ? 'modal-create-visible' : 'modal-create'}>
             <div style={{display: 'flex', justifyContent:'flex-end',margin:10, cursor: 'pointer'}}>
               <div onClick={handleCloseModal} style={{color:'#fff'}}>X</div>
             </div>
@@ -894,26 +975,30 @@ const Dashboard = () => {
             <div style={{display: 'flex', justifyContent: 'space-between', marginTop:20, alignItems: 'center'}}>
               <span style={{color:'#fff'}}>OMIS:</span>
               <div style={{color: '#fff'}}>
-              <MaskedNumeroOmis value={omis} onChange={setOmis}/>
-                <span style={{marginLeft:5}}>{'/ '+new Date().getFullYear().toString().substring(2,4)}</span>
+                <MaskedNumeroOmis value={omis} onChange={setOmis} disabled={disabledOmis}/>
+                { disabledOmis && <button onClick={()=>setDisabledOmis(false)} className='cumprir'>Editar</button>}
+                { !disabledOmis && <button onClick={()=>setDisabledOmis(true)} className='cumprir'>Salvar Número</button>}
               </div>
             </div>
 
             <div style={{display: 'flex', justifyContent: 'space-between', marginTop:20, alignItems: 'center'}}>
               <span style={{color:'#fff'}}>OFRAG:</span>
               <div style={{color: '#fff'}}>
-                <select style={{borderRadius:5}} value={ofragSelected} onChange={(e)=>{
+                <select id="select-box" style={{borderRadius:5}} value={ofragSelected} onChange={(e)=>{
 
                   setOfragSelected(e.target.value)
                   }}>
                   <option value="">Selecione uma opção</option>
                   {(ofrags.length > 0) ?  ofrags.map((option, index) => (
-                    <option key={index} value={option.id}>
+                    <option style={{backgroundColor: '#fff'}} key={index} value={option.id}>
                       {option.numero}
                     </option>
                   )) : null}
                 </select>
-                {(ofragSelected != '' && !editMission) ? <button onClick={getOfrag} className='cumprir'>Cumprir</button> : null}
+                {(ofragSelected != '' && !editMission && !cumprir) ? (!loadingCumprir ? <button onClick={getOfrag} className='cumprir'>Cumprir</button> : <LoadingSpinner/>) : null}
+                {errorCumprir != '' &&  <div style={{marginTop:10}} class="alert alert-danger" role="alert">
+                    {errorCumprir}
+                </div>}
               </div>
             </div>
 
@@ -999,6 +1084,10 @@ const Dashboard = () => {
                       </div>
                   </div>
                  </div>
+                 <div className='form-add'>
+                   <span style={{color:'#000'}}>COMB Mínimo: </span>
+                   <MaskedCombustivel onKeyPress={handleKeyPress} value={combustivel} onChange={setCombustivel}/>
+                 </div>
                  <div className='botoes-add-etapa'>
                  <button onClick={handleCancel} className='cancelar'>Cancelar</button>
                   <button  className='adicionar' onClick={editEtapa ? handleEditEtapa : handleAddEtapa}>{editEtapa ? 'Editar' : 'Adicionar'}</button>
@@ -1015,6 +1104,7 @@ const Dashboard = () => {
                         setIndexEditEtapa(index)
                         setEditEtapa(true)
                         getDadosEditEtapa(index)
+                        divRef.current.scrollTop = 0;
                       }} 
                       del={()=>{
                         let etapas_copy = {...etapas}
@@ -1030,6 +1120,7 @@ const Dashboard = () => {
                       index={index} 
                       dep={item.missao.dep} 
                       pouso={item.missao.pouso} 
+                      alternativa={item.missao.alternativa}
                       horaDep={item.missao.horaDep} 
                       horaPouso={item.missao.horaPouso} />
             })}
