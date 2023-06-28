@@ -231,6 +231,8 @@ option {
 
 .criar-div {
     border-bottom: 1px solid #fff;
+    display: flex;
+    justify-content: space-between;
 }
 
 .add-etapa {
