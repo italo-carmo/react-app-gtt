@@ -52,8 +52,8 @@
     "web-vitals": "^3.1.1"
   },
   "engines": {
-    "node": "14.x",
-    "npm": "7.x"
+    "node": ">=10",
+    "npm": ">=6"
   },
   "browserslist": {
     "production": [
