@@ -10,7 +10,8 @@
     "start": "react-scripts start",
     "test": "react-scripts test",
     "test:cov": "npm test -- --coverage --watchAll=false",
-    "test:debug": "react-scripts --inspect-brk test --runInBand"
+    "test:debug": "react-scripts --inspect-brk test --runInBand",
+    "deploy-production": "react-scripts build && scp -r ./build/* gtt@82.180.131.137:/home/gtt/app"
   },
   "dependencies": {
     "@coreui/coreui": "^4.2.6",
@@ -67,3 +68,5 @@
     ]
   }
 }
+
+
