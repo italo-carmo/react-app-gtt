@@ -482,7 +482,7 @@ const Dashboard = () => {
              // getDias(firstDay, true)
               setCaixaCreateVisible(false)
               setLoadingSave(false)
-              setTimeout(()=>{window.location = 'https://app.1gtt.com.br';},"2000")
+              setTimeout(()=>{location.reload()},"2000")
              }
            }
     

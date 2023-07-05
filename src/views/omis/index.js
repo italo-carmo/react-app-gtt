@@ -360,6 +360,17 @@ SUPERIOR A 15 MIN, EM QUALQUER PERNA DESCRITA NA OM;</span>
         </div>
       </div>
 
+      <div className='assinatura'>
+        <div className='operacoes'>
+          <div><span className='nome'>RAFAEL PORTELLA SANTOS Maj Av</span></div>
+          <div><span>Operações</span></div>
+        </div>
+        <div className='comandante'>
+       <div><span className='nome'>BRUNO AMÉRICO PEREIRA Ten Cel Av</span></div>
+        <div><span>Comandante</span></div>
+        </div>
+      </div>
+
      
     </div>
   )
