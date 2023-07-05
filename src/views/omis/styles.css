@@ -1,0 +1,175 @@
+.topo {
+    width: 100%;
+    display: flex;
+    margin:20px;
+}
+
+img {
+    margin-left:30px;
+    margin-top:30px;
+}
+
+.cabecalho {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.right-topo {
+    flex:1
+}
+
+.left-topo {
+    flex:1
+}
+
+.ordem-de-missao {
+    display: flex;
+}
+
+.ordem-demissao-bold {
+    font-weight: bold;
+    margin-left:10px;
+}
+
+.div-numero-ordem {
+    margin-left:30px;
+    margin-right: 30px;
+    border:1px solid #000;
+    display: flex;
+    justify-content: space-between;
+}
+
+.div-data {
+    border-left:1px solid #000;
+}
+
+.div-esforco {
+    border-left:1px solid #000;
+}
+
+.div-comandante-esforco {
+    margin-left:30px;
+    margin-right: 30px;
+    border:1px solid #000;
+    display: flex;
+    justify-content: space-between;
+    margin-top:5px;
+}
+
+.div-aeronave {
+    margin-left:30px;
+    margin-right: 30px;
+    border:1px solid #000;
+}
+
+.div-rota {
+    margin-left:30px;
+    margin-right: 30px;
+    border:1px solid #000;
+}
+
+.div-rota-table {
+    margin-left:30px;
+    margin-right: 30px;
+}
+
+.div-tripulacao {
+    margin-left:30px;
+    margin-right: 30px;
+    border:1px solid #000;
+    margin-top:5px;
+}
+
+.div-tripulante {
+    border-top:1px solid #000;
+}
+
+.div-pilotos {
+    background-color: #bbb;
+}
+
+.tripulante {
+    margin-left:10px;
+}
+
+.tripulantes-title {
+    margin-left:30px;
+    margin-right: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top:5px;
+}
+
+.numero {
+    margin-left:5px;
+    margin-right: 10px;
+
+}
+
+.data {
+    margin-right:10px;
+}
+
+.data-bold {
+    font-weight: bold;
+    margin-right: 10px;
+    margin-left: 10px;
+}
+
+.ordem-de-missao-bold {
+    font-weight: bold;
+    margin-left: 10px;
+}
+
+table {
+    width:100%;
+    border-collapse: collapse;
+}
+
+
+td, th {
+    border: 1px solid black;
+    text-align: center;
+}
+
+th {
+    background-color: #bbb;
+}
+
+.ordens-especiais {
+    margin-left:30px;
+    margin-right: 30px;
+    margin-top:10px;
+    display: flex;
+    flex-direction: column;
+}
+
+.ordem {
+    font-weight: bold;
+}
+
+.ofrag-div {
+    margin-top:10px;
+    display: flex;
+    margin-right:100px;
+}
+
+.ofrag-bold {
+    font-weight: bold;
+    margin-right:5px;
+}
+
+.bottom-ordens {
+    display: flex;
+}
+
+span {
+    font-size: 14px;
+}
+
+td {
+    font-size: 14px;
+}

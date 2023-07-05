@@ -1,5 +1,4 @@
 import React from 'react'
-
 const Main = React.lazy(() => import('./views/main/Main'))
 const Graficos = React.lazy(() => import('./views/graficos/index'))
 const PauDeSebo = React.lazy(() => import('./views/grafico-pau-de-sebo/index'))

@@ -144,17 +144,7 @@
     cursor: pointer;
 }
 
-.botoes {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-left:20px;
-    background-color: #191c24;
-    color:#fff;
-    border-radius: 5px;
-    padding: 5px;
-    cursor: pointer;
-}
+
 
 .item-botao {
     margin-left:5px ;

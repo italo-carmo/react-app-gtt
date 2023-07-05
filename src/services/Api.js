@@ -68,10 +68,77 @@ export default () => {
             let json = await request('POST', '/coordenadas' , body, token)
             return json
         },
-        getAeronaves: async (body) => {
+        getAeronaves: async () => {
             let token = localStorage.getItem('token')
             let json = await request('GET', '/aeronaves' , null, token)
             return json
         },
+        createMissao: async (body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('POST', '/missoes' , body, token)
+            return json
+        },
+        createEtapa: async (body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('POST', '/etapas' , body, token)
+            return json
+        },
+        getAerodromo: async (icao) => {
+            let token = localStorage.getItem('token')
+            let json = await request('GET', `/aerodromos/icao/${icao}` , null, token)
+            return json
+        },
+        deleteMissao: async (id) => {
+            let token = localStorage.getItem('token')
+            let json = await request('DELETE', `/missoes/${id}` , null, token)
+            return json
+        },
+        updateEtapas: async (body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('PUT', `/etapas` , body, token)
+            return json
+        },
+        updateMissao: async (body, id) => {
+            let token = localStorage.getItem('token')
+            let json = await request('PUT', `/missoes/${id}` , body, token)
+            return json
+        },
+        getTrigrama: async (trigrama) => {
+            let token = localStorage.getItem('token')
+            let json = await request('GET', `/trigramas/dados/${trigrama}` , null, token)
+            return json
+        },
+        createEscala: async (body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('POST', '/escalas' , body, token)
+            return json
+        },
+        updateEscala: async (body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('PUT', '/escalas' , body, token)
+            return json
+        },
+        getOfrags: async () => {
+            let token = localStorage.getItem('token')
+            let json = await request('GET', `/ofrag` , null, token)
+            return json
+        },
+        getOfrag: async (id) => {
+            let token = localStorage.getItem('token')
+            let json = await request('GET', `/ofrag/id/${id}` , null, token)
+            return json
+        },
+        getCombMinimo: async (body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('POST', '/planejamento/combustivel/aproximado' , body, token)
+            return json
+        },
+        getUltimaMissao: async () => {
+            let token = localStorage.getItem('token')
+            let json = await request('GET', '/missoes/ultima/missao' , null, token)
+            return json
+        },
+
+        
     }
 }
