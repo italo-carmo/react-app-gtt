@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
-import styles from './styles.css'
+import styles from './style-header.css'
 import {
   CContainer,
   CHeader,
@@ -105,50 +105,54 @@ const AppHeader = () => {
     <div className='bottom-header'>
       <div className='card-header card-background '>
           <div >
-            <p style={{color: 'rgba(255,255,255)', fontSize:'1.2vw',  backgroundColor: 'rgba(0,0,0, 0.7)', padding:2, borderRadius:3}}>Horas Voadas este ano</p>
+            <p className='titulo-header horas' style={{color: 'rgba(255,255,255)',  backgroundColor: 'rgba(0,0,0, 0.7)', padding:2, borderRadius:3}}>Horas Voadas este ano</p>
           </div>
           <div>
             {loadingHoras && <Loading/>}
-            <p style={{fontSize:'1vw',  backgroundColor: 'rgba(0,0,0, 0.7)', padding:2, borderRadius:3}}>{horas}</p>
+            <p className='nome-header' style={{ backgroundColor: 'rgba(0,0,0, 0.7)', padding:2, borderRadius:3}}>{horas}</p>
           </div>
       </div>
+
       <div className='card-header card-model'>
+      <div className='div-nome-card'>
+          <p className='titulo-header' style={{color: 'rgba(255,255,255,0.7)'}}>Situação</p>
+      </div>
+      <div className='bottom-card'>
         <img src='https://www.1gtt.com.br/app/dollar.png' width="15%"/>
-        <div className='div-nome-card'>
-          <div >
-            <p style={{color: 'rgba(255,255,255,0.7)', fontSize:'1.4vw'}}>Situação</p>
-          </div>
-          <div>
+        <div className='item-card'>
           {loadingDias && <Loading/>}
-            <p style={{fontSize:'1vw'}}>{capitalizeFirstLetter(situacao)}</p>
+            <span className='nome-header comissionado'>{situacao}</span>
           </div>
-        </div>
       </div>
+        </div>
+
       <div className='card-header card-model'>
-      <img src='https://www.1gtt.com.br/app/calendar.png' width="15%"/>
-        <div className='div-nome-card'>
-          <div >
-            <p style={{color: 'rgba(255,255,255,0.7)', fontSize:'1.4vw'}}>Dias Previstos</p>
-          </div>
-          <div>
-          {loadingDias && <Loading/>}
-            <p style={{fontSize:'1.3vw'}}>{diasPrevistos}</p>
-          </div>
-        </div>
+      <div className='div-nome-card'>
+          <p className='titulo-header' style={{color: 'rgba(255,255,255,0.7)'}}>Dias Previstos</p>
       </div>
+      <div className='bottom-card'>
+        <img src='https://www.1gtt.com.br/app/calendar.png' width="15%"/>
+        <div className='item-card'>
+          {loadingDias && <Loading/>}
+            <span className='nome-header'>{diasPrevistos}</span>
+          </div>
+      </div>
+        </div>
+
       <div className='card-header card-model'>
-      <img src='https://www.1gtt.com.br/app/appointment.png' width="15%"/>
-        <div className='div-nome-card'>
-          <div >
-            <p style={{color: 'rgba(255,255,255,0.7)', fontSize:'1.4vw'}}>Dias Realizados</p>
-          </div>
-          <div>
+      <div className='div-nome-card'>
+          <p className='titulo-header' style={{color: 'rgba(255,255,255,0.7)'}}>Dias Realizados</p>
+      </div>
+      <div className='bottom-card'>
+        <img src='https://www.1gtt.com.br/app/appointment.png' width="15%"/>
+        <div className='item-card'>
           {loadingDias && <Loading/>}
-            <p style={{fontSize:'1.3vw'}}>{diasRealizados}</p>
+            <span className='nome-header'>{diasRealizados}</span>
           </div>
+      </div>
         </div>
       </div>
-    </div>
+
   </div>
   )
 }

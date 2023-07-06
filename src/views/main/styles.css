@@ -127,6 +127,7 @@
 .aviao {
     background-color: #191c24;
     color:#fff;
+    font-size: 1.5vw;
 }
 
 #select-box * {
@@ -182,12 +183,70 @@ option {
     transition: visibility 0s linear, opacity 600ms;
 }
 
+@media (max-width:1150px) {
+    .modal-create-visible {
+        width: 40%;
+    }
+}
+
+@media (max-width:870px) {
+    .modal-create-visible {
+        width: 50%;
+    }
+}
+
+@media (max-width:690px) {
+    .modal-create-visible {
+        width: 60%;
+    }
+    .aviao {
+        font-size: 2vw;
+    }
+    .calendario {
+        font-size: 2vw;
+    }
+    .missao {
+        font-size: 1.5vw;
+    }
+    .botao-aviao {
+        font-size: 3vw;
+    }
+
+    span {
+        font-size: 3vw;
+    }
+
+    .adicionar {
+        width: 30%;
+        font-size: 2.4vw !important;
+    }
+
+    .cumprir {
+        font-size: 2.5vw !important;
+    }
+
+    .cancelar {
+        font-size: 2.4vw !important;
+    }
+
+    h3 {
+        font-size: 4vw;
+    }
+}
+
+@media (max-width:580px) {
+    .modal-create-visible {
+        width: 80%;
+    }
+}
+
 .calendario {
     background-color: #191c24;
     padding: 5px;
     color:#fff;
     border-radius: 5px;
     cursor: pointer;
+    font-size: 1.5vw;
 }
 
 .botao-aviao {
@@ -203,7 +262,6 @@ option {
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-left:20px;
     color:#fff;
     border-radius: 5px;
     padding: 5px;
@@ -228,6 +286,7 @@ option {
     background-color: #000;
     color:#fff;
     border-radius: 5px;
+    font-size: 2vw;
 }
 
 .criar-div {
@@ -321,4 +380,8 @@ input {
     font-size: 0.8vw;
 }
 
-  
+.ver-omis {
+    border:0;
+    border-radius: 10px;
+    margin-bottom: 5px;
+}

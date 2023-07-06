@@ -1024,7 +1024,7 @@ const Dashboard = () => {
           <button className="calendario" onClick={() => handleCheckDate(7, false)}>&gt;&gt;</button>
           </div>
           <div>
-            <button onClick={handleCreate} className='criar'>Criar Missão</button>
+            <button onClick={handleCreate} className='calendario'>Criar Missão</button>
           </div>
         </div>
          <div style={{display: 'flex', flexDirection:'column', width:'100%'}}>
@@ -1094,7 +1094,7 @@ const Dashboard = () => {
             </div>
             <div className='criar-div'>
               <h3 style={{color:'#fff'}}>{editMission ? 'Editar' :  'Criar'} Missão</h3>
-              {editMission ? <button onClick={getOmis}>Ver OMIS</button>: null}
+              {editMission ? <button className='ver-omis' onClick={getOmis}>Ver OMIS</button>: null}
             </div>
 
             <div style={{display: 'flex', justifyContent: 'space-between', marginTop:20, alignItems: 'center'}}>
