@@ -89,30 +89,35 @@ const Dashboard = () => {
     setCaixaVisible(false);
   };
 
-  const handleEditMission = (missao) => {
+  const handleEditMission = (missao, missaoClicked) => {
     setLoadingExcluir(false)
     setLoadingSave(false)
     setEditMission(true)
     setEditEtapa(false)
-    let id_missao = missao.eventos[0].missao.id_missao
+    let id_missao = missaoClicked.missao.id_missao
     setIdMissaoEdit(id_missao)
     setOfragSelected(missao.eventos[0].id_documento)
     let etapas_copy = {...etapas}
     let tripulacao_get = []
 
-    missao.eventos[0].missao.tripulacao.forEach(item=>{
+    missaoClicked.missao.tripulacao.forEach(item=>{
       tripulacao_get.push(item)
     })
-    let comentarios_get = missao.eventos[0].comentarios
+    let comentarios_get = missaoClicked.comentarios
 
     setComentarios(comentarios_get)
 
-    let omis_get = missao.eventos[0].missao.omis
+    let omis_get = missaoClicked.missao.omis
     setOmis(omis_get)
 
     setTripulacao(tripulacao_get)
 
-    etapas_copy.eventos = missao.eventos
+    etapas_copy.eventos = missao.eventos.filter(i=>{
+      if(i.missao.id_missao == id_missao) {
+        return i
+      }
+    })
+    console.log(etapas_copy)
     setEtapas(etapas_copy)
     setCaixaCreateVisible(true)
     setAeronaveMissao(missao.aviao)
@@ -1056,7 +1061,7 @@ const Dashboard = () => {
                       {item.eventos.length >0 && item.eventos.map(it=>{
                           if(it.data == i) {
                             return <div 
-                            onClick={()=>handleEditMission(item)} className='missao-white white'
+                            onClick={()=>handleEditMission(item, it)} className='missao-white white'
                             onMouseEnter={() => handleMouseEnter(it.missao.id, it.missao)}
                             onMouseLeave={handleMouseLeave}
                             >  
