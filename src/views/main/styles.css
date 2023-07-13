@@ -104,6 +104,10 @@
     font-size: 1vw;
 }
 
+.dados-aviao {
+    font-size: 0.8vw;
+}
+
 .missao-white {
     display: flex;
     flex-direction: column;
@@ -183,6 +187,55 @@ option {
     transition: visibility 0s linear, opacity 600ms;
 }
 
+.modal-aviao {
+    display: flex;
+    flex-direction: column;
+    background-color: #000;
+    min-width: 250px;
+    min-height:200px;
+    padding:20px;
+    position: absolute;
+    top: 50%;
+    margin-top: -100px;
+    left: 50%;
+    margin-left: -100px;
+}
+
+.in {
+    background-color: #c4302b;
+}
+
+.title-modal {
+    font-size: 1.3vw;
+    border-bottom: 1px solid #fff;
+}
+
+.text-modal {
+    font-size: 1.0vw;
+    margin-right:10px;
+}
+
+.item-body-modal {
+    margin-top:15px;    
+}
+
+.nome-aviao {
+    display: flex;
+    flex:1;
+}
+
+.modal-topo {
+    display: flex;
+    width:100%;
+    justify-content: flex-end;
+}
+
+.modal-bottom{
+    display: flex;
+    width:100%;
+    justify-content: center;
+}
+
 @media (max-width:1150px) {
     .modal-create-visible {
         width: 40%;
@@ -212,6 +265,10 @@ option {
         font-size: 3vw;
     }
 
+    .dados-aviao {
+        font-size: 1.2vw;
+    }
+
     span {
         font-size: 3vw;
     }
@@ -237,6 +294,12 @@ option {
 @media (max-width:580px) {
     .modal-create-visible {
         width: 80%;
+    }
+    .text-modal {
+        font-size: 2.5vw;
+    }
+    .title-modal {
+        font-size: 3vw;
     }
 }
 
@@ -276,6 +339,17 @@ option {
     cursor: pointer;
     border:0;
     margin-left:5px;
+}
+
+.salvar {
+    background-color: #28a745;
+    padding: 2px;
+    color:#fff;
+    border-radius: 5px;
+    cursor: pointer;
+    border:0;
+    margin-top:10px;
+    width: 100%;
 }
 
 .item-botao {

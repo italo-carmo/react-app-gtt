@@ -14,6 +14,8 @@ import MaskedInputIcao from '../../components/masked-input-icao'
 import MaskedInputTrigrama from '../../components/masked-trigrama'
 import MaskedNumeroOmis from '../../components/masked-numero-omis'
 import MaskedCombustivel from '../../components/masked-combustivel'
+import MaskedCiclos from '../../components/masked-ciclos'
+import MaskedHoras from '../../components/masked-horas'
 import TimeMaskedInput from 'src/components/masked-hours'
 import DateMaskedInput from 'src/components/masked-date'
 import moment from 'moment';
@@ -66,7 +68,16 @@ const Dashboard = () => {
   const [ofrags, setOfrags] = useState([])
   const [combustivel, setCombustivel] = useState(0)
   const [disabledOmis, setDisabledOmis] = useState(true)
+  const [modalAviao, setModalAviao] = useState(false)
+  const [ciclos, setCiclos] = useState('')
+  const [horas, setHoras] = useState('')
+  const [aviaoSelectedModal, setAviaoSelectedModal] = useState('')
+  const [situacaoAviao, setSituacaoAviao] = useState('')
+  const [atualizador, setAtualizador] = useState('')
+  const [dataAtualizacao, setDataAtualizacao] = useState('')
+  const [idAeronaveModal, setIdAeronaveModal] = useState('')
 
+  const situacoes = ["DI", "DO", "IN", "IS"]
   const inputPousoRef = useRef(null)
   const inputAltRef = useRef(null)
   const divRef = useRef(null);
@@ -298,6 +309,7 @@ const Dashboard = () => {
         }
       }
       setData({avioes:missoes})
+      console.log({avioes:missoes})
     }
   }
 
@@ -305,6 +317,8 @@ const Dashboard = () => {
     let res = await Api.getAeronaves()
     if(!res.error) {
       setAeronaves(res.data)
+      console.log("AERONAVES")
+      console.log(res.data)
     }
   }
 
@@ -641,14 +655,13 @@ const Dashboard = () => {
       
         return `${horasFormatadas}:${minutosFormatados}`;
       }
-
       let item_dados = {
         tripulacao,
         etapas: etapas_final,
         comandante: tripulacao[0].posto+' '+tripulacao[0].nome_guerra.toUpperCase(),
         data: etapas_final[0].data,
         aviao: aeronaveMissao,
-        omis: etapas.eventos[0].omis,
+        omis: etapas.eventos[0].missao.omis,
         ofrag: etapas.eventos[0].ofrag,
         horas: converterMinutosParaHoras(minutos_totais)
       }
@@ -974,6 +987,52 @@ const Dashboard = () => {
     setDataEtapa(etapa.missao.depISO)
   }
 
+  const selectAviao = (aviao, id, ciclos, horas, situacao, atualizador, atualizado) => {
+    setCiclos(ciclos)
+    setHoras(horas)
+    setAviaoSelectedModal(aviao)
+    setSituacaoAviao(situacao)
+    setAtualizador(atualizador)
+    setIdAeronaveModal(id)
+    const editData = (data) => {
+      let [dataSplit, horaSplit] = data.split('T')
+      let [ano, mes, dia] = dataSplit.split('-')
+      let [hora, minuto, segundo] = horaSplit.split(':')
+      let data_formatted = dia+'/'+mes+'/'+ano
+      let hora_formatted = hora+':'+minuto
+      return data_formatted+' - '+hora_formatted
+    }
+    setDataAtualizacao(editData(atualizado))
+    setModalAviao(true)
+  }
+
+  const handleSaveAviao = async () => {
+    if(situacaoAviao == '' || horas == '') {
+      alert('Todos os campos são obrigatórios')
+      return
+    }
+    let item = {
+      situacao: situacaoAviao,
+      ciclos,
+      horas
+    }
+
+    let res = await Api.updateAeronave(item, idAeronaveModal)
+
+    if(res.error) {
+      alert(res.error)
+      return
+    } else {
+      setIdAeronaveModal('')
+      setCiclos('')
+      setHoras('')
+      setSituacaoAviao('')
+      setModalAviao(false)
+      alert(res.msg)
+      location.reload()
+    }
+  }
+
 
   useEffect(()=>{
     handleTrocaAviao()
@@ -1055,7 +1114,12 @@ const Dashboard = () => {
 
             {(data.avioes.length > 0 ) && data.avioes.map(item=>{
               return <div className='missao-item'>
-                <div className='missao aviao'>{item.aviao}</div>
+                <div className={item.situacao == 'IN' ? 'missao aviao in' : 'missao aviao'}>
+                <span style={{cursor: 'pointer'}} onClick={()=>selectAviao(item.aviao, item.id, item.ciclos, item.horas, item.situacao, item.atualizador, item.atualizado)}>{item.aviao}</span>
+                <span className='dados-aviao'>Situação: {item.situacao}</span>
+                <span className='dados-aviao'>Ciclos: {item.ciclos}</span>
+                <span className='dados-aviao'>Horas: {item.horas}</span>
+                </div>
                 {semana.map(i=>{
                  return <div className='item-missao'>
                       {item.eventos.length >0 && item.eventos.map(it=>{
@@ -1377,11 +1441,50 @@ const Dashboard = () => {
 
     </div>
         </div>
-       
     
       </CCard>
 
-
+     {
+      modalAviao &&  <div className='modal-aviao'>
+      <div className='modal-topo'>
+      <div className='nome-aviao'>
+        <span className='title-modal' style={{color: '#fff'}}>FAB {aviaoSelectedModal}</span>
+      </div>
+        <span onClick={()=>{
+          setModalAviao(false)
+        }}  className='title-modal' style={{color: '#fff', cursor: 'pointer'}}>X</span>
+      </div>
+      <div className='modal-body'>
+        <div className='item-body-modal'>
+          <span className='text-modal' style={{color: '#fff'}}>Ciclos:</span>
+          <MaskedCiclos value={ciclos} onChange={setCiclos} />
+        </div>
+        <div className='item-body-modal'>
+          <span className='text-modal' style={{color: '#fff'}}>Horas:</span>
+          <MaskedHoras value={horas} onChange={setHoras} />
+        </div>
+        <div className='item-body-modal'>
+          <span className='text-modal' style={{color: '#fff'}}>Situação:</span>
+          <select style={{borderRadius: 10}} value={situacaoAviao} onChange={(e)=>{
+            setSituacaoAviao(e.target.value)
+            }}>
+            {situacoes.map((item, index)=>{
+              return <option key={index} value={item}>{item}</option>
+            })}
+          </select>
+        </div>
+        <div className='item-body-modal'>
+            <span className='text-modal' style={{color: '#fff'}}>Atualizado por: {atualizador}</span>
+        </div>
+        <div className='item-body-modal'>
+            <span className='text-modal' style={{color: '#fff'}}>Em: {dataAtualizacao} Z</span>
+        </div>
+      </div>
+      <div className='modal-bottom'>
+        <button onClick={handleSaveAviao} className='salvar'>Salvar</button>
+      </div>
+   </div>
+     }
      
     </>
   )

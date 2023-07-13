@@ -138,7 +138,11 @@ export default () => {
             let json = await request('GET', '/missoes/ultima/missao' , null, token)
             return json
         },
-
+        updateAeronave: async (body, id) => {
+            let token = localStorage.getItem('token')
+            let json = await request('PUT', `/aeronaves/${id}` , body, token)
+            return json
+        },
         
     }
 }
