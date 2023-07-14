@@ -2,7 +2,7 @@
   "name": "App GTT",
   "version": "4.5.0",
   "description": "Aplicativo do 1 GTT",
-  "homepage": ".",
+  "homepage": "http://app.1gtt.com.br/",
   "scripts": {
     "build": "react-scripts build",
     "eject": "react-scripts eject",

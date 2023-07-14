@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
-import styles from './styles.css'
+import styles from './style-header.css'
 import {
   CContainer,
   CHeader,
@@ -37,12 +37,12 @@ const AppHeader = () => {
     setLoadingDias(true)
     let res = await Api.getDias()
     let trigrama = localStorage.getItem("trigrama")
-    if (!res.error) {
-      let dados_filter = res.data.filter(item => item.Trigrama == trigrama)
+    if(!res.error) {
+      let dados_filter = res.data.filter(item=>item.Trigrama == trigrama)
       setDiasPrevistos(dados_filter[0]['Dias Previstos'])
       setDiasRealizados(dados_filter[0]['Dias Totais'])
-      if (dados_filter[0]['Situação'] == 'COMISSIONADO') {
-        if (dados_filter[0]['Modulo'] == 'SIM') {
+      if(dados_filter[0]['Situação'] == 'COMISSIONADO') {
+        if(dados_filter[0]['Modulo'] == 'SIM') {
           setSituacao('COMISSIONADO COM MÓDULO')
         } else {
           setSituacao('COMISSIONADO SEM MÓDULO')
@@ -54,20 +54,20 @@ const AppHeader = () => {
     } else {
       setLoadingDias(false)
     }
-
+    
   }
 
   const getHoras = async () => {
     setLoadingHoras(true)
-    let res = await Api.getHoras()
+      let res = await Api.getHoras()
 
-    if (!res.error) {
-      setHoras(res.data[0].Horas)
-      setLoadingHoras(false)
-    } else {
-      setLoadingHoras(false)
-    }
-
+      if (!res.error) {
+        setHoras(res.data[0].Horas)
+        setLoadingHoras(false)
+      } else {
+        setLoadingHoras(false)
+      }
+      
   }
 
   function capitalizeFirstLetter(string) {
@@ -77,79 +77,83 @@ const AppHeader = () => {
   useEffect(()=>{
     getHoras()
     getDias()
-  }, [])
+  },[])
 
   return (
-    <div>
-      <CHeader style={{ backgroundColor: '#191c24' }} position="sticky" className="mb-4">
-        <CContainer fluid>
-          <CHeaderToggler
-            className="ps-1 white-color"
-            onClick={() => dispatch({ type: 'set', sidebarShow: !sidebarShow })}
-          >
-            <CIcon icon={cilMenu} size="lg" />
-          </CHeaderToggler>
-          <AppBreadcrumb />
-          <CHeaderBrand className="mx-auto d-md-none" to="/">
-            <CIcon icon={logo} height={48} alt="Logo" />
-          </CHeaderBrand>
-          <CHeaderNav className="d-none d-md-flex me-auto">
-          </CHeaderNav>
+  <div>
+      <CHeader style={{backgroundColor: '#191c24'}} position="sticky" className="mb-4">
+      <CContainer fluid>
+        <CHeaderToggler
+          className="ps-1 white-color"
+          onClick={() => dispatch({ type: 'set', sidebarShow: !sidebarShow })}
+        >
+          <CIcon icon={cilMenu} size="lg" />
+        </CHeaderToggler>
+        <AppBreadcrumb />
 
+        <CHeaderNav className="d-none d-md-flex me-auto">
+        </CHeaderNav>
+        <CHeaderNav>
 
-          <CHeaderNav className="ms-3">
-            <AppHeaderDropdown />
-          </CHeaderNav>
-        </CContainer>
+        </CHeaderNav>
+        <CHeaderNav className="ms-3">
+          <AppHeaderDropdown />
+        </CHeaderNav>
+      </CContainer>
 
-      </CHeader>
-      <div className='bottom-header'>
-        <div className='card-header card-background '>
+    </CHeader>
+    <div className='bottom-header'>
+      <div className='card-header card-background '>
           <div >
-            <p style={{color: 'rgba(255,255,255)', fontSize:'1.2vw',  backgroundColor: 'rgba(0,0,0, 0.7)', padding:2, borderRadius:3}}>Horas Voadas este ano</p>
+            <p className='titulo-header horas' style={{color: 'rgba(255,255,255)',  backgroundColor: 'rgba(0,0,0, 0.7)', padding:2, borderRadius:3}}>Horas Voadas este ano</p>
           </div>
           <div>
             {loadingHoras && <Loading/>}
-            <p style={{fontSize:'1vw',  backgroundColor: 'rgba(0,0,0, 0.7)', padding:2, borderRadius:3}}>{horas}</p>
+            <p className='nome-header' style={{ backgroundColor: 'rgba(0,0,0, 0.7)', padding:2, borderRadius:3}}>{horas}</p>
           </div>
       </div>
+
       <div className='card-header card-model'>
+      <div className='div-nome-card'>
+          <p className='titulo-header' style={{color: 'rgba(255,255,255,0.7)'}}>Situação</p>
+      </div>
+      <div className='bottom-card'>
         <img src='https://www.1gtt.com.br/app/dollar.png' width="15%"/>
-        <div className='div-nome-card'>
-          <div >
-            <p style={{color: 'rgba(255,255,255,0.7)', fontSize:'1.4vw'}}>Situação</p>
-          </div>
-          <div>
+        <div className='item-card'>
           {loadingDias && <Loading/>}
-            <p style={{fontSize:'1vw'}}>{capitalizeFirstLetter(situacao)}</p>
+            <span className='nome-header comissionado'>{situacao}</span>
           </div>
-        </div>
       </div>
+        </div>
+
       <div className='card-header card-model'>
-      <img src='https://www.1gtt.com.br/app/calendar.png' width="15%"/>
-        <div className='div-nome-card'>
-          <div >
-            <p style={{color: 'rgba(255,255,255,0.7)', fontSize:'1.4vw'}}>Dias Previstos</p>
-          </div>
-          <div>
-          {loadingDias && <Loading/>}
-            <p style={{fontSize:'1.3vw'}}>{diasPrevistos}</p>
-          </div>
-        </div>
+      <div className='div-nome-card'>
+          <p className='titulo-header' style={{color: 'rgba(255,255,255,0.7)'}}>Dias Previstos</p>
       </div>
+      <div className='bottom-card'>
+        <img src='https://www.1gtt.com.br/app/calendar.png' width="15%"/>
+        <div className='item-card'>
+          {loadingDias && <Loading/>}
+            <span className='nome-header'>{diasPrevistos}</span>
+          </div>
+      </div>
+        </div>
+
       <div className='card-header card-model'>
-      <img src='https://www.1gtt.com.br/app/appointment.png' width="15%"/>
-        <div className='div-nome-card'>
-          <div >
-            <p style={{color: 'rgba(255,255,255,0.7)', fontSize:'1.4vw'}}>Dias Realizados</p>
-          </div>
-          <div>
+      <div className='div-nome-card'>
+          <p className='titulo-header' style={{color: 'rgba(255,255,255,0.7)'}}>Dias Realizados</p>
+      </div>
+      <div className='bottom-card'>
+        <img src='https://www.1gtt.com.br/app/appointment.png' width="15%"/>
+        <div className='item-card'>
           {loadingDias && <Loading/>}
-            <p style={{fontSize:'1.3vw'}}>{diasRealizados}</p>
+            <span className='nome-header'>{diasRealizados}</span>
           </div>
+      </div>
         </div>
       </div>
-    </div>
+
+  </div>
   )
 }
 

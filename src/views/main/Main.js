@@ -14,6 +14,8 @@ import MaskedInputIcao from '../../components/masked-input-icao'
 import MaskedInputTrigrama from '../../components/masked-trigrama'
 import MaskedNumeroOmis from '../../components/masked-numero-omis'
 import MaskedCombustivel from '../../components/masked-combustivel'
+import MaskedCiclos from '../../components/masked-ciclos'
+import MaskedHoras from '../../components/masked-horas'
 import TimeMaskedInput from 'src/components/masked-hours'
 import DateMaskedInput from 'src/components/masked-date'
 import moment from 'moment';
@@ -66,7 +68,16 @@ const Dashboard = () => {
   const [ofrags, setOfrags] = useState([])
   const [combustivel, setCombustivel] = useState(0)
   const [disabledOmis, setDisabledOmis] = useState(true)
+  const [modalAviao, setModalAviao] = useState(false)
+  const [ciclos, setCiclos] = useState('')
+  const [horas, setHoras] = useState('')
+  const [aviaoSelectedModal, setAviaoSelectedModal] = useState('')
+  const [situacaoAviao, setSituacaoAviao] = useState('')
+  const [atualizador, setAtualizador] = useState('')
+  const [dataAtualizacao, setDataAtualizacao] = useState('')
+  const [idAeronaveModal, setIdAeronaveModal] = useState('')
 
+  const situacoes = ["DI", "DO", "IN", "IS"]
   const inputPousoRef = useRef(null)
   const inputAltRef = useRef(null)
   const divRef = useRef(null);
@@ -89,30 +100,35 @@ const Dashboard = () => {
     setCaixaVisible(false);
   };
 
-  const handleEditMission = (missao) => {
+  const handleEditMission = (missao, missaoClicked) => {
     setLoadingExcluir(false)
     setLoadingSave(false)
     setEditMission(true)
     setEditEtapa(false)
-    let id_missao = missao.eventos[0].missao.id_missao
+    let id_missao = missaoClicked.missao.id_missao
     setIdMissaoEdit(id_missao)
     setOfragSelected(missao.eventos[0].id_documento)
     let etapas_copy = {...etapas}
     let tripulacao_get = []
 
-    missao.eventos[0].missao.tripulacao.forEach(item=>{
+    missaoClicked.missao.tripulacao.forEach(item=>{
       tripulacao_get.push(item)
     })
-    let comentarios_get = missao.eventos[0].comentarios
+    let comentarios_get = missaoClicked.comentarios
 
     setComentarios(comentarios_get)
 
-    let omis_get = missao.eventos[0].missao.omis
+    let omis_get = missaoClicked.missao.omis
     setOmis(omis_get)
 
     setTripulacao(tripulacao_get)
 
-    etapas_copy.eventos = missao.eventos
+    etapas_copy.eventos = missao.eventos.filter(i=>{
+      if(i.missao.id_missao == id_missao) {
+        return i
+      }
+    })
+    console.log(etapas_copy)
     setEtapas(etapas_copy)
     setCaixaCreateVisible(true)
     setAeronaveMissao(missao.aviao)
@@ -178,23 +194,23 @@ const Dashboard = () => {
     let hoje_copy = new Date(hoje)
     hoje_copy.setDate(hoje_copy.getDate() - 1);
     let dias = []
-    for (var i = 0; i <= 6; i++) {
-      if (i != 0) {
+    for(var i=0;i<=6;i++) {
+      if(i!=0){
         var hoje_sum = hoje_copy.setDate(hoje_copy.getDate() + 1);
       } else {
         var hoje_sum = hoje_copy.setDate(hoje_copy.getDate());
       }
       let hoje_sum_date = new Date(hoje_sum)
       let dia = hoje_sum_date.getDate()
-      let mes = (hoje_sum_date.getMonth() + 1)
+      let mes = (hoje_sum_date.getMonth()+1)
       let ano = (hoje_sum_date.getFullYear())
-      if (dia <= 9) {
-        dia = '0' + dia
+      if(dia<=9) {
+        dia= '0'+dia
       }
-      if (mes <= 9) {
-        mes = '0' + mes
+      if(mes<=9) {
+        mes= '0'+mes
       }
-      let hoje_sum_formatted = dia + '/' + mes + '/' + ano
+      let hoje_sum_formatted = dia+'/'+mes+'/'+ano
       dias.push(hoje_sum_formatted)
     }
     setSemana(dias)
@@ -293,6 +309,7 @@ const Dashboard = () => {
         }
       }
       setData({avioes:missoes})
+      console.log({avioes:missoes})
     }
   }
 
@@ -300,12 +317,14 @@ const Dashboard = () => {
     let res = await Api.getAeronaves()
     if(!res.error) {
       setAeronaves(res.data)
+      console.log("AERONAVES")
+      console.log(res.data)
     }
   }
 
   const handleCheckDate = (numero, tipo) => {
     let firstDayCopy = new Date(firstDay);
-    if (tipo) {
+    if(tipo) {
       firstDayCopy.setDate(firstDayCopy.getDate() - numero);
     } else {
       firstDayCopy.setDate(firstDayCopy.getDate() + numero);
@@ -482,7 +501,7 @@ const Dashboard = () => {
              // getDias(firstDay, true)
               setCaixaCreateVisible(false)
               setLoadingSave(false)
-              setTimeout(()=>{window.location = 'https://app.1gtt.com.br';},"2000")
+              setTimeout(()=>{location.reload()},"2000")
              }
            }
     
@@ -636,14 +655,13 @@ const Dashboard = () => {
       
         return `${horasFormatadas}:${minutosFormatados}`;
       }
-
       let item_dados = {
         tripulacao,
         etapas: etapas_final,
         comandante: tripulacao[0].posto+' '+tripulacao[0].nome_guerra.toUpperCase(),
         data: etapas_final[0].data,
         aviao: aeronaveMissao,
-        omis: etapas.eventos[0].omis,
+        omis: etapas.eventos[0].missao.omis,
         ofrag: etapas.eventos[0].ofrag,
         horas: converterMinutosParaHoras(minutos_totais)
       }
@@ -969,6 +987,52 @@ const Dashboard = () => {
     setDataEtapa(etapa.missao.depISO)
   }
 
+  const selectAviao = (aviao, id, ciclos, horas, situacao, atualizador, atualizado) => {
+    setCiclos(ciclos)
+    setHoras(horas)
+    setAviaoSelectedModal(aviao)
+    setSituacaoAviao(situacao)
+    setAtualizador(atualizador)
+    setIdAeronaveModal(id)
+    const editData = (data) => {
+      let [dataSplit, horaSplit] = data.split('T')
+      let [ano, mes, dia] = dataSplit.split('-')
+      let [hora, minuto, segundo] = horaSplit.split(':')
+      let data_formatted = dia+'/'+mes+'/'+ano
+      let hora_formatted = hora+':'+minuto
+      return data_formatted+' - '+hora_formatted
+    }
+    setDataAtualizacao(editData(atualizado))
+    setModalAviao(true)
+  }
+
+  const handleSaveAviao = async () => {
+    if(situacaoAviao == '' || horas == '') {
+      alert('Todos os campos são obrigatórios')
+      return
+    }
+    let item = {
+      situacao: situacaoAviao,
+      ciclos,
+      horas
+    }
+
+    let res = await Api.updateAeronave(item, idAeronaveModal)
+
+    if(res.error) {
+      alert(res.error)
+      return
+    } else {
+      setIdAeronaveModal('')
+      setCiclos('')
+      setHoras('')
+      setSituacaoAviao('')
+      setModalAviao(false)
+      alert(res.msg)
+      location.reload()
+    }
+  }
+
 
   useEffect(()=>{
     handleTrocaAviao()
@@ -1024,39 +1088,44 @@ const Dashboard = () => {
           <button className="calendario" onClick={() => handleCheckDate(7, false)}>&gt;&gt;</button>
           </div>
           <div>
-            <button onClick={handleCreate} className='criar'>Criar Missão</button>
+            <button onClick={handleCreate} className='calendario'>Criar Missão</button>
           </div>
         </div>
          <div style={{display: 'flex', flexDirection:'column', width:'100%'}}>
           <div className='topo'>
             <div className='missao'>Avião</div>
-            {semana.map((item, index) => {
-              var hoje_dia = hoje.getDate()
-              let hoje_mes = (hoje.getMonth() + 1)
-              let hoje_ano = hoje.getFullYear()
-              if (hoje_dia <= 9) {
-                hoje_dia = '0' + hoje_dia
-              }
-              if (hoje_mes <= 9) {
-                hoje_mes = '0' + hoje_mes
-              }
-              let hoje_string = hoje_dia + '/' + hoje_mes + '/' + hoje_ano
+            {semana.map((item,index)=>{
+                var hoje_dia = hoje.getDate()
+                let hoje_mes = (hoje.getMonth()+1)
+                let hoje_ano = hoje.getFullYear()
+                if(hoje_dia <=9) {
+                  hoje_dia = '0'+hoje_dia
+                }
+                if(hoje_mes <=9) {
+                  hoje_mes = '0'+hoje_mes
+                }
+                let hoje_string = hoje_dia+'/'+hoje_mes+'/'+hoje_ano
 
-              return <div className='missao' style={{ backgroundColor: hoje_string == item ? '#46a31d' : '#000' }}>{item}</div>
+                return <div  className='missao' style={{backgroundColor: hoje_string == item ? '#46a31d' : '#000'}}>{item}</div>
             })}
           </div>
           <div className='missoes'>
+            
 
-
-            {(data.avioes.length > 0) && data.avioes.map(item => {
+            {(data.avioes.length > 0 ) && data.avioes.map(item=>{
               return <div className='missao-item'>
-                <div className='missao aviao'>{item.aviao}</div>
+                <div className={item.situacao == 'IN' ? 'missao aviao in' : 'missao aviao'}>
+                <span style={{cursor: 'pointer'}} onClick={()=>selectAviao(item.aviao, item.id, item.ciclos, item.horas, item.situacao, item.atualizador, item.atualizado)}>{item.aviao}</span>
+                <span className='dados-aviao'>Situação: {item.situacao}</span>
+                <span className='dados-aviao'>Ciclos: {item.ciclos}</span>
+                <span className='dados-aviao'>Horas: {item.horas}</span>
+                </div>
                 {semana.map(i=>{
                  return <div className='item-missao'>
                       {item.eventos.length >0 && item.eventos.map(it=>{
                           if(it.data == i) {
                             return <div 
-                            onClick={()=>handleEditMission(item)} className='missao-white white'
+                            onClick={()=>handleEditMission(item, it)} className='missao-white white'
                             onMouseEnter={() => handleMouseEnter(it.missao.id, it.missao)}
                             onMouseLeave={handleMouseLeave}
                             >  
@@ -1094,7 +1163,7 @@ const Dashboard = () => {
             </div>
             <div className='criar-div'>
               <h3 style={{color:'#fff'}}>{editMission ? 'Editar' :  'Criar'} Missão</h3>
-              {editMission ? <button onClick={getOmis}>Ver OMIS</button>: null}
+              {editMission ? <button className='ver-omis' onClick={getOmis}>Ver OMIS</button>: null}
             </div>
 
             <div style={{display: 'flex', justifyContent: 'space-between', marginTop:20, alignItems: 'center'}}>
@@ -1372,12 +1441,51 @@ const Dashboard = () => {
 
     </div>
         </div>
-       
     
       </CCard>
 
-
-
+     {
+      modalAviao &&  <div className='modal-aviao'>
+      <div className='modal-topo'>
+      <div className='nome-aviao'>
+        <span className='title-modal' style={{color: '#fff'}}>FAB {aviaoSelectedModal}</span>
+      </div>
+        <span onClick={()=>{
+          setModalAviao(false)
+        }}  className='title-modal' style={{color: '#fff', cursor: 'pointer'}}>X</span>
+      </div>
+      <div className='modal-body'>
+        <div className='item-body-modal'>
+          <span className='text-modal' style={{color: '#fff'}}>Ciclos:</span>
+          <MaskedCiclos value={ciclos} onChange={setCiclos} />
+        </div>
+        <div className='item-body-modal'>
+          <span className='text-modal' style={{color: '#fff'}}>Horas:</span>
+          <MaskedHoras value={horas} onChange={setHoras} />
+        </div>
+        <div className='item-body-modal'>
+          <span className='text-modal' style={{color: '#fff'}}>Situação:</span>
+          <select style={{borderRadius: 10}} value={situacaoAviao} onChange={(e)=>{
+            setSituacaoAviao(e.target.value)
+            }}>
+            {situacoes.map((item, index)=>{
+              return <option key={index} value={item}>{item}</option>
+            })}
+          </select>
+        </div>
+        <div className='item-body-modal'>
+            <span className='text-modal' style={{color: '#fff'}}>Atualizado por: {atualizador}</span>
+        </div>
+        <div className='item-body-modal'>
+            <span className='text-modal' style={{color: '#fff'}}>Em: {dataAtualizacao} Z</span>
+        </div>
+      </div>
+      <div className='modal-bottom'>
+        <button onClick={handleSaveAviao} className='salvar'>Salvar</button>
+      </div>
+   </div>
+     }
+     
     </>
   )
 }

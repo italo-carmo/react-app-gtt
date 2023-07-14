@@ -144,7 +144,7 @@ const Omis = ({match}) => {
   const dados_params = params.get('dados');
 
   const dados = JSON.parse(decodeURIComponent(dados_params));
-
+  console.log(dados)
   if(dados) {
     var tripulacao = dados.tripulacao
     var etapas = dados.etapas
@@ -153,6 +153,7 @@ const Omis = ({match}) => {
     var aviao = dados.aviao
     var ofrag = dados.ofrag
     var horas = dados.horas
+    var omis = dados.omis
   } else {
     var tripulacao = []
     var etapas = []
@@ -161,6 +162,7 @@ const Omis = ({match}) => {
     var aviao = ''
     var ofrag = ''
     var horas = ''
+    var omis = ''
   }
 
 
@@ -183,7 +185,7 @@ const Omis = ({match}) => {
       <div className='div-numero-ordem'>
         <div className='ordem-de-missao'>
           <span className='ordem-demissao-bold'>Ordem de Missão:</span>
-          <span className='numero'>070/1GTT/2023</span>
+          <span className='numero'>{omis} / 1º GTT</span>
         </div>
         <div className='div-data'>
             <span className='data-bold'>Data:</span>
@@ -357,6 +359,17 @@ SUPERIOR A 15 MIN, EM QUALQUER PERNA DESCRITA NA OM;</span>
             <span className='ofrag-bold'>Esforço Aéreo:</span>
             <span>CONFORME OFRAG</span>
           </div>
+        </div>
+      </div>
+
+      <div className='assinatura'>
+        <div className='operacoes'>
+          <div><span className='nome'>RAFAEL PORTELLA SANTOS Maj Av</span></div>
+          <div><span>Operações</span></div>
+        </div>
+        <div className='comandante'>
+       <div><span className='nome'>BRUNO AMÉRICO PEREIRA Ten Cel Av</span></div>
+        <div><span>Comandante</span></div>
         </div>
       </div>
 
