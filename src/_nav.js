@@ -50,6 +50,11 @@ const _nav = [
         name: 'Pau de Sebo',
         to: '/pau-de-sebo',
       },
+      {
+        component: CNavItem,
+        name: 'Abastecimento',
+        to: '/abastecimento',
+      },
     ],
   },
   {
