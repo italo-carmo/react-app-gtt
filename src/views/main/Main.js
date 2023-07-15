@@ -1233,7 +1233,13 @@ const Dashboard = () => {
                     let inicio_date = new Date(it.inicio)
                     let fim_date = new Date(it.fim)
 
-                    if(data.getDate() <= fim_date.getDate() && data.getDate() >= inicio_date.getDate()) {
+                    console.log(it.titulo)
+                    console.log(inicio_date.getDate())
+                    console.log(fim_date.getDate())
+                    console.log('comparando com:')
+                    console.log(data.getDate())
+
+                    if(data.getTime() <= fim_date.getTime() && data.getTime() >= inicio_date.getTime()) {
                       return <div className='missao-white white' 
                             //onMouseEnter={() => handleMouseEnterObs(it.observacoes)}
                             onClick={()=>handleEditObs(it)}
