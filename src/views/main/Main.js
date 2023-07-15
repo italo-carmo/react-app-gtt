@@ -122,7 +122,7 @@ const Dashboard = () => {
     setCaixaVisible(false);
   };
 
-  const handleEditMission = (missao, missaoClicked) => {
+  const handleEditMission = async (missao, missaoClicked) => {
     setLoadingExcluir(false)
     setLoadingSave(false)
     setEditMission(true)
@@ -144,12 +144,18 @@ const Dashboard = () => {
     setOmis(omis_get)
 
     setTripulacao(tripulacao_get)
-
-    etapas_copy.eventos = missao.eventos.filter(i=>{
-      if(i.missao.id_missao == id_missao) {
+    console.log(etapas_copy)
+    let missoes_id = await Api.getMissoesAvioesId(id_missao)
+    
+    let missoes_filtered = missoes_id.data.filter(i=>{
+      if(i.eventos.length > 0) {
         return i
       }
     })
+
+    console.log(missoes_filtered[0].eventos)
+    console.log(missao.eventos)
+    etapas_copy.eventos = missoes_filtered[0].eventos
     setEtapas(etapas_copy)
     setCaixaCreateVisible(true)
     setAeronaveMissao(missao.aviao)
@@ -1232,12 +1238,6 @@ const Dashboard = () => {
                     const data = new Date(ano, mes - 1, dia);
                     let inicio_date = new Date(it.inicio)
                     let fim_date = new Date(it.fim)
-
-                    console.log(it.titulo)
-                    console.log(inicio_date.getDate())
-                    console.log(fim_date.getDate())
-                    console.log('comparando com:')
-                    console.log(data.getDate())
 
                     if(data.getTime() <= fim_date.getTime() && data.getTime() >= inicio_date.getTime()) {
                       return <div className='missao-white white' 

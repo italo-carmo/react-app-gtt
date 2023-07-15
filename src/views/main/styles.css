@@ -411,6 +411,7 @@ option {
     min-height: 50px;
     border-radius:10px;
     display:flex;
+    flex-wrap: wrap;
 }
 
 .add-trip {
