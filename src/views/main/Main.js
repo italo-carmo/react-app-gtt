@@ -16,6 +16,8 @@ import MaskedNumeroOmis from '../../components/masked-numero-omis'
 import MaskedCombustivel from '../../components/masked-combustivel'
 import MaskedCiclos from '../../components/masked-ciclos'
 import MaskedHoras from '../../components/masked-horas'
+import MaskedObs from '../../components/masked-inpput-text-obs'
+import MaskedObsTextArea from '../../components/masked-inpput-text-obs-textarea'
 import TimeMaskedInput from 'src/components/masked-hours'
 import DateMaskedInput from 'src/components/masked-date'
 import moment from 'moment';
@@ -32,6 +34,7 @@ const Dashboard = () => {
   const [id,setId] = useState([])
   const [caixaVisible, setCaixaVisible] = useState(false)
   const [caixaCreateVisible, setCaixaCreateVisible] = useState(false)
+  const [caixaCreateVisibleObs, setCaixaCreateVisibleObs] = useState(false)
   const [editMission, setEditMission] = useState(false)
   const [editEtapa, setEditEtapa] = useState(false)
   const [indexEditEtapa, setIndexEditEtapa] = useState(false)
@@ -76,6 +79,16 @@ const Dashboard = () => {
   const [atualizador, setAtualizador] = useState('')
   const [dataAtualizacao, setDataAtualizacao] = useState('')
   const [idAeronaveModal, setIdAeronaveModal] = useState('')
+  const [observacoes, setObservacoes] = useState([])
+  const [caixaObsVisible, setCaixaObsVisible] = useState(false)
+  const [obsText, setObsText] = useState('')
+  const [isEditObs, setIsEditObs] = useState(false)
+  const [caixaCreateVisibleObsEdit, setCaixaCreateVisibleObsEdit]=useState(false)
+  const [tituloObs, setTituloObs] = useState('')
+  const [comentarioObs, setComentarioObs] = useState('')
+  const [dataInicioObs, setDataInicioObs] = useState(new Date())
+  const [dataFimObs, setDataFimObs] = useState(new Date())
+  const [idObs, setIdObs] = useState('')
 
   const situacoes = ["DI", "DO", "IN", "IS"]
   const inputPousoRef = useRef(null)
@@ -97,6 +110,15 @@ const Dashboard = () => {
   };
 
   const handleMouseLeave = () => {
+    setCaixaVisible(false);
+  };
+
+   const handleMouseEnterObs = (obs) => {
+    setObsText(obs)
+    setCaixaObsVisible(true);
+  };
+
+  const handleMouseLeaveObs = () => {
     setCaixaVisible(false);
   };
 
@@ -128,7 +150,6 @@ const Dashboard = () => {
         return i
       }
     })
-    console.log(etapas_copy)
     setEtapas(etapas_copy)
     setCaixaCreateVisible(true)
     setAeronaveMissao(missao.aviao)
@@ -169,7 +190,6 @@ const Dashboard = () => {
       
       let tripulacao_copy = [...tripulacao]
       let res = await Api.getTrigrama(trigrama)
-      console.log(res)
       if(!res.error) {
         tripulacao_copy.push({id: res.data.id_user, trigrama: res.data.trigrama, funcao: res.data.Usuario.FuncoesAbordo.nome})
         setTripulacao(tripulacao_copy)
@@ -215,6 +235,16 @@ const Dashboard = () => {
     }
     setSemana(dias)
     getMissoes(dias, reseta)
+    getObservacoes(dias)
+  }
+
+  const getObservacoes = async (dias) => {
+    let inicio = dias[0]
+    let fim = dias[6]
+    let res_obs = await Api.getObservacoesData({inicio, fim})
+    if(!res_obs.error) {
+      setObservacoes(res_obs.data)
+    }
   }
 
   const getOfrags = async () => {
@@ -295,7 +325,6 @@ const Dashboard = () => {
     let inicio = dias[0]
     let fim = dias[6]
     let res = await Api.getMissoesAvioes({inicio, fim})
-
     if(!res.error) {
       let missoes = res.data
       if(!reseta) {
@@ -309,16 +338,14 @@ const Dashboard = () => {
         }
       }
       setData({avioes:missoes})
-      console.log({avioes:missoes})
     }
+
   }
 
   const getAeronaves = async () => {
     let res = await Api.getAeronaves()
     if(!res.error) {
       setAeronaves(res.data)
-      console.log("AERONAVES")
-      console.log(res.data)
     }
   }
 
@@ -345,6 +372,17 @@ const Dashboard = () => {
     if(!res.error) {
       setOmis((parseInt(res.data[0].numero) + 1).toString())
     }
+  }
+
+  const handleCreateObs = async () => {
+    setTituloObs('')
+    setComentarioObs('')
+    var hoje = new Date(); // Cria um objeto Date com a data e hora atuais
+    hoje.setHours(0, 0, 0, 0); 
+    setDataInicioObs(hoje)
+    setDataFimObs(hoje)
+    setIsEditObs(false)
+    setCaixaCreateVisibleObsEdit(true)
   }
 
   const handleCancel = () => {
@@ -524,7 +562,6 @@ const Dashboard = () => {
 
   const getOmis = async () => {
       let tripulacao = []
-      console.log(etapas)
       etapas.eventos[0].missao.tripulacao.forEach(item=>{
         tripulacao.push(item)
       })
@@ -672,7 +709,6 @@ const Dashboard = () => {
   }
 
   const getCombustivelMinimo = async (dep, pouso, alternativa) => {
-    console.log(dep, pouso, alternativa)
     if(dep != '' && pouso!= '' && alternativa != '' && dep.length == 4 && pouso.length == 4 && alternativa.length == 4) {
       let res = await Api.getCombMinimo({dep, pouso, alternativa})
       if(!res.error) {
@@ -960,7 +996,6 @@ const Dashboard = () => {
   const getDadosEditEtapa = (index) => {
     let etapas_copy = {...etapas}
     let etapa = etapas_copy.eventos[index]
-    //console.log(etapas_copy)
     setIcaoOrigemAdd(etapa.missao.dep)
     setIcaoDestinoAdd(etapa.missao.pouso)
     setIcaoAltAdd(etapa.missao.alternativa ? etapa.missao.alternativa : '')
@@ -1033,6 +1068,76 @@ const Dashboard = () => {
     }
   }
 
+  const handleEditObs = (obs) => {
+    setIsEditObs(true)
+    setTituloObs(obs.titulo)
+    setComentarioObs(obs.observacoes)
+    setIdObs(obs.id)
+    setDataInicioObs(new Date(obs.inicio))
+    setDataFimObs(new Date(obs.fim))
+    setCaixaCreateVisibleObsEdit(true)
+  }
+
+  const handleSaveObs = async () => {
+    var item = {
+      titulo: tituloObs,
+      observacoes: comentarioObs,
+      inicio: dataInicioObs,
+      fim: dataFimObs
+    }
+    if(isEditObs) {
+      let id = idObs
+      let res = await Api.updateObservacao(item, id)
+      if(!res.error) {
+        setTituloObs('')
+        setComentarioObs('')
+        setDataInicioObs(new Date())
+        setDataFimObs(new Date())
+        setCaixaCreateVisibleObsEdit(false)
+        setIsEditObs(false)
+        alert(res.msg)
+        location.reload()
+      }
+    } else {
+      let res = await Api.createObservacao(item)
+      if (!res.error) {
+        setTituloObs('')
+        setComentarioObs('')
+        setDataInicioObs(new Date())
+        setDataFimObs(new Date())
+        setCaixaCreateVisibleObsEdit(false)
+        setIsEditObs(false)
+        alert(res.msg)
+        location.reload()
+      }
+    }
+
+  }
+
+  const handleExcluiObsAviso = () => {
+    const confirmacao = window.confirm('Deseja mesmo excluir essa Observação?');
+    if (confirmacao) {
+      handleExcluiObs()
+    }
+  }
+
+  const handleExcluiObs = async () => {
+    let id = idObs
+    let res = await Api.deleteObservacao(id)
+    if(res.error) {
+      alert(res.error)
+      return
+    }
+    setTituloObs('')
+    setComentarioObs('')
+    setDataInicioObs(new Date())
+    setDataFimObs(new Date())
+    setCaixaCreateVisibleObsEdit(false)
+    setIsEditObs(false)
+    alert(res.msg)
+    location.reload()
+  }
+
 
   useEffect(()=>{
     handleTrocaAviao()
@@ -1068,6 +1173,12 @@ const Dashboard = () => {
     </button>
   )
 
+  const DateInputWhite = ({ value, onClick }) => (
+    <button style={{backgroundColor: '#fff', color: '#000'}} className="calendario" onClick={onClick}>
+    +
+    </button>
+  )
+
   return (
     <>
       <CCard className="mb-6" style={{flexDirection: 'column'}}>
@@ -1089,6 +1200,7 @@ const Dashboard = () => {
           </div>
           <div>
             <button onClick={handleCreate} className='calendario'>Criar Missão</button>
+            <button onClick={handleCreateObs} className='calendario'>Criar OBS</button>
           </div>
         </div>
          <div style={{display: 'flex', flexDirection:'column', width:'100%'}}>
@@ -1111,10 +1223,33 @@ const Dashboard = () => {
           </div>
           <div className='missoes'>
             
+          <div className='missao-item'> 
+            <div className='missao aviao'>OBS</div>
+            {semana.map(i=>{
+                return <div className='item-missao'>
+                  {observacoes.map(it=>{
+                    const [dia, mes, ano] = i.split("/");
+                    const data = new Date(ano, mes - 1, dia);
+                    let inicio_date = new Date(it.inicio)
+                    let fim_date = new Date(it.fim)
 
+                    if(data.getDate() <= fim_date.getDate() && data.getDate() >= inicio_date.getDate()) {
+                      return <div className='missao-white white' 
+                            //onMouseEnter={() => handleMouseEnterObs(it.observacoes)}
+                            onClick={()=>handleEditObs(it)}
+                            onMouseLeave={handleMouseLeaveObs}
+                      >
+                        
+                        {it.titulo}</div>
+                    }
+                  })}
+
+                </div>
+            })}
+          </div>
             {(data.avioes.length > 0 ) && data.avioes.map(item=>{
               return <div className='missao-item'>
-                <div className={item.situacao == 'IN' ? 'missao aviao in' : 'missao aviao'}>
+                <div className={(item.situacao == 'IN' || item.situacao == 'IS') ? 'missao aviao in' : 'missao aviao'}>
                 <span style={{cursor: 'pointer'}} onClick={()=>selectAviao(item.aviao, item.id, item.ciclos, item.horas, item.situacao, item.atualizador, item.atualizado)}>{item.aviao}</span>
                 <span className='dados-aviao'>Situação: {item.situacao}</span>
                 <span className='dados-aviao'>Ciclos: {item.ciclos}</span>
@@ -1443,6 +1578,110 @@ const Dashboard = () => {
         </div>
     
       </CCard>
+
+       { caixaObsVisible && <div className='modal-aviao' style={{alignItems: 'flex-end'}} onMouseLeave={handleMouseLeaveObs}>
+       <span onClick={()=>{
+          setCaixaObsVisible(false)
+        }}  className='title-modal' style={{color: '#fff', cursor: 'pointer'}}>X</span>
+            <p style={{fontSize: '1vw', color: '#fff', marginTop: 20 }}>{obsText}</p>
+                            
+            </div>}
+
+            { caixaCreateVisibleObs && <div className='modal-aviao' style={{alignItems: 'flex-end'}}>
+       <span onClick={()=>{
+          setCaixaCreateVisibleObs(false)
+        }}  className='title-modal' style={{color: '#fff', cursor: 'pointer'}}>X</span>
+            <div className='modal-body'>
+                <div className='item-body-modal'>
+                  <span className='text-modal' style={{color: '#fff'}}>Título:</span>
+                  <MaskedCiclos value={ciclos} onChange={setCiclos} />
+                </div>
+                <div className='item-body-modal'>
+                  <span className='text-modal' style={{color: '#fff'}}>Observação:</span>
+                  <MaskedCiclos value={ciclos} onChange={setCiclos} />
+                </div>
+            </div>
+                            
+            </div>}
+
+            { caixaCreateVisibleObsEdit && <div className='modal-aviao' style={{alignItems: 'flex-end'}}>
+       <span onClick={()=>{
+          setCaixaCreateVisibleObsEdit(false)
+        }}  className='title-modal' style={{color: '#fff', cursor: 'pointer'}}>X</span>
+            <div className='modal-body'>
+                <div className='item-body-modal'>
+                  <span className='text-modal' style={{color: '#fff'}}>Título:</span>
+                  <MaskedObs value={tituloObs} onChange={setTituloObs} />
+                </div>
+                <div className='item-body-modal'>
+                  <span className='text-modal' style={{color: '#fff'}}>Comentários:</span>
+                </div>
+                <MaskedObsTextArea linhas={4} value={comentarioObs} onChange={setComentarioObs} />
+                <div className='item-modal-body'>
+                <span style={{color:'#fff', marginRight:10}}>Inicio: </span>
+                <div style={{display: 'flex', color:'#fff', alignItems: 'center'}}>
+                  <div className='input-obs'>                  
+                    {dataInicioObs.toLocaleString([], { year: 'numeric', month: '2-digit', day: '2-digit'})}
+                  </div>
+                   <div className='' style={{marginLeft:10}}>
+                      <DatePicker 
+                      selected={dataInicioObs}
+                      timeInputLabel={dataInicioObs}
+                      onChange={(date) => {
+                        //var offset = date.getTimezoneOffset();
+                        // Convertendo a data para UTC
+                        //date.setMinutes(date.getMinutes() - offset);
+                        setDataInicioObs(date);
+                        }}
+                      customInput={<DateInputWhite />}
+                      //showTimeSelect
+                      //timeFormat="HH:mm"
+                      timeIntervals={10}
+                      //dateFormat="LLL"
+                      timeZone="Etc/UTC"
+                      timeZoneData={[{ value: 'Etc/UTC', label: 'Zulu (GMT 0)' }]}
+                      />
+                      </div>
+                  </div>
+                </div>
+
+                <div className='item-modal-body'>
+                <span style={{color:'#fff', marginRight:10}}>Fim: </span>
+                <div style={{display: 'flex', color:'#fff', alignItems: 'center'}}>
+                <div className='input-obs'>
+                  {dataFimObs.toLocaleString([], { year: 'numeric', month: '2-digit', day: '2-digit'})}
+                </div>
+                   <div className='' style={{marginLeft:10}}>
+                      <DatePicker 
+                      selected={dataFimObs}
+                      timeInputLabel={dataFimObs}
+                      onChange={(date) => {
+                        //var offset = date.getTimezoneOffset();
+                        // Convertendo a data para UTC
+                        //date.setMinutes(date.getMinutes() - offset);
+                        setDataFimObs(date);
+                        }}
+                      customInput={<DateInputWhite />}
+                      //showTimeSelect
+                      timeFormat="HH:mm"
+                      timeIntervals={10}
+                      dateFormat="LLL"
+                      timeZone="Etc/UTC"
+                      timeZoneData={[{ value: 'Etc/UTC', label: 'Zulu (GMT 0)' }]}
+                      />
+                      </div>
+                  </div>
+                </div>
+                <div className='modal-bottom'>
+                  <button onClick={handleSaveObs} className='salvar'>{isEditObs ? 'Editar' : 'Salvar'}</button>
+                </div>
+                {isEditObs && 
+                <div className='modal-bottom'>
+                  <button onClick={handleExcluiObsAviso} className='excluir'>{'Excluir'}</button>
+                </div>}
+            </div>
+                            
+            </div>}
 
      {
       modalAviao &&  <div className='modal-aviao'>

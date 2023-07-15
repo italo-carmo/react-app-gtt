@@ -143,6 +143,25 @@ export default () => {
             let json = await request('PUT', `/aeronaves/${id}` , body, token)
             return json
         },
-        
+        getObservacoesData: async (body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('POST', '/observacoes/dias' , body, token)
+            return json
+        },
+        updateObservacao: async (body, id) => {
+            let token = localStorage.getItem('token')
+            let json = await request('PUT', `/observacoes/${id}` , body, token)
+            return json
+        },
+        createObservacao: async (body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('POST', '/observacoes' , body, token)
+            return json
+        },
+        deleteObservacao: async (id) => {
+            let token = localStorage.getItem('token')
+            let json = await request('DELETE', `/observacoes/${id}` , null, token)
+            return json
+        },
     }
 }
