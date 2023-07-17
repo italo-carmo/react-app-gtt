@@ -144,7 +144,6 @@ const Dashboard = () => {
     setOmis(omis_get)
 
     setTripulacao(tripulacao_get)
-    console.log(etapas_copy)
     let missoes_id = await Api.getMissoesAvioesId(id_missao)
     
     let missoes_filtered = missoes_id.data.filter(i=>{
@@ -153,8 +152,6 @@ const Dashboard = () => {
       }
     })
 
-    console.log(missoes_filtered[0].eventos)
-    console.log(missao.eventos)
     etapas_copy.eventos = missoes_filtered[0].eventos
     setEtapas(etapas_copy)
     setCaixaCreateVisible(true)
@@ -1286,8 +1283,11 @@ const Dashboard = () => {
                             <p style={{fontSize: '1vw'}}>Tripulação: {tripulacaoShow}</p>
                             
                           </div>}
-                          <div className='text-missao'>{it.missao.horaDep} {it.missao.dep}</div>  
-                          <div className='text-missao'>{it.missao.horaPouso} {it.missao.pouso} </div>
+                          {(it.missao.horaDep != it.missao.horaPouso) ? <>
+                            <div className='text-missao'>{it.missao.horaDep} {it.missao.dep}</div>  
+                            <div className='text-missao'>{it.missao.horaPouso} {it.missao.pouso} </div> </> :
+                            <div className='text-missao'>{it.missao.dep}</div>  
+                          }
                           </div>
                           }
                       })}

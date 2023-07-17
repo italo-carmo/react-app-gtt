@@ -324,20 +324,22 @@ const Omis = ({match}) => {
         </tr>
         {
           etapas.map(item=>{
-            return(
-              <tr>
-                <td>{item.data}</td>
-                <td>{item.horaDep}</td>
-                <td>{item.dep}</td>
-                <td>{item.horaPouso}</td>
-                <td>{item.pouso}</td>
-                <td>{item.tev}</td>
-                <td>{item.solo}</td>
-                <td>{item.alternativa}</td>
-                <td>{item.tev_alt}</td>
-                <td>{item.combustivel}</td>
-              </tr>
-            )
+            if(item.horaDep != item.horaPouso) {
+              return(
+                <tr>
+                  <td>{item.data}</td>
+                  <td>{item.horaDep}</td>
+                  <td>{item.dep}</td>
+                  <td>{item.horaPouso}</td>
+                  <td>{item.pouso}</td>
+                  <td>{item.tev}</td>
+                  <td>{item.solo}</td>
+                  <td>{item.alternativa}</td>
+                  <td>{item.tev_alt}</td>
+                  <td>{item.combustivel}</td>
+                </tr>
+              )
+            }
           })
         }
       </table>
