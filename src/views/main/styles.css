@@ -329,6 +329,13 @@ option {
 }
 
 @media (max-width:580px) {
+    .white, .red {
+        font-size: 0.9vw;
+    }
+
+    .text-missao {
+        font-size: 1vw !important;
+    }
     .modal-create-visible {
         width: 80%;
     }
@@ -346,7 +353,7 @@ option {
     color:#fff;
     border-radius: 5px;
     cursor: pointer;
-    font-size: 1.5vw;
+    font-size: 1.2vw;
 }
 
 .botao-aviao {
