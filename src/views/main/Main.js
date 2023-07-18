@@ -90,6 +90,15 @@ const Dashboard = () => {
   const [dataFimObs, setDataFimObs] = useState(new Date())
   const [idObs, setIdObs] = useState('')
   const [manutencoes, setManutencoes] = useState([])
+  const [isEditManut, setIsEditManut] = useState(false)
+  const [caixaCreateManutencaoVisible, setCaixaCreateManutencaoVisible]=useState(false)
+  const [tituloManutencao, setTituloManutencao] = useState('')
+  const [comentariosManutencao, setComentariosManutencao] = useState('')
+  const [dataInicioManut, setDataInicioManut] = useState(new Date())
+  const [dataFimManut, setDataFimManut] = useState(new Date())
+  const [idAeronaveManut, setIdAeronaveManut] = useState('')
+  const [idManut, setIdManut] = useState('')
+  const [aerononaveManut, setAerononaveManut] = useState('')
 
   const situacoes = ["DI", "DO", "IN", "IS"]
   const inputPousoRef = useRef(null)
@@ -398,6 +407,16 @@ const Dashboard = () => {
     setDataFimObs(hoje)
     setIsEditObs(false)
     setCaixaCreateVisibleObsEdit(true)
+  }
+
+  const handleCreateManut = async () => {
+    setTituloManutencao('')
+    setComentariosManutencao('')
+    var hoje = new Date(); // Cria um objeto Date com a data e hora atuais
+    setDataInicioManut(hoje)
+    setDataFimManut(hoje)
+    setIsEditManut(false)
+    setCaixaCreateManutencaoVisible(true)
   }
 
   const handleCancel = () => {
@@ -1093,6 +1112,28 @@ const Dashboard = () => {
     setCaixaCreateVisibleObsEdit(true)
   }
 
+  const handleEditmanut = (manut) => {
+    setIsEditManut(true)
+    setTituloManutencao(manut.titulo)
+    setComentariosManutencao(manut.descricao)
+    setIdManut(manut.id)
+    setAerononaveManut(manut.Aeronave.aeronave)
+    setIdAeronaveManut(manut.Aeronave.id)
+    let inicio_Date = new Date(manut.inicio)
+    let fim_Date = new Date(manut.fim)
+    var offset_inicio = inicio_Date.getTimezoneOffset();
+    // Convertendo a data para UTC
+    inicio_Date.setMinutes(inicio_Date.getMinutes() + offset_inicio);
+    var offset_fim = fim_Date.getTimezoneOffset();
+    // Convertendo a data para UTC
+    fim_Date.setMinutes(fim_Date.getMinutes() + offset_fim);
+    setDataInicioManut(inicio_Date)
+    setDataFimManut(fim_Date)
+    setCaixaCreateManutencaoVisible(true)
+  }
+
+  
+
   const handleSaveObs = async () => {
     var item = {
       titulo: tituloObs,
@@ -1129,6 +1170,67 @@ const Dashboard = () => {
 
   }
 
+  const handleSaveManut = async () => {
+    if(!aerononaveManut || aerononaveManut == '') {
+      alert('A Aeronave é obrigatória')
+      return
+    }
+    if(!tituloManutencao || tituloManutencao == '' || !comentariosManutencao || comentariosManutencao == '') {
+      alert('O Título e descrição são obrigatórios')
+      return
+    }
+    let inicio_copy = new Date(dataInicioManut)
+    let fim_copy = new Date(dataFimManut)
+    if(inicio_copy.getTime() > fim_copy.getTime()) {
+      alert('Data de término menor do que a de início')
+      return
+    }
+    var offset_inicio = inicio_copy.getTimezoneOffset();
+    // Convertendo a data para UTC
+    inicio_copy.setMinutes(inicio_copy.getMinutes() - offset_inicio);
+    var offset_fim = fim_copy.getTimezoneOffset();
+    // Convertendo a data para UTC
+    fim_copy.setMinutes(fim_copy.getMinutes() - offset_fim);
+
+    var item = {
+      titulo: tituloManutencao,
+      descricao: comentariosManutencao,
+      inicio: inicio_copy.toISOString(),
+      fim: fim_copy.toISOString(),
+      id_aviao: idAeronaveManut
+    }
+
+    if(isEditManut) {
+      let id = idManut
+      let res = await Api.updateManutencao(item, id)
+      if(res.error) {
+        alert(res.error)
+        return
+      }
+        setTituloManutencao('')
+        setComentariosManutencao('')
+        setDataInicioManut(new Date())
+        setDataFimManut(new Date())
+        setCaixaCreateManutencaoVisible(false)
+        setIsEditManut(false)
+        alert(res.msg)
+        location.reload()
+    } else {
+      let res = await Api.createManutencao(item)
+      if (!res.error) {
+        setTituloManutencao('')
+        setComentariosManutencao('')
+        setDataInicioManut(new Date())
+        setDataFimManut(new Date())
+        setCaixaCreateManutencaoVisible(false)
+        setIsEditManut(false)
+        alert(res.msg)
+        location.reload()
+      }
+    }
+
+  }
+
   const handleExcluiObsAviso = () => {
     const confirmacao = window.confirm('Deseja mesmo excluir essa Observação?');
     if (confirmacao) {
@@ -1149,6 +1251,31 @@ const Dashboard = () => {
     setDataFimObs(new Date())
     setCaixaCreateVisibleObsEdit(false)
     setIsEditObs(false)
+    alert(res.msg)
+    location.reload()
+  }
+
+
+  const handleExcluiManutAviso = () => {
+    const confirmacao = window.confirm('Deseja mesmo excluir essa Manutenção?');
+    if (confirmacao) {
+      handleExcluiManut()
+    }
+  }
+
+  const handleExcluiManut = async () => {
+    let id = idManut
+    let res = await Api.deleteManutencao(id)
+    if(res.error) {
+      alert(res.error)
+      return
+    }
+    setTituloManutencao('')
+    setComentariosManutencao('')
+    setDataInicioManut(new Date())
+    setDataFimManut(new Date())
+    setCaixaCreateManutencaoVisible(false)
+    setIsEditManut(false)
     alert(res.msg)
     location.reload()
   }
@@ -1216,6 +1343,7 @@ const Dashboard = () => {
           <div>
             <button onClick={handleCreate} className='calendario'>Criar Missão</button>
             <button onClick={handleCreateObs} className='calendario'>Criar OBS</button>
+            <button onClick={handleCreateManut} className='calendario'>Criar Manutenção</button>
           </div>
         </div>
          <div style={{display: 'flex', flexDirection:'column', width:'100%'}}>
@@ -1278,7 +1406,7 @@ const Dashboard = () => {
                         const manutencoesAeronave = aeronaves[aeronave];
                         return manutencoesAeronave.map((manutencao) => {
                           if ((aeronave == item.aviao) && data == i) {
-                            return <div className='missao-red red' key={manutencao.id}>
+                            return <div className='missao-red red' key={manutencao.id} onClick={()=>handleEditmanut(manutencao)}>
                             {manutencao.titulo}
                           </div>
                           }
@@ -1714,7 +1842,93 @@ const Dashboard = () => {
                             
             </div>}
 
-     {
+            { caixaCreateManutencaoVisible && <div className='modal-aviao' style={{alignItems: 'flex-end'}}>
+       <span onClick={()=>{
+          setCaixaCreateManutencaoVisible(false)
+        }}  className='title-modal' style={{color: '#fff', cursor: 'pointer'}}>X</span>
+            <div className='modal-body'>
+            <div style={{display: 'flex', justifyContent: 'space-between', marginTop:20, alignItems: 'center'}}>
+              <span style={{color:'#fff'}}>Avião:</span>
+              {aeronaves.map(item=>{
+                return <button onClick={()=>{
+                  setAerononaveManut(item.aeronave)
+                  setIdAeronaveManut(item.id)
+                  let etapas_copy = {...etapas}
+                  etapas_copy.aviao = item.aeronave
+              
+                  setEtapas(etapas_copy)
+                }} style={{backgroundColor: aerononaveManut == item.aeronave ? '#28a745' : '#FFF' , color: aerononaveManut == item.aeronave ? '#fff' : '#000'}} className='botao-aviao'>{item.aeronave}</button>
+              })}
+            </div>
+                <div className='item-body-modal'>
+                  <span className='text-modal' style={{color: '#fff'}}>Título:</span>
+                  <MaskedObs value={tituloManutencao} onChange={setTituloManutencao} />
+                </div>
+                <div className='item-body-modal'>
+                  <span className='text-modal' style={{color: '#fff'}}>Descricão:</span>
+                </div>
+                <MaskedObsTextArea linhas={4} value={comentariosManutencao} onChange={setComentariosManutencao} />
+                <div className='item-modal-body'>
+                <span style={{color:'#fff', marginRight:10}}>Inicio: </span>
+                <div style={{display: 'flex', color:'#fff', alignItems: 'center'}}>
+                  <div className='input-obs'>                  
+                  {dataInicioManut.toLocaleString([], { year: 'numeric', month: '2-digit', day: '2-digit', hour: 'numeric', minute: 'numeric'})+'Z'}
+                  </div>
+                   <div className='' style={{marginLeft:10}}>
+                      <DatePicker 
+                      selected={dataInicioManut}
+                      timeInputLabel={dataInicioManut}
+                      onChange={(date) => {
+                        setDataInicioManut(date);
+                        }}
+                      customInput={<DateInputWhite />}
+                      showTimeSelect
+                      timeFormat="HH:mm"
+                      timeIntervals={10}
+                      dateFormat="LLL"
+                      timeZone="Etc/UTC"
+                      timeZoneData={[{ value: 'Etc/UTC', label: 'Zulu (GMT 0)' }]}
+                      />
+                      </div>
+                  </div>
+                </div>
+
+                <div className='item-modal-body'>
+                <span style={{color:'#fff', marginRight:10}}>Fim: </span>
+                <div style={{display: 'flex', color:'#fff', alignItems: 'center'}}>
+                <div className='input-obs'>
+                {dataFimManut.toLocaleString([], { year: 'numeric', month: '2-digit', day: '2-digit', hour: 'numeric', minute: 'numeric'})+'Z'}
+                </div>
+                   <div className='' style={{marginLeft:10}}>
+                      <DatePicker 
+                      selected={dataFimManut}
+                      timeInputLabel={dataFimManut}
+                      onChange={(date) => {
+                        setDataFimManut(date);
+                        }}
+                      customInput={<DateInputWhite />}
+                      showTimeSelect
+                      timeFormat="HH:mm"
+                      timeIntervals={10}
+                      dateFormat="LLL"
+                      timeZone="Etc/UTC"
+                      timeZoneData={[{ value: 'Etc/UTC', label: 'Zulu (GMT 0)' }]}
+                      />
+                      </div>
+                  </div>
+                </div>
+                <div className='modal-bottom'>
+                  <button onClick={handleSaveManut} className='salvar'>{isEditManut ? 'Editar' : 'Salvar'}</button>
+                </div>
+                {isEditManut && 
+                <div className='modal-bottom'>
+                  <button onClick={handleExcluiManutAviso} className='excluir'>{'Excluir'}</button>
+                </div>}
+            </div>
+                            
+            </div>}
+
+      {
       modalAviao &&  <div className='modal-aviao'>
       <div className='modal-topo'>
       <div className='nome-aviao'>

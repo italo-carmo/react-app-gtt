@@ -173,5 +173,20 @@ export default () => {
             let json = await request('DELETE', `/observacoes/${id}` , null, token)
             return json
         },
+        createManutencao: async (body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('POST', '/manutencoes' , body, token)
+            return json
+        },
+        updateManutencao: async (body, id) => {
+            let token = localStorage.getItem('token')
+            let json = await request('PUT', `/manutencoes/${id}` , body, token)
+            return json
+        },
+        deleteManutencao: async (id) => {
+            let token = localStorage.getItem('token')
+            let json = await request('DELETE', `/manutencoes/${id}` , null, token)
+            return json
+        },
     }
 }
