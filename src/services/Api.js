@@ -53,6 +53,11 @@ export default () => {
             let json = await request('POST', '/missoes/avioes/lista' , body, token)
             return json
         },
+        getManutencoesAvioes: async (body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('POST', '/manutencoes/datas' , body, token)
+            return json
+        },
         getMissoesAvioesId: async (id) => {
             let token = localStorage.getItem('token')
             let json = await request('POST', `/missoes/avioes/lista/${id}` , null, token)

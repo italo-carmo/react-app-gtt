@@ -89,6 +89,7 @@ const Dashboard = () => {
   const [dataInicioObs, setDataInicioObs] = useState(new Date())
   const [dataFimObs, setDataFimObs] = useState(new Date())
   const [idObs, setIdObs] = useState('')
+  const [manutencoes, setManutencoes] = useState([])
 
   const situacoes = ["DI", "DO", "IN", "IS"]
   const inputPousoRef = useRef(null)
@@ -239,6 +240,7 @@ const Dashboard = () => {
     setSemana(dias)
     getMissoes(dias, reseta)
     getObservacoes(dias)
+    getManutencoes(dias)
   }
 
   const getObservacoes = async (dias) => {
@@ -247,6 +249,16 @@ const Dashboard = () => {
     let res_obs = await Api.getObservacoesData({inicio, fim})
     if(!res_obs.error) {
       setObservacoes(res_obs.data)
+    }
+  }
+
+  const getManutencoes = async (dias) => {
+    let inicio = dias[0]
+    let fim = dias[6]
+    let res_manutencoes = await Api.getManutencoesAvioes({inicio, fim})
+    if(!res_manutencoes.error) {
+      setManutencoes(res_manutencoes.data)
+      console.log(res_manutencoes)
     }
   }
 
@@ -1260,6 +1272,19 @@ const Dashboard = () => {
                 </div>
                 {semana.map(i=>{
                  return <div className='item-missao'>
+                     {Object.keys(manutencoes).map((data) => {
+                      const aeronaves = manutencoes[data];
+                      return Object.keys(aeronaves).map((aeronave) => {
+                        const manutencoesAeronave = aeronaves[aeronave];
+                        return manutencoesAeronave.map((manutencao) => {
+                          if ((aeronave == item.aviao) && data == i) {
+                            return <div className='missao-red red' key={manutencao.id}>
+                            {manutencao.titulo}
+                          </div>
+                          }
+                        });
+                      });
+                    })}
                       {item.eventos.length >0 && item.eventos.map(it=>{
                           if(it.data == i) {
                             return <div 

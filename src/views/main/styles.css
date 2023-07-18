@@ -132,6 +132,20 @@
     padding:10px;
     width: 90%;
 }
+.missao-red {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-right: 1px solid #c4302b;
+    border-bottom: 1px solid #c4302b;
+    font-size: 1vw;
+    padding:10px;
+    width: 90%;
+    color:#fff;
+}
+
+
 
 .bottom-table {
     display: flex;
@@ -157,6 +171,16 @@ option {
 
 .white {
     background-color: #fff;
+    margin: 5px;
+    padding: 5px;
+    font-size: 0.6vw;
+    border-radius: 5px;
+    position: relative;
+    cursor: pointer;
+}
+
+.red {
+    background-color: #c4302b;
     margin: 5px;
     padding: 5px;
     font-size: 0.6vw;
