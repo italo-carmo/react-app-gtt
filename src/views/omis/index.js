@@ -154,6 +154,7 @@ const Omis = ({match}) => {
     var ofrag = dados.ofrag
     var horas = dados.horas
     var omis = dados.omis
+    var comentarios = dados.comentarios ? dados.comentarios : 'NIL'
   } else {
     var tripulacao = []
     var etapas = []
@@ -163,6 +164,7 @@ const Omis = ({match}) => {
     var ofrag = ''
     var horas = ''
     var omis = ''
+    var comentarios = ''
   }
 
 
@@ -361,6 +363,10 @@ SUPERIOR A 15 MIN, EM QUALQUER PERNA DESCRITA NA OM;</span>
             <span className='ofrag-bold'>Esforço Aéreo:</span>
             <span>CONFORME OFRAG</span>
           </div>
+        </div>
+        <div className='ofrag-div'>
+          <span className='ofrag-bold'>Comentários:</span>
+          <span>{comentarios}</span>
         </div>
       </div>
 

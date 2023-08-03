@@ -595,6 +595,7 @@ const Dashboard = () => {
   }
 
   const getOmis = async () => {
+      let comentarios = etapas.eventos[0].comentarios
       let tripulacao = []
       etapas.eventos[0].missao.tripulacao.forEach(item=>{
         tripulacao.push(item)
@@ -734,6 +735,7 @@ const Dashboard = () => {
         aviao: aeronaveMissao,
         omis: etapas.eventos[0].missao.omis,
         ofrag: etapas.eventos[0].ofrag,
+        comentarios,
         horas: converterMinutosParaHoras(minutos_totais)
       }
 
@@ -762,6 +764,8 @@ const Dashboard = () => {
       }
       if(comentarios != '') {
         item.comentarios = comentarios
+      } else {
+        item.comentarios = 'NIL'
       }
       await Api.updateMissao(item, id_missao)
     }
