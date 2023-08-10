@@ -26,6 +26,7 @@ img {
 
 .ordem-de-missao {
     display: flex;
+    align-items: center;
 }
 
 .ordem-demissao-bold {
@@ -84,6 +85,7 @@ img {
 
 .div-tripulante {
     border-top:1px solid #000;
+    font-size: 12px;
 }
 
 .div-pilotos {
@@ -133,6 +135,7 @@ table {
 td, th {
     border: 1px solid black;
     text-align: center;
+    font-size: 12px;
 }
 
 th {
@@ -167,15 +170,15 @@ th {
 }
 
 span {
-    font-size: 14px;
+    font-size: 12px;
 }
 
 td {
-    font-size: 14px;
+    font-size: 12px;
 }
 
 .assinatura {
-    margin-top:150px;
+    margin-top:100px;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -189,9 +192,18 @@ td {
     flex-direction: column;
     margin-left:20px;
     margin-right:20px;
+    page-break-inside: avoid;
 }
 
 .nome {
-    border-top:1px solid #000;
+
     padding-top:10px;
+}
+
+h5 {
+    font-size: 12px;
+}
+
+h5 {
+    font-size: 12px;
 }

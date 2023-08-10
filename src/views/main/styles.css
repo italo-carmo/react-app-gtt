@@ -207,6 +207,7 @@ option {
     border-radius: 5px;
     position: relative;
     cursor: pointer;
+    border: 1px solid #fff;
 }
 
 .modal-create {
