@@ -213,6 +213,8 @@ const Dashboard = () => {
     }
   };
 
+
+
   
 
   const handleCloseModal = () => {
@@ -739,10 +741,171 @@ const Dashboard = () => {
         horas: converterMinutosParaHoras(minutos_totais)
       }
 
-      const dados = encodeURIComponent(JSON.stringify(item_dados));
-      const url = `/omis?dados=${dados}`;
-      window.open(url, '_blank');
+      const form = document.createElement('form');
+      form.method = 'post';
+      form.action = '/omis';
+      form.target = '_blank'; // Abre em uma nova aba
+      
+      // Crie um campo de input para cada parâmetro e adicione-os ao formulário
+      for (const key in item_dados) {
+        if (item_dados.hasOwnProperty(key)) {
+          const input = document.createElement('input');
+          input.type = 'hidden';
+          input.name = key;
+          input.value = JSON.stringify(item_dados[key]);
+          form.appendChild(input);
+        }
+      }
+      
+      // Adicione o formulário à página e o envie
+      document.body.appendChild(form);
+      form.submit();
+      
+      // Remova o formulário da página (opcional)
+      document.body.removeChild(form);
+
+      //const dados = encodeURIComponent(JSON.stringify(item_dados));
+      //const url = `/omis?dados=${dados}`;
+      //window.open(url, '_blank');
   }
+
+  const getLanche = async () => {
+    let tripulacao = []
+    etapas.eventos[0].missao.tripulacao.forEach(item=>{
+      tripulacao.push(item)
+    })
+    let etapas_final = []
+
+    const editData = (data) => {
+      let [dataSplit, horaSplit] = data.split('T')
+      let [ano, mes, dia] = dataSplit.split('-')
+      let [hora, minuto, segundo] = horaSplit.split(':')
+      let data_formatted = dia+'/'+mes+'/'+ano
+      let hora_formatted = hora+':'+minuto
+      return [data_formatted, hora_formatted]
+    }
+
+    function calcularTempoDeVoo(distancia) {
+      var velocidade = 400; // Velocidade em NM/hora
+    
+      // Calcula o tempo de voo em horas
+      var tempoEmHoras = distancia / velocidade;
+    
+      // Calcula os minutos restantes
+      var minutosRestantes = Math.round((tempoEmHoras % 1) * 60);
+    
+      // Ajusta os minutos para o múltiplo de 5 mais próximo
+      minutosRestantes = Math.ceil(minutosRestantes / 5) * 5;
+    
+      // Se os minutos forem 60, ajusta para a próxima hora
+      if (minutosRestantes === 60) {
+        tempoEmHoras += 1;
+        minutosRestantes = 0;
+      }
+    
+      // Formata o resultado
+      var horas = Math.floor(tempoEmHoras);
+      if(horas <= 9) {
+        horas = '0'+horas.toString()
+      }
+      
+    
+      // Adiciona um zero à esquerda se os minutos forem menores que 10
+      var minutos = minutosRestantes < 10 ? '0' + minutosRestantes : minutosRestantes;
+    
+      // Retorna o tempo de voo formatado
+      return horas+':'+minutos;
+    }
+
+
+    function converterMilissegundosParaHoraMinuto(milissegundos) {
+      // Calcula o número de horas
+      var horas = Math.floor(milissegundos / 3600000);
+      
+      if(horas <= 9) {
+        horas = '0'+horas.toString()
+      }
+      // Calcula o número de minutos restantes
+      var minutosRestantes = Math.ceil((milissegundos % 3600000) / 60000);
+      if(minutosRestantes <= 9) {
+        minutosRestantes = '0'+minutosRestantes.toString()
+      }
+      // Formata o resultado
+      var resultado = horas+":"+minutosRestantes
+    
+      return resultado;
+    }
+
+    async function processaEventos() {
+      var horas_missao = 0
+      for (let i = 0; i < etapas.eventos.length; i++) {
+        let item = etapas.eventos[i]
+        var horaSolo = "01:00"
+        if (i != etapas.eventos.length - 1) {
+          let horaProximaDep = etapas.eventos[i + 1].missao.depISO
+          var horaSoloMili =
+            new Date(horaProximaDep) - new Date(item.missao.pousoISO)
+          if (horaSoloMili < 28800000) {
+            var horaSolo = converterMilissegundosParaHoraMinuto(horaSoloMili)
+          }
+        }
+        let [dataDep, horaDep] = editData(item.missao.depISO)
+        let [dataPouso, horaPouso] = editData(item.missao.pousoISO)
+        let tev = converterMilissegundosParaHoraMinuto(
+          new Date(item.missao.pousoISO) - new Date(item.missao.depISO)
+        )
+        var tev_alt = "00:00"
+        let res_alternativa = await Api.getDistanciaAerodromos({
+          origem: item.missao.pouso,
+          destino: item.missao.alternativa,
+        })
+        if (!res_alternativa.error) {
+          let distancia = res_alternativa.data.distancia
+          var tev_alt = calcularTempoDeVoo(distancia)
+        }
+        let dado = {
+          data: dataDep,
+          depIso: item.missao.depISO,
+          horaDep: horaDep,
+          dep: item.missao.dep,
+          horaPouso: horaPouso,
+          pouso: item.missao.pouso,
+          tev: tev,
+          solo: horaSolo,
+          alternativa: item.missao.alternativa,
+          tev_alt: tev_alt,
+          combustivel: item.missao.combustivel_minimo,
+        }
+        etapas_final.push(dado)
+      }
+    }
+    
+    await processaEventos();
+
+    tripulacao.sort(function(a, b) {
+      return a.antiguidade - b.antiguidade
+    });
+
+    var minutos_totais = 0
+    etapas_final.forEach(item=>{
+      let [horas, minutos] = item.tev.split(':')
+      let tempo = parseInt(horas)*60+(parseInt(minutos))
+      minutos_totais+=tempo
+    })
+
+    let item_dados = {
+      tripulacao,
+      etapas: etapas_final,
+      data: etapas_final[0].data,
+      aviao: aeronaveMissao,
+      omis: etapas.eventos[0].missao.omis,
+    }
+
+    const dados = encodeURIComponent(JSON.stringify(item_dados));
+    const url = `/lanche?dados=${dados}`;
+    window.open(url, '_blank');
+}
+
 
   const getCombustivelMinimo = async (dep, pouso, alternativa) => {
     if(dep != '' && pouso!= '' && alternativa != '' && dep.length == 4 && pouso.length == 4 && alternativa.length == 4) {
@@ -1462,7 +1625,9 @@ const Dashboard = () => {
             <div className='criar-div'>
               <h3 style={{color:'#fff'}}>{editMission ? 'Editar' :  'Criar'} Missão</h3>
               {editMission ? <button className='ver-omis' onClick={getOmis}>Ver OMIS</button>: null}
+              {editMission ? <button className='ver-omis' onClick={getLanche}>Ver Lanche</button>: null}
             </div>
+            
 
             <div style={{display: 'flex', justifyContent: 'space-between', marginTop:20, alignItems: 'center'}}>
               <span style={{color:'#fff'}}>Avião:</span>
