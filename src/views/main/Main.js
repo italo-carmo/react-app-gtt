@@ -133,13 +133,13 @@ const Dashboard = () => {
   };
 
   const handleEditMission = async (missao, missaoClicked) => {
+    console.log(missao)
     setLoadingExcluir(false)
     setLoadingSave(false)
     setEditMission(true)
     setEditEtapa(false)
     let id_missao = missaoClicked.missao.id_missao
     setIdMissaoEdit(id_missao)
-    setOfragSelected(missao.eventos[0].id_documento)
     let etapas_copy = {...etapas}
     let tripulacao_get = []
 
@@ -161,8 +161,8 @@ const Dashboard = () => {
         return i
       }
     })
-
     etapas_copy.eventos = missoes_filtered[0].eventos
+    setOfragSelected(etapas_copy.eventos[0].id_documento)
     setEtapas(etapas_copy)
     setCaixaCreateVisible(true)
     setAeronaveMissao(missao.aviao)
