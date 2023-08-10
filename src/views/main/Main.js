@@ -99,6 +99,7 @@ const Dashboard = () => {
   const [idAeronaveManut, setIdAeronaveManut] = useState('')
   const [idManut, setIdManut] = useState('')
   const [aerononaveManut, setAerononaveManut] = useState('')
+  const [ofragToShow, setOfragToShow] = useState('')
 
   const situacoes = ["DI", "DO", "IN", "IS"]
   const inputPousoRef = useRef(null)
@@ -107,15 +108,15 @@ const Dashboard = () => {
 
   const Api = useApi()
 
-  const handleMouseEnter = (id,etapa) => {
+  const handleMouseEnter = (id,etapa, missao) => {
     setId(id)
-    
     let trip_show = etapa.tripulacao.map(item=>{
       return item.trigrama
     })
 
     setTripulacaoShow(trip_show.join('/'))
     setEtapaToShow(etapa)
+    setOfragToShow(missao.ofrag)
     setCaixaVisible(true);
   };
 
@@ -1588,7 +1589,7 @@ const Dashboard = () => {
                           if(it.data == i) {
                             return <div 
                             onClick={()=>handleEditMission(item, it)} className={it.missao.tripulacao.length<=0 ? 'missao-white white' : 'missao-white green'}
-                            onMouseEnter={() => handleMouseEnter(it.missao.id, it.missao)}
+                            onMouseEnter={() => handleMouseEnter(it.missao.id, it.missao, it)}
                             onMouseLeave={handleMouseLeave}
                             >  
                          {caixaVisible && (id ==it.missao.id) && (it.missao.id != null)  &&  <div
@@ -1604,6 +1605,7 @@ const Dashboard = () => {
                             }}
                           >
                             <p style={{fontSize: '1vw'}}>OMIS: {etapaToShow.omis}</p>
+                            <p style={{fontSize: '1vw'}}>{ofragToShow}</p>
                             <p style={{fontSize: '1vw'}}>Tripulação: {tripulacaoShow}</p>
                             
                           </div>}
