@@ -177,6 +177,26 @@ option {
     border-radius: 5px;
     position: relative;
     cursor: pointer;
+    border: 1px solid #000;
+}
+
+.data {
+    display: flex;
+    flex-direction: column;
+}
+
+
+
+.green {
+    background-color:  #28a745;
+    margin: 5px;
+    padding: 5px;
+    border: 1px solid #fff;
+    font-size: 0.6vw;
+    border-radius: 5px;
+    position: relative;
+    cursor: pointer;
+    color:#fff;
 }
 
 .red {

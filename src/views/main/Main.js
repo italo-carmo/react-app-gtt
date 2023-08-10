@@ -1511,6 +1511,7 @@ const Dashboard = () => {
           <div className='topo'>
             <div className='missao'>Avião</div>
             {semana.map((item,index)=>{
+              const diasDaSemana = ['DOM', 'SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SÁB'];
                 var hoje_dia = hoje.getDate()
                 let hoje_mes = (hoje.getMonth()+1)
                 let hoje_ano = hoje.getFullYear()
@@ -1522,7 +1523,16 @@ const Dashboard = () => {
                 }
                 let hoje_string = hoje_dia+'/'+hoje_mes+'/'+hoje_ano
 
-                return <div  className='missao' style={{backgroundColor: hoje_string == item ? '#46a31d' : '#000'}}>{item}</div>
+                const partesData = item.split('/'); // Dividir a string em partes: [09, 08, 2023]
+                const data = new Date(partesData[2], partesData[1] - 1, partesData[0]); // Mês é indexado em 0
+
+                // Agora, pegamos o dia da semana (0 = Domingo, 1 = Segunda, ...)
+                const diaDaSemanaIndex = data.getUTCDay(); // Retorna um número entre 0 e 6
+
+                // Finalmente, pegamos o nome do dia da semana a partir do array
+                const diaDaSemanaNome = diasDaSemana[diaDaSemanaIndex];
+
+                return <div  className='missao data' style={{backgroundColor: hoje_string == item ? '#46a31d' : '#000'}}><span>{item}</span> <span>{diaDaSemanaNome}</span></div>
             })}
           </div>
           <div className='missoes'>
@@ -1577,7 +1587,7 @@ const Dashboard = () => {
                       {item.eventos.length >0 && item.eventos.map(it=>{
                           if(it.data == i) {
                             return <div 
-                            onClick={()=>handleEditMission(item, it)} className='missao-white white'
+                            onClick={()=>handleEditMission(item, it)} className={it.missao.tripulacao.length<=0 ? 'missao-white white' : 'missao-white green'}
                             onMouseEnter={() => handleMouseEnter(it.missao.id, it.missao)}
                             onMouseLeave={handleMouseLeave}
                             >  
