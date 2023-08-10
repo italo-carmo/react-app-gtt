@@ -757,16 +757,10 @@ const Dashboard = () => {
         }
       }
       
-      // Adicione o formulário à página e o envie
-      document.body.appendChild(form);
-      form.submit();
-      
-      // Remova o formulário da página (opcional)
-      document.body.removeChild(form);
 
-      //const dados = encodeURIComponent(JSON.stringify(item_dados));
-      //const url = `/omis?dados=${dados}`;
-      //window.open(url, '_blank');
+      const dados = encodeURIComponent(JSON.stringify(item_dados));
+      const url = `/omis?dados=${dados}`;
+      window.open(url, '_blank');
   }
 
   const getLanche = async () => {
