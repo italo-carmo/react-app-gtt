@@ -101,7 +101,7 @@ const Dashboard = () => {
   const [aerononaveManut, setAerononaveManut] = useState('')
   const [ofragToShow, setOfragToShow] = useState('')
 
-  const situacoes = ["DI", "DO", "IN", "IS"]
+  const situacoes = ["DI", "DO", "IN", "IS", "II"]
   const inputPousoRef = useRef(null)
   const inputAltRef = useRef(null)
   const divRef = useRef(null);
@@ -1251,6 +1251,7 @@ const Dashboard = () => {
       alert('Todos os campos são obrigatórios')
       return
     }
+
     let item = {
       situacao: situacaoAviao,
       ciclos,
@@ -1573,7 +1574,7 @@ const Dashboard = () => {
           </div>
             {(data.avioes.length > 0 ) && data.avioes.map(item=>{
               return <div className='missao-item'>
-                <div className={(item.situacao == 'IN' || item.situacao == 'IS') ? 'missao aviao in' : 'missao aviao'}>
+                <div className={(item.situacao == 'IN' || item.situacao == 'IS' || item.situacao == 'II') ? 'missao aviao in' : 'missao aviao'}>
                 <span style={{cursor: 'pointer'}} onClick={()=>selectAviao(item.aviao, item.id, item.ciclos, item.horas, item.situacao, item.atualizador, item.atualizado)}>{item.aviao}</span>
                 <span className='dados-aviao'>Situação: {item.situacao}</span>
                 <span className='dados-aviao'>Ciclos: {item.ciclos}</span>
