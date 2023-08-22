@@ -116,7 +116,16 @@ const Dashboard = () => {
 
     setTripulacaoShow(trip_show.join('/'))
     setEtapaToShow(etapa)
-    setOfragToShow(missao.ofrag)
+    if(missao.id_documento) {
+      let index_ofrag = ofrags.findIndex(i =>i.id == missao.id_documento)
+      if(index_ofrag > -1) {
+        setOfragToShow(ofrags[index_ofrag].numero)
+      } else {
+        setOfragToShow('OFRAG S/N')
+      }
+    } else {
+      setOfragToShow('OFRAG S/N')
+    }
     setCaixaVisible(true);
   };
 
@@ -134,7 +143,6 @@ const Dashboard = () => {
   };
 
   const handleEditMission = async (missao, missaoClicked) => {
-    console.log(missao)
     setLoadingExcluir(false)
     setLoadingSave(false)
     setEditMission(true)
@@ -567,6 +575,7 @@ const Dashboard = () => {
            let res_etapa = await Api.createEtapa(data_item)
          
            if(res_etapa.error) {
+            console.log(res_etapa)
              alert(res.etapa.error)
              return
            } else {
