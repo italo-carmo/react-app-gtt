@@ -915,7 +915,12 @@ const Dashboard = () => {
     if(dep != '' && pouso!= '' && alternativa != '' && dep.length == 4 && pouso.length == 4 && alternativa.length == 4) {
       let res = await Api.getCombMinimo({dep, pouso, alternativa})
       if(!res.error) {
-        setCombustivel(res.data.combustivel)
+        if(parseInt(res.data.combustivel) < 10000) {
+          setCombustivel(10000)
+        } else {
+          setCombustivel(res.data.combustivel)
+        }
+
       } 
     }
   }
