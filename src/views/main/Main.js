@@ -296,10 +296,6 @@ const Dashboard = () => {
       setErrorCumprir('A aeronave é obrigatória')
       return
     }
-    if(editMission) {
-      setErrorCumprir('Exclua essa OMIS e crie outra para cumprir com OFRAG')
-      return
-    }
     if(ofragSelected != '') {
       let res = await Api.getOfrag(ofragSelected)
       
@@ -1687,7 +1683,7 @@ const Dashboard = () => {
                     </option>
                   )) : null}
                 </select>
-                {(ofragSelected != '' && !editMission && !cumprir) ? (!loadingCumprir ? <button onClick={getOfrag} className='cumprir'>Cumprir</button> : <LoadingSpinner/>) : null}
+                {(ofragSelected != '' && !cumprir) ? (!loadingCumprir ? <button onClick={getOfrag} className='cumprir'>Cumprir</button> : <LoadingSpinner/>) : null}
                 {errorCumprir != '' &&  <div style={{marginTop:10}} class="alert alert-danger" role="alert">
                     {errorCumprir}
                 </div>}
