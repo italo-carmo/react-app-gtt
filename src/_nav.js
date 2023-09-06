@@ -42,6 +42,11 @@ const _nav = [
     items: [
       {
         component: CNavItem,
+        name: 'Etapas',
+        to: '/etapas',
+      },
+      {
+        component: CNavItem,
         name: 'Esforço Aéreo',
         to: '/grafico-esforco',
       },

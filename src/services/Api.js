@@ -188,5 +188,10 @@ export default () => {
             let json = await request('DELETE', `/manutencoes/${id}` , null, token)
             return json
         },
+        getEtapas: async () => {
+            let token = localStorage.getItem('token')
+            let json = await request('GET', '/estatistica/paudesebo' , null, token)
+            return json
+        },
     }
 }
