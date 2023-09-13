@@ -1110,6 +1110,8 @@ const Dashboard = () => {
       manutencao: null
     }
     etapas_copy.eventos[indexEditEtapa] = evento
+
+    etapas_copy.eventos.sort((evento1, evento2) => new Date(evento1.missao.depISO) - new Date(evento2.missao.depISO));
     setEtapas(etapas_copy)
 
     var index = data_copy.avioes.findIndex(i=>i.aviao == aeronaveMissao)
@@ -1117,6 +1119,7 @@ const Dashboard = () => {
       let index_data = data_copy.avioes[index].eventos.findIndex(i=>i.missao.id == find_item.missao.id)
       if(index_data >=0) {
         data_copy.avioes[index].eventos[index_data] = evento
+        data_copy.avioes[index].eventos.sort((evento1, evento2) => new Date(evento1.missao.depISO) - new Date(evento2.missao.depISO));
         setData(data_copy)
       }
     }
@@ -1191,7 +1194,10 @@ const Dashboard = () => {
     var index = data_copy.avioes.findIndex(i=>i.aviao == aeronaveMissao)
     if(index >=0) {
       data_copy.avioes[index].eventos.push(evento)
+      data_copy.avioes[index].eventos.sort((evento1, evento2) => new Date(evento1.missao.depISO) - new Date(evento2.missao.depISO));
     }
+
+    etapas_copy.eventos.sort((evento1, evento2) => new Date(evento1.missao.depISO) - new Date(evento2.missao.depISO));
     setData(data_copy)
     setEtapas(etapas_copy)
 
@@ -1787,6 +1793,7 @@ const Dashboard = () => {
             }
 
             {etapas.eventos.map((item, index)=>{
+   
               return <EtapaItem 
                       edit={()=>{
                         setIndexEditEtapa(index)
@@ -1810,7 +1817,9 @@ const Dashboard = () => {
                       pouso={item.missao.pouso} 
                       alternativa={item.missao.alternativa}
                       horaDep={item.missao.horaDep} 
-                      horaPouso={item.missao.horaPouso} />
+                      horaPouso={item.missao.horaPouso}
+                      data={item.data}
+                      />
             })}
 
     <div className='add-trip'>

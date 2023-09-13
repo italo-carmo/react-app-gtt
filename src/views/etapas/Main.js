@@ -25,6 +25,7 @@ const Etapas = () => {
   const [icao, setIcao] = useState('');
   const [esforcos, setEsforcos] = useState([]);
   const [aeronaves, setAeronaves] = useState([]);
+  const [horasTotais, setHorasTotais] = useState(0);
 
   const Api = useApi()
 
@@ -36,6 +37,17 @@ const Etapas = () => {
           return item
         } 
       })
+      var horas_totais = 0
+      res_filtered.forEach(item => {
+        let [horasStr, minutosStr] = item.tempo_de_voo.split(':');
+        const horas = parseInt(horasStr, 10);
+        const minutos = parseInt(minutosStr, 10);
+        
+        const minutosTotais = horas * 60 + minutos;
+        horas_totais += minutosTotais;
+      });
+
+      setHorasTotais(horas_totais)
       setEtapas(res_filtered)
       setEtapasFiltered(res_filtered)
     }
@@ -93,20 +105,25 @@ const Etapas = () => {
   const botaoStyle = {
     backgroundColor: 'green',
     color: 'white',
-    padding: '5px 20px',
+    padding: '2px 20px',
     borderRadius: '5px',
     border: 'none',
     cursor: 'pointer',
+    fontSize: 12,
+    width:80,
+    marginBottom:5
   };
 
   const botaoStyleRed = {
     backgroundColor: 'black',
     color: 'white',
-    padding: '5px 20px',
+    padding: '2px 20px',
     borderRadius: '5px',
     border: 'none',
     cursor: 'pointer',
-    marginLeft:5
+    marginLeft:5,
+    fontSize: 12,
+    width:80
   };
 
   const inputStyleLow = {
@@ -170,6 +187,25 @@ const Etapas = () => {
     setTrigrama('');
     setIcao('');
     setEtapasFiltered(etapas)
+  }
+
+  const minutosParaHorasMinutos = (minutos) => {
+    const horas = Math.floor(minutos / 60);
+    const minutosRestantes = minutos % 60;
+    const horasFormatadas = horas.toString().padStart(2, '0');
+    const minutosFormatados = minutosRestantes.toString().padStart(2, '0');
+    return `${horasFormatadas}:${minutosFormatados}`;
+  }
+
+  const handleCheck = async (id, check) => {
+    let res = await Api.checkEtapa(id, {check})
+    if(res.error) {
+      alert(res.error)
+      return
+    } else {
+      alert(res.msg)
+      getEtapas()
+    }
   }
 
   // Função de ação para lidar com o clique no botão "Filtrar"
@@ -245,10 +281,22 @@ const Etapas = () => {
       })
     }
 
+    var horas_totais = 0
+    new_etapas.forEach(item => {
+      let [horasStr, minutosStr] = item.tempo_de_voo.split(':');
+      const horas = parseInt(horasStr, 10);
+      const minutos = parseInt(minutosStr, 10);
+      
+      const minutosTotais = horas * 60 + minutos;
+      horas_totais += minutosTotais;
+    });
+
+    setHorasTotais(horas_totais)
+
     setEtapasFiltered(new_etapas)
   };
 
-
+  var horas_iniciais = 0
   return (
     <>
       <CCard className="mb-6" style={{flexDirection: 'column', overflowX: 'auto', maxHeight:700 }}>
@@ -313,13 +361,16 @@ const Etapas = () => {
         <input type="text" maxLength="3" value={trigrama} onChange={handleTrigramaChange} style={inputStyleLow}/>
       </div>
         {/* Botão "Filtrar" */}
-        <button style={botaoStyle} onClick={handleFiltrarClick}>Filtrar</button>
-        <button style={botaoStyleRed} onClick={handleLimpar}>Limpar</button>
+        <div className='buttons'>
+          <button style={botaoStyle} onClick={handleFiltrarClick}>Filtrar</button>
+          <button style={botaoStyleRed} onClick={handleLimpar}>Limpar</button>
+        </div>
 
     </div>
         <table>
           <thead className='tabela-cabecalho'>
             <tr>
+              <th>Checado</th>
               <th>Data</th>
               <th>OFRAG</th>
               <th>OMIS</th>
@@ -362,7 +413,10 @@ const Etapas = () => {
               <th>LUB</th>
             </tr>
           </thead>
-          {etapasFiltered.map(item=>{
+          {etapasFiltered.map((item, index)=>{
+            if(index == 0) {
+              horas_iniciais = 0
+            }
              let index_1p = item.Usuarios.findIndex(i=>i.posicao == '1P')
              let index_2p = item.Usuarios.findIndex(i=>i.posicao == '2P')
              let index_in = item.Usuarios.findIndex(i=>i.posicao == 'IN')
@@ -391,6 +445,11 @@ const Etapas = () => {
              let index_a3 = item.Usuarios.findIndex(i=>i.posicao == 'A3')
             return (
               <tr>
+                  <td>
+                    {!item.checada ? <button onClick={()=>handleCheck(item.id, !item.checada)} className='check'/> : 
+                    <img onClick={()=>handleCheck(item.id, !item.checada)} className='correct' src='https://www.1gtt.com.br/correct.png' />
+                     }
+                    </td>
                   <td>{transformData(item.dep)}</td>
                   <td>{item.Missao.Ofrag.numero ? transformOfrag(item.Missao.Ofrag.numero) : ''}</td>
                   <td>{item.Missao.numero}</td>
@@ -434,6 +493,48 @@ const Etapas = () => {
               </tr>
             )
           })}
+          <tr className='bold'>
+                  <td>TOTAL</td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td>{minutosParaHorasMinutos(horasTotais)}</td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+              </tr>
         </table>
       </CCard>
      

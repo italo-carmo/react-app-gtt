@@ -548,6 +548,7 @@ th, td {
     padding: 8px; /* Espaçamento interno para o conteúdo das células */
     text-align: left; /* Alinhamento do texto à esquerda */
     font-size:12px;
+    text-align: center; 
 }
 
 .tabela-cabecalho {
@@ -564,4 +565,43 @@ th {
 
 tr:nth-child(odd) {
     background-color: #ddd; /* Cor de fundo para linhas pares */
+}
+
+.bold {
+    font-weight: bold;
+}
+
+.buttons {
+    flex:1;
+    flex-direction: column;
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+}
+
+.check {
+    width:20px;
+    height:20px;
+    border-radius:10px;
+    margin:0;
+    border:2px solid #000;
+}
+
+.date {
+    font-size: 10px;
+}
+
+.check-green {
+    background-color: #28a745;
+    width:20px;
+    height:20px;
+    border-radius:10px;
+    margin:0;
+    border:2px solid #000;
+}
+
+.correct {
+    width:20px;
+    height:20px;
+    cursor: pointer;
 }

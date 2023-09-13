@@ -193,5 +193,10 @@ export default () => {
             let json = await request('GET', '/estatistica/paudesebo' , null, token)
             return json
         },
+        checkEtapa: async (id, body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('POST', `/etapas/check/${id}` , body, token)
+            return json
+        },
     }
 }
