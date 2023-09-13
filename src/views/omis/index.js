@@ -155,6 +155,7 @@ const Omis = ({match}) => {
     var horas = dados.horas
     var omis = dados.omis
     var comentarios = dados.comentarios ? dados.comentarios : 'NIL'
+    var configuracao = dados.configuracao ? dados.configuracao : ''
   } else {
     var tripulacao = []
     var etapas = []
@@ -353,7 +354,7 @@ const Omis = ({match}) => {
 SUPERIOR A 15 MIN, EM QUALQUER PERNA DESCRITA NA OM;</span>
         <span className='ordem'>2 - ANORMALIDADES DA MISSÃO DEVEM SER IMEDIATAMENTE REPORTADAS AO OCC DA BAAN
 (62) 99948-9751;</span>
-        <span className='ordem'>3 - CONFIGURAÇÃO INICIAL: 36 ASSENTOS + 7 PALLETS;</span>
+        <span className='ordem'>3 - CONFIGURAÇÃO INICIAL: {configuracao}</span>
         <div className='bottom-ordens'>
           <div className='ofrag-div'>
             <span className='ofrag-bold'>OFRAG:</span>

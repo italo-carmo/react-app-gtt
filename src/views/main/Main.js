@@ -86,6 +86,7 @@ const Dashboard = () => {
   const [caixaCreateVisibleObsEdit, setCaixaCreateVisibleObsEdit]=useState(false)
   const [tituloObs, setTituloObs] = useState('')
   const [comentarioObs, setComentarioObs] = useState('')
+  const [configuracao, setConfiguracao] = useState('')
   const [dataInicioObs, setDataInicioObs] = useState(new Date())
   const [dataFimObs, setDataFimObs] = useState(new Date())
   const [idObs, setIdObs] = useState('')
@@ -156,8 +157,10 @@ const Dashboard = () => {
       tripulacao_get.push(item)
     })
     let comentarios_get = missaoClicked.comentarios
+    let configuracao_get = missaoClicked.configuracao
 
     setComentarios(comentarios_get)
+    setConfiguracao(configuracao_get)
 
     let omis_get = missaoClicked.missao.omis
     setOmis(omis_get)
@@ -604,6 +607,7 @@ const Dashboard = () => {
 
   const getOmis = async () => {
       let comentarios = etapas.eventos[0].comentarios
+      let configuracao_get = etapas.eventos[0].configuracao
       let tripulacao = []
       etapas.eventos[0].missao.tripulacao.forEach(item=>{
         tripulacao.push(item)
@@ -744,6 +748,7 @@ const Dashboard = () => {
         omis: etapas.eventos[0].missao.omis,
         ofrag: etapas.eventos[0].ofrag,
         comentarios,
+        configuracao: configuracao_get,
         horas: converterMinutosParaHoras(minutos_totais)
       }
 
@@ -935,6 +940,7 @@ const Dashboard = () => {
       } else {
         item.comentarios = 'NIL'
       }
+      item.configuracao = configuracao
       await Api.updateMissao(item, id_missao)
     }
     let etapas_map = etapas.eventos.map(async (i)=>{
@@ -1039,6 +1045,7 @@ const Dashboard = () => {
     setDataEtapaPouso(new Date())
     setAeronaveMissao( '')
     setComentarios('')
+    setConfiguracao('')
     setOmis('')
     setOfragSelected('')
     setEditMission(false)
@@ -1647,8 +1654,8 @@ const Dashboard = () => {
             </div>
             <div className='criar-div'>
               <h3 style={{color:'#fff'}}>{editMission ? 'Editar' :  'Criar'} Missão</h3>
-              {editMission ? <button className='ver-omis' onClick={getOmis}>Ver OMIS</button>: null}
-              {editMission ? <button className='ver-omis' onClick={getLanche}>Ver Lanche</button>: null}
+              {editMission && tripulacao.length > 0 ? <button className='ver-omis' onClick={getOmis}>Ver OMIS</button>: null}
+              {editMission && tripulacao.length > 0 ? <button className='ver-omis' onClick={getLanche}>Ver Lanche</button>: null}
             </div>
             
 
@@ -1910,6 +1917,10 @@ const Dashboard = () => {
         })}
     </div>
 
+    </div>
+    <div style={{marginTop: 30, display: 'flex', flexDirection: 'column'}}>
+      <span style={{color:'#fff'}}>Configuração: </span>
+      <textarea value={configuracao} onChange={(e)=>setConfiguracao(e.target.value)} style={{borderRadius: 10, padding:5}}></textarea>
     </div>
     <div style={{marginTop: 30, display: 'flex', flexDirection: 'column'}}>
       <span style={{color:'#fff'}}>Comentários: </span>
