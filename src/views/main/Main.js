@@ -306,6 +306,15 @@ const Dashboard = () => {
         let etapas_get = []
         var data_copy = {...data}
 
+        var etapas_copy = {...etapas}
+
+        etapas_copy.eventos.forEach(it=>{
+          var index = data_copy.avioes.findIndex(i=>i.aviao == aeronaveMissao)
+          if(index >=0) {
+            data_copy.avioes[index].eventos = data_copy.avioes[index].eventos.filter(i=>i.missao.depISO != it.missao.depISO && i.missao.dep != it.missao.dep)
+          }
+        })
+
         res.data.missoes[0].rotaOfrag.etapas.forEach(item=>{
           let [data, horas] = item.dataHoraDecolagem.split('T')
           let [ano, mes, dia] = data.split('-')
@@ -334,7 +343,6 @@ const Dashboard = () => {
             },
             manutencao: null
           }
-
           var index = data_copy.avioes.findIndex(i=>i.aviao == aeronaveMissao)
           if(index >=0) {
             data_copy.avioes[index].eventos.push(evento)
@@ -342,7 +350,6 @@ const Dashboard = () => {
           etapas_get.push(evento)
         })
         if(etapas_get.length > 0) {
-          let etapas_copy = {...etapas}
           etapas_copy.eventos = etapas_get
           setEtapas(etapas_copy)
           setErrorEtapaAdd('')
@@ -1692,7 +1699,7 @@ const Dashboard = () => {
                   <option value="">Selecione uma opção</option>
                   {(ofrags.length > 0) ?  ofrags.map((option, index) => (
                     <option style={{backgroundColor: '#fff'}} key={index} value={option.id}>
-                      {option.numero}
+                      {option.numero} - V{option.versao}
                     </option>
                   )) : null}
                 </select>
@@ -1817,6 +1824,12 @@ const Dashboard = () => {
                           }
                         })
                         etapas_copy.eventos = eventos_filter
+                        let data_copy = {...data}
+                        var index_data = data_copy.avioes.findIndex(i=>i.aviao == aeronaveMissao)
+                        if(index_data >=0) {
+                          data_copy.avioes[index_data].eventos = data_copy.avioes[index_data].eventos.filter((itm, idx)=>itm.missao.dep != item.missao.dep && itm.missao.horaDep != item.missao.horaDep && itm.missao.pouso != item.missao.pouso)
+                          setData(data_copy)
+                        }
                         setEtapas(etapas_copy)
                       }} 
                       index={index} 
