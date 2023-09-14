@@ -84,6 +84,7 @@ const Dashboard = () => {
   const [obsText, setObsText] = useState('')
   const [isEditObs, setIsEditObs] = useState(false)
   const [caixaCreateVisibleObsEdit, setCaixaCreateVisibleObsEdit]=useState(false)
+  const [caixaCreateVisibleSobreaviso, setCaixaCreateVisibleSobreaviso]=useState(false)
   const [tituloObs, setTituloObs] = useState('')
   const [comentarioObs, setComentarioObs] = useState('')
   const [configuracao, setConfiguracao] = useState('')
@@ -101,6 +102,10 @@ const Dashboard = () => {
   const [idManut, setIdManut] = useState('')
   const [aerononaveManut, setAerononaveManut] = useState('')
   const [ofragToShow, setOfragToShow] = useState('')
+  const [sobreavisos, setSobreavisos] = useState([])
+  const [dataSobreaviso,setDataSobreaviso] = useState(new Date())
+  const [editSobreaviso, setEditSobreaviso] = useState(false)
+  const [idSobreaviso,setIdSobreaviso] = useState('')
 
   const situacoes = ["DI", "DO", "IN", "IS", "II"]
   const inputPousoRef = useRef(null)
@@ -262,6 +267,7 @@ const Dashboard = () => {
     }
     setSemana(dias)
     getMissoes(dias, reseta)
+    getSobreavisos(dias)
     getObservacoes(dias)
     getManutencoes(dias)
   }
@@ -272,6 +278,15 @@ const Dashboard = () => {
     let res_obs = await Api.getObservacoesData({inicio, fim})
     if(!res_obs.error) {
       setObservacoes(res_obs.data)
+    }
+  }
+
+  const getSobreavisos = async (dias) => {
+    let inicio = dias[0]
+    let fim = dias[6]
+    let res = await Api.getSobreavisos({inicio, fim})
+    if(!res.error) {
+      setSobreavisos(res.data)
     }
   }
 
@@ -424,6 +439,13 @@ const Dashboard = () => {
     setDataFimObs(hoje)
     setIsEditObs(false)
     setCaixaCreateVisibleObsEdit(true)
+  }
+
+  const handleCreateSobreaviso = () => {
+    setDataSobreaviso(new Date())
+    setTripulacao([])
+    setEditSobreaviso(false)
+    setCaixaCreateVisibleSobreaviso(true)
   }
 
   const handleCreateManut = async () => {
@@ -1062,6 +1084,11 @@ const Dashboard = () => {
     getDias(firstDay, true)
   }
 
+  const handleLimparSobreaviso = () => {
+    setTripulacao([])
+    setDataSobreaviso(new Date())
+  }
+
   const handleEditEtapa = async () => {
     setErrorEtapaAdd('')
     if(icaoDestinoAdd == '' || icaoOrigemAdd == '' || icaoAltAdd == '' || dataEtapa == '' || dataEtapaPouso == '') {
@@ -1305,6 +1332,21 @@ const Dashboard = () => {
     setCaixaCreateVisibleObsEdit(true)
   }
 
+  const handleEditaSobreaviso = (sobreaviso) => {
+    setEditSobreaviso(true)
+    setIdSobreaviso(sobreaviso.id)
+    setDataEtapa(new Date(sobreaviso.data))
+    setCaixaCreateVisibleSobreaviso(true)
+    let trigramas_sobreaviso = []
+    sobreaviso.Usuarios.forEach(i=>{
+      trigramas_sobreaviso.push({id: i.id, trigrama: i.Trigrama.trigrama, funcao: i.FuncoesAbordo.nome}
+  )
+    })
+    setTripulacao(trigramas_sobreaviso)
+  }
+
+  
+
   const handleEditmanut = (manut) => {
     setIsEditManut(true)
     setTituloManutencao(manut.titulo)
@@ -1325,6 +1367,55 @@ const Dashboard = () => {
     setCaixaCreateManutencaoVisible(true)
   }
 
+  const handleCloseModalSobreaviso = () => {
+    handleLimparSobreaviso()
+    setCaixaCreateVisibleSobreaviso(false)
+  }
+
+
+  const handleCriaSobreaviso = async () => {
+    var id_usuarios = []
+    tripulacao.forEach(item=>{
+      id_usuarios.push(item.id)
+    })
+
+    let item = {
+      id_usuarios,
+      data:dataEtapa.toISOString()
+    }
+
+    let res = await Api.createSobreaviso(item)
+    if(res.error) {
+      alert(res.error)
+      return
+    } 
+
+    alert(res.msg)
+    handleLimparSobreaviso()
+    setCaixaCreateVisibleSobreaviso(false)
+    location.reload()
+  }
+
+  const handleEditaItemSobreaviso = async() =>{
+    var id_usuarios = []
+    tripulacao.forEach(item=>{
+      id_usuarios.push(item.id)
+    })
+
+    let item = {
+      id_usuarios,
+    }
+
+    let res = await Api.updateSobreaviso(idSobreaviso,item)
+    if(res.error) {
+      alert(res.error)
+      return
+    } 
+    alert(res.msg)
+    handleLimparSobreaviso()
+    setCaixaCreateVisibleSobreaviso(false)
+    location.reload()
+  }
   
 
   const handleSaveObs = async () => {
@@ -1431,6 +1522,27 @@ const Dashboard = () => {
     }
   }
 
+  const handleExcluiSobreavisAviso = () => {
+    const confirmacao = window.confirm('Deseja mesmo excluir esse Sobreaviso?');
+    if (confirmacao) {
+      handleExcluiSobreaviso()
+    }
+  }
+
+  const handleExcluiSobreaviso = async () => {
+    let id = idSobreaviso
+    let res = await Api.deleteSobreaviso(id)
+    if(res.error) {
+      alert(res.error)
+      return
+    }
+    setDataEtapa(new Date())
+    setCaixaCreateVisibleSobreaviso(false)
+    setEditSobreaviso(false)
+    alert(res.msg)
+    location.reload()
+  }
+
   const handleExcluiObs = async () => {
     let id = idObs
     let res = await Api.deleteObservacao(id)
@@ -1534,9 +1646,10 @@ const Dashboard = () => {
           <button className="calendario" onClick={() => handleCheckDate(7, false)}>&gt;&gt;</button>
           </div>
           <div>
-            <button onClick={handleCreate} className='calendario'>Criar Missão</button>
-            <button onClick={handleCreateObs} className='calendario'>Criar OBS</button>
-            <button onClick={handleCreateManut} className='calendario'>Criar Manutenção</button>
+            <button onClick={handleCreate} className='calendario'>Missão</button>
+            <button onClick={handleCreateSobreaviso} className='calendario'>Sobreaviso</button>
+            <button onClick={handleCreateObs} className='calendario'>OBS</button>
+            <button onClick={handleCreateManut} className='calendario'>Manutenção</button>
           </div>
         </div>
          <div style={{display: 'flex', flexDirection:'column', width:'100%'}}>
@@ -1652,6 +1765,56 @@ const Dashboard = () => {
                 })}
               </div>
             })}
+            <div className='missao-item'>
+              <div className='missao aviao'>Sobreaviso</div>
+              {semana.map(i=>{
+            
+                return <div className='item-missao'>
+                      {sobreavisos.map(it=>{
+                        const [dia, mes, ano] = i.split("/");
+                        const data = new Date(ano, mes - 1, dia);
+                        let data_sobreaviso = new Date(it.data)
+
+                        const diaData1 = data.getDate();
+                        const mesData1 = data.getMonth();
+                        const anoData1 = data.getFullYear();
+                        
+                        const diaData2 = data_sobreaviso.getDate();
+                        const mesData2 = data_sobreaviso.getMonth();
+                        const anoData2 = data_sobreaviso.getFullYear();
+
+                        const saoIguais = diaData1 === diaData2 && mesData1 === mesData2 && anoData1 === anoData2;
+
+                        if(saoIguais) {
+                          var trigramas_pilotos = []
+                          var trigramas_mecanicos = []
+                          var trigramas_loadmasters = []
+                          var trigramas_comissarios = []
+                          it.Usuarios.forEach((itm,idx)=>{
+                            if(itm.FuncoesAbordo.nome == 'Piloto') {
+                              trigramas_pilotos.push(itm.Trigrama.trigrama)
+                            }
+                            if(itm.FuncoesAbordo.nome == 'Mecânico de Voo') {
+                              trigramas_mecanicos.push(itm.Trigrama.trigrama)
+                            }
+                            if(itm.FuncoesAbordo.nome == 'Loadmaster') {
+                              trigramas_loadmasters.push(itm.Trigrama.trigrama)
+                            }
+                            if(itm.FuncoesAbordo.nome == 'Comissário') {
+                              trigramas_comissarios.push(itm.Trigrama.trigrama)
+                            }
+                          })
+                          return <div className='div-trigramas-sobreaviso' onClick={()=>handleEditaSobreaviso(it)}>
+                                    <span className='trigrama-sobreaviso'>{trigramas_pilotos.join(' / ')}</span>
+                                    <span className='trigrama-sobreaviso'>{trigramas_mecanicos.join(' / ')}</span>
+                                    <span className='trigrama-sobreaviso'>{trigramas_loadmasters.join(' / ')}</span>
+                                    <span className='trigrama-sobreaviso'>{trigramas_comissarios.join(' / ')}</span>
+                                  </div>
+                        }
+                      })}
+                </div>
+              })}
+            </div>
             </div>
          </div>
 
@@ -1954,6 +2117,135 @@ const Dashboard = () => {
 
     </div>
         </div>
+
+        <div ref={divRef} className={caixaCreateVisibleSobreaviso ? 'modal-create-visible' : 'modal-create'}>
+        <div style={{display: 'flex', justifyContent:'flex-end',margin:10, cursor: 'pointer'}}>
+          <div onClick={handleCloseModalSobreaviso} style={{color:'#fff'}}>X</div>
+        </div>
+        <div className='criar-div'>
+          <h3 style={{color:'#fff'}}>{editSobreaviso ? 'Editar' :  'Criar'} Sobreaviso</h3>
+        </div>
+        <div className='form-area'>
+        <div className='form-add' style={{alignItems: 'center'}}>
+                   <span style={{color:'#000'}}>Data: </span>
+                  <div style={{display: 'flex', alignItems: 'center'}}>
+                  {dataEtapa.toLocaleString([], { year: 'numeric', month: '2-digit', day: '2-digit'})}
+                   <div className='' style={{marginLeft:10}}>
+                  <DatePicker 
+                      selected={dataEtapa}
+                      timeInputLabel={dataEtapa}
+                      onChange={(date) => {
+                        //var offset = date.getTimezoneOffset();
+                        // Convertendo a data para UTC
+                        //date.setMinutes(date.getMinutes() - offset);
+                        setDataEtapa(date);
+                        }}
+                      customInput={<DateInputWhite />}
+                      //showTimeSelect
+                      //timeFormat="HH:mm"
+                      timeIntervals={10}
+                      //dateFormat="LLL"
+                      timeZone="Etc/UTC"
+                      timeZoneData={[{ value: 'Etc/UTC', label: 'Zulu (GMT 0)' }]}
+                      />    
+                      </div>
+                  </div>
+                 </div>
+        </div>
+        
+
+        <div className='add-trip'>
+        <span style={{color:'#fff'}}>Tripulação:</span>
+        <MaskedInputTrigrama maxLength={3} value={trigrama} onChange={setTrigrama} onKeyPress={handleKeyPressTripulante} />
+
+        {errorTripulante &&
+        <div style={{marginTop:10}} class="alert alert-danger" role="alert">
+        {errorTripulante}
+        </div>}
+        <div className='tripulante-row'>
+        <span style={{color:'#fff'}} className='tripulante'>Pilotos:</span>
+        </div>
+        <div className='caixa-tripulante'>
+        {tripulacao.map(item=>{
+        if (item.funcao == 'Piloto') {
+        return (
+        <div className='tripulante-item' >
+        {item.trigrama}
+        <img style={{marginLeft:5, cursor: 'pointer'}} onClick={()=>handleDeleteTrip(item.id)} src='https://www.1gtt.com.br/app/close.png' width='15px'/>
+        </div>
+        )
+        }
+        })}
+        </div>
+
+        <div className='tripulante-row'>
+        <span style={{color:'#fff'}} className='tripulante'>Mecânicos:</span>
+        </div>
+        <div className='caixa-tripulante'>
+        {tripulacao.map(item=>{
+        if (item.funcao == 'Mecânico de Voo') {
+        return (
+        <div className='tripulante-item' >
+        {item.trigrama}
+        <img style={{marginLeft:5, cursor: 'pointer'}} onClick={()=>handleDeleteTrip(item.id)} src='https://www.1gtt.com.br/app/close.png' width='15px'/>
+        </div>
+        )
+        }
+        })}
+        </div>
+
+        <div className='tripulante-row'>
+        <span style={{color:'#fff'}} className='tripulante'>Loadmasters:</span>
+        </div>
+        <div className='caixa-tripulante'>
+        {tripulacao.map(item=>{
+        if (item.funcao == 'Loadmaster') {
+        return (
+        <div className='tripulante-item' >
+        {item.trigrama}
+        <img style={{marginLeft:5, cursor: 'pointer'}} onClick={()=>handleDeleteTrip(item.id)} src='https://www.1gtt.com.br/app/close.png' width='15px'/>
+        </div>
+        )
+        }
+        })}
+        </div>
+
+        <div className='tripulante-row'>
+        <span style={{color:'#fff'}} className='tripulante'>Comissários:</span>
+        </div>
+        <div className='caixa-tripulante'>
+        {tripulacao.map(item=>{
+        if (item.funcao == 'Comissário') {
+        return (
+        <div className='tripulante-item' >
+        {item.trigrama}
+        <img style={{marginLeft:5, cursor: 'pointer'}} onClick={()=>handleDeleteTrip(item.id)} src='https://www.1gtt.com.br/app/close.png' width='15px'/>
+        </div>
+        )
+        }
+        })}
+        </div>
+
+
+</div>
+
+
+<div className='botoes-add-etapa' style={{marginTop:30}}>
+<button className='cancelar' style={{fontSize: '1vw'}} onClick={()=>{
+  setTripulacao([])
+}}>Limpar</button>
+{loadingSave ? <LoadingSpinner/> : <button className='adicionar' style={{fontSize: '1vw'}} onClick={editSobreaviso ? handleEditaItemSobreaviso :handleCriaSobreaviso}>{editSobreaviso ? 'Editar Sobreaviso' : 'Criar Sobreaviso'}</button>}
+</div>
+
+<div className='botoes-add-etapa' style={{marginTop:30, justifyContent:'center'}}>
+{loadingExcluir && <LoadingSpinner />}
+{
+editSobreaviso ? <button className='cancelar' style={{fontSize: '1.3vw'}} onClick={handleExcluiSobreavisAviso}>Excluir Sobreaviso</button>
+:  <></>
+}
+
+</div>
+</div>
     
       </CCard>
 

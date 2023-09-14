@@ -198,5 +198,28 @@ export default () => {
             let json = await request('POST', `/etapas/check/${id}` , body, token)
             return json
         },
+        getSobreavisos: async (body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('POST', '/sobreaviso/data' , body, token)
+            return json
+        },
+        createSobreaviso: async (body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('POST', '/sobreaviso' , body, token)
+            return json
+        },
+        updateSobreaviso: async (id, body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('PUT', `/sobreaviso/${id}` , body, token)
+            return json
+        },
+        deleteSobreaviso: async (id) => {
+            let token = localStorage.getItem('token')
+            let json = await request('DELETE', `/sobreaviso/${id}` , null, token)
+            return json
+        },
+
+        
     }
+
 }

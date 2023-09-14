@@ -15,6 +15,26 @@
     display: flex;
 }
 
+.trigrama-sobreaviso {
+    font-size: 1vw;
+    color:#fff;
+    
+}
+
+.div-trigramas-sobreaviso {
+    background-color: #28a745;
+    border: 1px solid #fff;
+    border-radius: 10px;
+    margin:5px;
+    padding:5px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    flex:1;
+    width:90%;
+    cursor: pointer;
+}
+
 .aviao-item-topo {
     background-color: #191c24;
     color:#fff;
