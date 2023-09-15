@@ -1378,10 +1378,11 @@ const Dashboard = () => {
     tripulacao.forEach(item=>{
       id_usuarios.push(item.id)
     })
-
+    let new_data = new Date(dataEtapa)
+    new_data.setHours(3, 30, 0, 0);
     let item = {
       id_usuarios,
-      data:dataEtapa.toISOString()
+      data:new_data.toISOString()
     }
 
     let res = await Api.createSobreaviso(item)
@@ -1912,7 +1913,7 @@ const Dashboard = () => {
                       customInput={<DateInput />}
                       showTimeSelect
                       timeFormat="HH:mm"
-                      timeIntervals={10}
+                      timeIntervals={5}
                       dateFormat="LLL"
                       timeZone="Etc/UTC"
                       timeZoneData={[{ value: 'Etc/UTC', label: 'Zulu (GMT 0)' }]}
@@ -1949,7 +1950,7 @@ const Dashboard = () => {
                       customInput={<DateInput />}
                       showTimeSelect
                       timeFormat="HH:mm"
-                      timeIntervals={10}
+                      timeIntervals={5}
                       dateFormat="LLL"
                       />
                       </div>
@@ -2143,7 +2144,7 @@ const Dashboard = () => {
                       customInput={<DateInputWhite />}
                       //showTimeSelect
                       //timeFormat="HH:mm"
-                      timeIntervals={10}
+                      timeIntervals={5}
                       //dateFormat="LLL"
                       timeZone="Etc/UTC"
                       timeZoneData={[{ value: 'Etc/UTC', label: 'Zulu (GMT 0)' }]}
@@ -2306,7 +2307,7 @@ editSobreaviso ? <button className='cancelar' style={{fontSize: '1.3vw'}} onClic
                       customInput={<DateInputWhite />}
                       //showTimeSelect
                       //timeFormat="HH:mm"
-                      timeIntervals={10}
+                      timeIntervals={5}
                       //dateFormat="LLL"
                       timeZone="Etc/UTC"
                       timeZoneData={[{ value: 'Etc/UTC', label: 'Zulu (GMT 0)' }]}
@@ -2334,7 +2335,7 @@ editSobreaviso ? <button className='cancelar' style={{fontSize: '1.3vw'}} onClic
                       customInput={<DateInputWhite />}
                       //showTimeSelect
                       timeFormat="HH:mm"
-                      timeIntervals={10}
+                      timeIntervals={5}
                       dateFormat="LLL"
                       timeZone="Etc/UTC"
                       timeZoneData={[{ value: 'Etc/UTC', label: 'Zulu (GMT 0)' }]}
@@ -2395,7 +2396,7 @@ editSobreaviso ? <button className='cancelar' style={{fontSize: '1.3vw'}} onClic
                       customInput={<DateInputWhite />}
                       showTimeSelect
                       timeFormat="HH:mm"
-                      timeIntervals={10}
+                      timeIntervals={5}
                       dateFormat="LLL"
                       timeZone="Etc/UTC"
                       timeZoneData={[{ value: 'Etc/UTC', label: 'Zulu (GMT 0)' }]}
@@ -2420,7 +2421,7 @@ editSobreaviso ? <button className='cancelar' style={{fontSize: '1.3vw'}} onClic
                       customInput={<DateInputWhite />}
                       showTimeSelect
                       timeFormat="HH:mm"
-                      timeIntervals={10}
+                      timeIntervals={5}
                       dateFormat="LLL"
                       timeZone="Etc/UTC"
                       timeZoneData={[{ value: 'Etc/UTC', label: 'Zulu (GMT 0)' }]}
