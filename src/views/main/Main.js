@@ -642,6 +642,7 @@ const Dashboard = () => {
 
   const getOmis = async () => {
       let comentarios = etapas.eventos[0].comentarios
+      let esforco_missao = etapas.eventos[0].esforco
       let configuracao_get = etapas.eventos[0].configuracao
       let tripulacao = []
       etapas.eventos[0].missao.tripulacao.forEach(item=>{
@@ -783,6 +784,7 @@ const Dashboard = () => {
         omis: etapas.eventos[0].missao.omis,
         ofrag: etapas.eventos[0].ofrag,
         comentarios,
+        esforco: esforco_missao,
         configuracao: configuracao_get,
         horas: converterMinutosParaHoras(minutos_totais)
       }

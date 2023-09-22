@@ -144,7 +144,6 @@ const Omis = ({match}) => {
   const dados_params = params.get('dados');
 
   const dados = JSON.parse(decodeURIComponent(dados_params));
-  console.log(dados)
   if(dados) {
     var tripulacao = dados.tripulacao
     var etapas = dados.etapas
@@ -156,6 +155,7 @@ const Omis = ({match}) => {
     var omis = dados.omis
     var comentarios = dados.comentarios ? dados.comentarios : 'NIL'
     var configuracao = dados.configuracao ? dados.configuracao : ''
+    var esforco = dados.esforco
   } else {
     var tripulacao = []
     var etapas = []
@@ -166,6 +166,7 @@ const Omis = ({match}) => {
     var horas = ''
     var omis = ''
     var comentarios = ''
+    var esforco = ''
   }
 
 
@@ -362,7 +363,7 @@ SUPERIOR A 15 MIN, EM QUALQUER PERNA DESCRITA NA OM;</span>
           </div>
           <div className='ofrag-div'>
             <span className='ofrag-bold'>Esforço Aéreo:</span>
-            <span>CONFORME OFRAG</span>
+            <span>{esforco}</span>
           </div>
         </div>
         <div className='ofrag-div'>
