@@ -67,6 +67,7 @@ const Dashboard = () => {
   const [trigrama, setTrigrama] = useState('')
   const [omis, setOmis] = useState('')
   const [comentarios, setComentarios] = useState('')
+  const [esforco, setEsforco] = useState('')
   const [ofragSelected, setOfragSelected] = useState('')
   const [ofrags, setOfrags] = useState([])
   const [combustivel, setCombustivel] = useState(0)
@@ -162,9 +163,11 @@ const Dashboard = () => {
       tripulacao_get.push(item)
     })
     let comentarios_get = missaoClicked.comentarios
+    let esforco_get = missaoClicked.esforco
     let configuracao_get = missaoClicked.configuracao
 
     setComentarios(comentarios_get)
+    setEsforco(esforco_get)
     setConfiguracao(configuracao_get)
 
     let omis_get = missaoClicked.missao.omis
@@ -573,6 +576,9 @@ const Dashboard = () => {
       if(ofragSelected != '') {
         item.id_documento = ofragSelected
       }
+      if(esforco != '') {
+        item.esforco = esforco
+      }
       let res = await Api.createMissao(item)
       if(!res.error) {
          let id_missao = res.data.id
@@ -970,6 +976,7 @@ const Dashboard = () => {
         item.comentarios = 'NIL'
       }
       item.configuracao = configuracao
+      item.esforco = esforco
       await Api.updateMissao(item, id_missao)
     }
     let etapas_map = etapas.eventos.map(async (i)=>{
@@ -1074,6 +1081,7 @@ const Dashboard = () => {
     setDataEtapaPouso(new Date())
     setAeronaveMissao( '')
     setComentarios('')
+    setEsforco('')
     setConfiguracao('')
     setOmis('')
     setOfragSelected('')
@@ -2102,6 +2110,10 @@ const Dashboard = () => {
     <div style={{marginTop: 30, display: 'flex', flexDirection: 'column'}}>
       <span style={{color:'#fff'}}>Comentários: </span>
       <textarea value={comentarios} onChange={(e)=>setComentarios(e.target.value)} style={{borderRadius: 10, padding:5}}></textarea>
+    </div>
+    <div style={{marginTop: 30, display: 'flex', flexDirection: 'column'}}>
+      <span style={{color:'#fff'}}>Esforço Aéreo: </span>
+      <textarea value={esforco} onChange={(e)=>setEsforco(e.target.value)} style={{borderRadius: 10, padding:5}}></textarea>
     </div>
 
     <div className='botoes-add-etapa' style={{marginTop:30}}>
