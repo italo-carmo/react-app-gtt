@@ -113,6 +113,11 @@ export default () => {
             let json = await request('PUT', `/missoes/${id}` , body, token)
             return json
         },
+        getMissao: async (id) => {
+            let token = localStorage.getItem('token')
+            let json = await request('GET', `/missoes/${id}` , null, token)
+            return json
+        },
         getTrigrama: async (trigrama) => {
             let token = localStorage.getItem('token')
             let json = await request('GET', `/trigramas/dados/${trigrama}` , null, token)
@@ -218,8 +223,41 @@ export default () => {
             let json = await request('DELETE', `/sobreaviso/${id}` , null, token)
             return json
         },
-
-        
+        getEtapaById: async (id) => {
+            let token = localStorage.getItem('token')
+            let json = await request('GET', `/etapas/getbyid/${id}` , null, token)
+            return json
+        },
+        getPermissoes: async () => {
+            let token = localStorage.getItem('token')
+            let json = await request('GET', `/permissoes_usuarios/minhas` , null, token)
+            return json
+        },
+        getMissoesRevisar: async () => {
+            let token = localStorage.getItem('token')
+            let json = await request('GET', `/missoes/revisar/lista` , null, token)
+            return json
+        },
+        getPernoitesMissao: async (id) => {
+            let token = localStorage.getItem('token')
+            let json = await request('GET', `/pernoites/missao/${id}` , null, token)
+            return json
+        },
+        getMeiasDiariasMissao: async (id) => {
+            let token = localStorage.getItem('token')
+            let json = await request('GET', `/meias-diarias/missao/${id}` , null, token)
+            return json
+        },
+        revisarOm: async (id) => {
+            let token = localStorage.getItem('token')
+            let json = await request('GET', `/missoes/revisar/om/${id}` , null, token)
+            return json
+        },
+        retornarOm: async (id) => {
+            let token = localStorage.getItem('token')
+            let json = await request('GET', `/missoes/retornar/om/${id}` , null, token)
+            return json
+        }
     }
 
 }

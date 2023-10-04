@@ -1,0 +1,424 @@
+import React, { useEffect, useState, useRef } from 'react'
+import styles from './styles.css'
+import {
+  CButton,
+  CCard,
+
+} from '@coreui/react'
+import useApi from 'src/services/Api'
+import "react-datepicker/dist/react-datepicker.css";
+import { forwardRef } from 'react'
+import LoadingSpinner from 'src/components/Loading'
+import { useNavigate } from 'react-router-dom';
+import moment from 'moment'
+import { usePDF } from 'react-to-pdf';
+
+const RevisarOms = () => {
+  const { toPDF, targetRef } = usePDF({filename: 'omis.pdf'});
+  const [missoes, setMissoes] = useState([])
+  const [missaoSelected, setMissaoSelected] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [pernoites, setPernoites] = useState([])
+  const [meiasDiarias, setMeiasDiarias] = useState([])
+
+  const pdfRef = useRef(null);
+  const Api = useApi()
+  const navigate = useNavigate()
+
+  const verifySap = async () => {
+    let res = await Api.getPermissoes()
+    if(res.error) {
+      navigate('/main')
+      return
+    }
+    let index = res.data[0].Permissaos.findIndex(i=>i.permissao == 'sap')
+    if(index < 0) {
+      navigate('/main')
+      return
+    }
+  }
+
+  const hendleRevisar = async () => {
+    let res = await Api.revisarOm(missaoSelected.id)
+    if(res.error) {
+      alert(res.error)
+      return
+    }
+    alert(res.msg)
+    getMissoes()
+  }
+
+  const handleRevisarAviso = () => {
+    const confirmacao = window.confirm('Deseja mesmo revisar essa OM?');
+    if (confirmacao) {
+      hendleRevisar()
+    }
+  }
+
+
+  const hendleRetornar = async () => {
+    let res = await Api.retornarOm(missaoSelected.id)
+    if(res.error) {
+      alert(res.error)
+      return
+    }
+    alert(res.msg)
+    getMissoes()
+  }
+
+  const handleRetornarAviso = () => {
+    const confirmacao = window.confirm('Deseja mesmo retornar essa OM para edição?');
+    if (confirmacao) {
+      hendleRetornar()
+    }
+  }
+
+  const handleOpenHTML = () => {
+    const content = pdfRef.current;
+  
+    if (content) {
+      const htmlContent = content.innerHTML;
+      console.log(htmlContent)
+      // Crie um novo documento HTML temporário
+      const newWindow = window.open();
+      const newDocument = newWindow.document;
+      // Adicione um link para a folha de estilo CSS ao cabeçalho do novo documento
+      const cssLink = newDocument.createElement('link');
+      cssLink.href = 'styles.css'; // Substitua pelo caminho real do seu arquivo CSS
+      cssLink.rel = 'stylesheet';
+      newDocument.head.appendChild(cssLink);
+      let css = '<link rel="stylesheet" type="text/css" href="https://1gtt.com.br/styles-sap.css">'
+      // Escreva o conteúdo HTML no novo documento
+      newDocument.open();
+      newDocument.write(css+htmlContent);
+      newDocument.close();
+    }
+  };
+
+  const getMissoes = async () => {
+    let res = await Api.getMissoesRevisar()
+    if(res.error) {
+      alert(res.error)
+      return
+    } else {
+      setMissoes(res.data)
+    }
+  }
+
+  const handleSelectOmis = async (id) => {
+    setMissaoSelected('')
+    setLoading(true)
+    let res = await Api.getMissao(id)
+    if(res.error) {
+      alert(res.error)
+      setLoading(false)
+      return
+    } else {
+      let missao_get = res.data
+      missao_get.Usuarios.sort((a,b)=>a.Antiguidade.antiguidade - b.Antiguidade.antiguidade)
+      setMissaoSelected(missao_get)
+      setLoading(false)
+      let res_pernoites = await Api.getPernoitesMissao(id)
+      if(!res_pernoites.error) {
+        setPernoites(res_pernoites.data)
+      let res_meias_diarias = await Api.getMeiasDiariasMissao(id)
+      if(!res_meias_diarias.error) {
+        setMeiasDiarias(res_meias_diarias.data)
+      }
+      }
+      
+    }
+  }
+  
+  useEffect(()=>{
+    verifySap()
+    getMissoes()
+  },[])
+
+
+  return (
+    <>
+      <CCard className="mb-6" style={{flexDirection: 'column', overflowX: 'auto' }}>
+        <div style={{display: 'flex', flexDirection: 'row', overflowX: 'auto' }}>
+          <div className='left-side-top' style={{flex:0.15, padding:10, marginRight:10}}>
+          </div>
+          {
+            missaoSelected != '' &&
+          <div className='right-side-top' style={{marginTop:10, flex:0.85, display: 'flex', justifyContent: 'center'}}>
+            <div style={{cursor:'pointer', backgroundColor: '#000', color: '#fff', padding: 5, borderRadius:10, marginRight:5 }} onClick={handleOpenHTML}>Download PDF</div>
+            <div style={{cursor:'pointer', backgroundColor: '#e9d604', color: '#000', padding: 5, borderRadius:10, marginRight:5 }} onClick={handleRetornarAviso}>Retornar OM para Edição</div>
+            <div style={{cursor:'pointer', backgroundColor: '#87d030', color: '#000', padding: 5, borderRadius:10 }} onClick={handleRevisarAviso}>Revisar OM</div>
+          </div>
+          }
+        </div>
+      <div style={{display: 'flex', flexDirection: 'row', overflowX: 'auto' }}>
+      <div className='left-side' >
+          {missoes.map(item=>{
+            if(item.revisada) {
+              var status = 'Revisada'
+            } else {
+              var status = 'Finalizada'
+            }
+            return (
+              <div className='item-omis' onClick={()=>{handleSelectOmis(item.id)}}>
+                <div className={status == 'Finalizada' ? 'tag-amarela' : 'tag'}></div>
+                <div className='descricao-omis'>
+                  <span className='numero'>{item.numero}</span>
+                  <span className='numero'>{status}</span>
+                </div>
+              </div>
+            )
+          })}
+      </div>
+      <div className='right-side' ref={pdfRef}>
+      {loading && 
+      <div  style={{
+        position: 'absolute',
+        left: '50%',
+        top: '50%',
+        transform: 'translate(-50%, -50%)',
+      }}>
+        <LoadingSpinner black={true} width="150px" />
+      </div>
+      }
+          {missaoSelected != '' && 
+            <>
+            <div className='cabecalho'>
+              <div className='linha-cabecalho'>
+                <span className='bold'>Número da Missão:</span>
+                <span style={{marginLeft:5}}>{missaoSelected.numero}</span>
+              </div>
+              <div className='linha-cabecalho'>
+                <span className='bold'>Documento Acionador:</span>
+                <span style={{marginLeft:5}}>{missaoSelected.Ofrag.numero}</span>
+              </div>
+              <div className='linha-cabecalho'>
+                <span className='bold'>Aeronave:</span>
+                <span style={{marginLeft:5}}>{missaoSelected.Etapas[0].Aeronave.aeronave}</span>
+              </div>
+              <div className='linha-cabecalho'>
+                <span className='bold'>Diárias Reais:</span>
+                <span style={{marginLeft:5}}>R$ {missaoSelected.diarias_reais}</span>
+              </div>
+              <div className='linha-cabecalho'>
+                <span className='bold'>Diárias Simuladas:</span>
+                <span style={{marginLeft:5}}>R$ {missaoSelected.diarias_simuladas}</span>
+              </div>
+            </div>
+            <div className='cabecalho'>
+                <div className='linha-cabecalho linha-underline'>
+                </div>
+              </div>
+             <div className='center'>
+              <span>Tripulantes:</span>
+             </div>
+             <div class="table-area">
+              <table>
+                <tr>
+                  <th>Posto</th>
+                  <th>Nome Completo</th>
+                  <th>SARAM</th>
+                  <th>Identidade</th>
+                  <th>Status</th>
+                </tr>
+                {missaoSelected.Usuarios.map(it=>{
+                  let index = missaoSelected.Escalas.findIndex(i=>i.id_militar == it.id)
+                  if(index >=0) {
+                    var status = missaoSelected.Escalas[index].diaria ? 'Diária' : 'Comissionamento'
+                  } else {
+                    var status = ''
+                  }
+                  return (
+                    <tr>
+                      <td>{it.Posto.nome}</td>
+                      <td>{it.nome_completo}</td>
+                      <td>{it.saram}</td>
+                      <td>{it.identidade}</td>
+                      <td>{status}</td>
+                    </tr>
+                  )
+                })}
+              </table>
+            </div>
+            <div className='cabecalho'>
+                <div className='linha-cabecalho linha-underline'>
+                </div>
+              </div>
+            <div className='center'>
+              <span>Etapas:</span>
+             </div>
+             <div class="table-area">
+             <table>
+               <tr>
+                  <th>Data</th>
+                  <th>Hora Dep (Z)</th>
+                  <th>Origem</th>
+                  <th>Hora Pouso (Z)</th>
+                  <th>Destino</th>
+                </tr>
+                {missaoSelected.Etapas.map(it=>{
+                  const dataHoraDepMoment = moment.utc(it.dep);
+                  const dataHoraPousoMoment = moment.utc(it.pouso);
+                  return (
+                    <tr>
+                      <td>{dataHoraDepMoment.format('DD/MM/YYYY')}</td>
+                      <td>{dataHoraDepMoment.format('HH:mm')}</td>
+                      <td>{it.Dep.icao}</td>
+                      <td>{dataHoraPousoMoment.format('HH:mm')}</td>
+                      <td>{it.Pouso.icao}</td>
+                    </tr>
+                  )
+                })}
+                </table>
+             </div>
+             <div className='cabecalho'>
+                <div className='linha-cabecalho linha-underline'>
+                </div>
+              </div>
+
+             <div className='center'>
+              <span>Pernoites:</span>
+             </div>
+             {pernoites.length == 0 &&
+             <div className='cabecalho'>
+              <div className='linha-cabecalho'>
+                <span>- Não há</span>
+              </div>
+             </div>
+             }
+              {pernoites.map(itm=>{
+                const dataHoraInicioMoment = moment.utc(itm.inicio);
+                const dataHoraTerminoMoment = moment.utc(itm.termino);
+                itm.usuarios.sort((a,b)=>a.antiguidade - b.antiguidade)
+                return (
+                  <>
+                  <div style={{pageBreakInside: 'avoid'}}>
+                    <div className='cabecalho'>
+                        <div className='linha-cabecalho'>
+                          <span className='bold'>Localidade:</span>
+                          <span className='margin-left'>{itm.cidade.cidade}</span>
+                        </div>
+                        <div className='linha-cabecalho'>
+                          <span className='bold'>Início:</span>
+                          <span className='margin-left'>{dataHoraInicioMoment.format('DD/MM/YYYY')} - {dataHoraInicioMoment.format('HH:mm')}Z</span>
+                        </div>
+                        <div className='linha-cabecalho'>
+                          <span className='bold'>Fim:</span>
+                          <span className='margin-left'>{dataHoraTerminoMoment.format('DD/MM/YYYY')} - {dataHoraTerminoMoment.format('HH:mm')}Z</span>
+                        </div>
+                    </div>
+                    <div class="table-area">
+                      <table>
+                        <tr>
+                          <th>Posto</th>
+                          <th>Nome Completo</th>
+                          <th>Status</th>
+                        </tr>
+                        {itm.usuarios.map(it=>{
+                            let index = missaoSelected.Escalas.findIndex(i=>i.id_militar == it.id_user)
+                            if(index >=0) {
+                              var status = missaoSelected.Escalas[index].diaria ? 'Diária' : 'Comissionamento'
+                            } else {
+                              var status = ''
+                            }
+                          return (
+                            <tr>
+                              <td>{it.posto}</td>
+                              <td>{it.nome_completo}</td>
+                              <td>{status}</td>
+                            </tr>
+                          )
+                        })}
+                      </table>
+                    </div>
+                    </div>
+                  </>
+                )
+              })}
+              <div className='cabecalho'>
+                <div className='linha-cabecalho linha-underline'>
+                </div>
+              </div>
+              <div className='center'>
+                <span>Meias Diárias:</span>
+             </div>
+             {meiasDiarias.length == 0 &&
+             <div className='cabecalho'>
+              <div className='linha-cabecalho'>
+                <span>- Não há</span>
+              </div>
+             </div>
+             }
+              {meiasDiarias.map(itm=>{
+                itm.usuarios.sort((a,b)=>a.antiguidade - b.antiguidade)
+                return (
+                  <>
+                    <div className='cabecalho'>
+                        <div className='linha-cabecalho'>
+                          <span className='bold'>Localidade:</span>
+                          <span className='margin-left'>{itm.cidade.cidade}</span>
+                        </div>
+                    </div>
+                    <div class="table-area">
+                      <table>
+                        <tr>
+                          <th>Posto</th>
+                          <th>Nome Completo</th>
+                          <th>Status</th>
+                        </tr>
+                        {itm.usuarios.map(it=>{
+                            let index = missaoSelected.Escalas.findIndex(i=>i.id_militar == it.id_user)
+                            if(index >=0) {
+                              var status = missaoSelected.Escalas[index].diaria ? 'Diária' : 'Comissionamento'
+                            } else {
+                              var status = ''
+                            }
+                          return (
+                            <tr>
+                              <td>{it.posto}</td>
+                              <td>{it.nome_completo}</td>
+                              <td>{status}</td>
+                            </tr>
+                          )
+                        })}
+                      </table>
+                    </div>
+                  </>
+                )
+              })}
+              <div className='cabecalho'>
+                <div className='linha-cabecalho linha-underline'>
+                </div>
+              </div>
+              <div style={{pageBreakInside: 'avoid'}}>
+              <div className='center'>
+                <span>Relato do Comandante:</span>
+             </div>
+              <div className='cabecalho'>
+                <div className='relato'>
+                  {missaoSelected.relato ? <p>{missaoSelected.relato}</p> : ''}
+                </div>
+              </div>
+     
+              <div className='center'>
+                  <span>Assinatura do Comandante:</span>
+              </div>
+                <div className='center'>
+                <img style={{height: 'auto'}} width="200px" src={missaoSelected.assinatura && missaoSelected.assinatura.length > 10 ? "data:image/jpeg;base64, "+missaoSelected.assinatura : "https://1gtt.com.br/falta.png"}/>
+
+                </div>
+                <div className='cabecalho'>
+                  <span style={{fontSize:'1.3', marginBottom:20}}>{missaoSelected.Usuarios[0].Posto.nome} {missaoSelected.Usuarios[0].nome_guerra}</span>
+                </div>
+              </div>
+            </>
+          }
+      </div>
+      </div>
+      </CCard>
+     
+    </>
+  )
+}
+
+export default RevisarOms
