@@ -20,6 +20,7 @@ const RevisarOms = () => {
   const [loading, setLoading] = useState(false)
   const [pernoites, setPernoites] = useState([])
   const [meiasDiarias, setMeiasDiarias] = useState([])
+  const [idMissaoSelected, setIdMissaoSelected] = useState('')
 
   const pdfRef = useRef(null);
   const Api = useApi()
@@ -78,7 +79,6 @@ const RevisarOms = () => {
   
     if (content) {
       const htmlContent = content.innerHTML;
-      console.log(htmlContent)
       // Crie um novo documento HTML temporário
       const newWindow = window.open();
       const newDocument = newWindow.document;
@@ -117,6 +117,7 @@ const RevisarOms = () => {
       let missao_get = res.data
       missao_get.Usuarios.sort((a,b)=>a.Antiguidade.antiguidade - b.Antiguidade.antiguidade)
       setMissaoSelected(missao_get)
+      setIdMissaoSelected(missao_get.id)
       setLoading(false)
       let res_pernoites = await Api.getPernoitesMissao(id)
       if(!res_pernoites.error) {
@@ -160,7 +161,7 @@ const RevisarOms = () => {
               var status = 'Finalizada'
             }
             return (
-              <div className='item-omis' onClick={()=>{handleSelectOmis(item.id)}}>
+              <div className='item-omis' style={{backgroundColor: idMissaoSelected == item.id ? '#bbb' : '#fff'}} onClick={()=>{handleSelectOmis(item.id)}}>
                 <div className={status == 'Finalizada' ? 'tag-amarela' : 'tag'}></div>
                 <div className='descricao-omis'>
                   <span className='numero'>{item.numero}</span>
@@ -220,6 +221,8 @@ const RevisarOms = () => {
                   <th>SARAM</th>
                   <th>Identidade</th>
                   <th>Status</th>
+                  <th>Diárias</th>
+                  <th>Dias</th>
                 </tr>
                 {missaoSelected.Usuarios.map(it=>{
                   let index = missaoSelected.Escalas.findIndex(i=>i.id_militar == it.id)
@@ -228,6 +231,38 @@ const RevisarOms = () => {
                   } else {
                     var status = ''
                   }
+                  var dias = 0
+                  var meias_diarias = 0
+                  for (const meiaDiaria of meiasDiarias) {
+                      for (const usuario of meiaDiaria.usuarios) {
+                        if(usuario.id_user == it.id) {
+                          if(status == 'Diária') {
+                            meias_diarias += 0.5
+                          } else {
+                            dias += 1
+                          }
+                          
+                        }
+                      }
+                  }
+                  var diarias = 0
+                  
+
+                  for (const pernoite of pernoites) {
+                    for (const usuario of pernoite.usuarios) {
+                      if(usuario.id_user == it.id) {
+                        const dataHoraInicioMoment = moment.utc(pernoite.inicio);
+                        const dataHoraTerminoMoment = moment.utc(pernoite.termino);
+                        const diferencaEmDias = dataHoraTerminoMoment.diff(dataHoraInicioMoment, 'days');        
+                        
+                        if(status == 'Diária') {
+                          diarias += diferencaEmDias == 0 ? 1 : diferencaEmDias
+                        } else {
+                          dias += diferencaEmDias == 0 ? 1 : diferencaEmDias
+                        }
+                      }
+                    }
+                }
                   return (
                     <tr>
                       <td>{it.Posto.nome}</td>
@@ -235,6 +270,8 @@ const RevisarOms = () => {
                       <td>{it.saram}</td>
                       <td>{it.identidade}</td>
                       <td>{status}</td>
+                      <td>{diarias + meias_diarias}</td>
+                      <td>{dias}</td>
                     </tr>
                   )
                 })}
@@ -289,6 +326,7 @@ const RevisarOms = () => {
               {pernoites.map(itm=>{
                 const dataHoraInicioMoment = moment.utc(itm.inicio);
                 const dataHoraTerminoMoment = moment.utc(itm.termino);
+                const diferencaEmDias = dataHoraTerminoMoment.diff(dataHoraInicioMoment, 'days');
                 itm.usuarios.sort((a,b)=>a.antiguidade - b.antiguidade)
                 return (
                   <>
@@ -313,6 +351,7 @@ const RevisarOms = () => {
                           <th>Posto</th>
                           <th>Nome Completo</th>
                           <th>Status</th>
+                          <th>Dias/Diárias</th>
                         </tr>
                         {itm.usuarios.map(it=>{
                             let index = missaoSelected.Escalas.findIndex(i=>i.id_militar == it.id_user)
@@ -326,6 +365,7 @@ const RevisarOms = () => {
                               <td>{it.posto}</td>
                               <td>{it.nome_completo}</td>
                               <td>{status}</td>
+                              <td>{diferencaEmDias == 0 ? 1 : diferencaEmDias}</td>
                             </tr>
                           )
                         })}
@@ -365,6 +405,7 @@ const RevisarOms = () => {
                           <th>Posto</th>
                           <th>Nome Completo</th>
                           <th>Status</th>
+                          <th>Dias/Diárias</th>
                         </tr>
                         {itm.usuarios.map(it=>{
                             let index = missaoSelected.Escalas.findIndex(i=>i.id_militar == it.id_user)
@@ -378,6 +419,7 @@ const RevisarOms = () => {
                               <td>{it.posto}</td>
                               <td>{it.nome_completo}</td>
                               <td>{status}</td>
+                              <td>{status == 'Diária' ? '0,5' : '1'}</td>
                             </tr>
                           )
                         })}
