@@ -140,18 +140,6 @@ const RevisarOms = () => {
   return (
     <>
       <CCard className="mb-6" style={{flexDirection: 'column', overflowX: 'auto' }}>
-        <div style={{display: 'flex', flexDirection: 'row', overflowX: 'auto' }}>
-          <div className='left-side-top' style={{flex:0.15, padding:10, marginRight:10}}>
-          </div>
-          {
-            missaoSelected != '' &&
-          <div className='right-side-top' style={{marginTop:10, flex:0.85, display: 'flex', justifyContent: 'center'}}>
-            <div style={{cursor:'pointer', backgroundColor: '#000', color: '#fff', padding: 5, borderRadius:10, marginRight:5 }} onClick={handleOpenHTML}>Download PDF</div>
-            <div style={{cursor:'pointer', backgroundColor: '#e9d604', color: '#000', padding: 5, borderRadius:10, marginRight:5 }} onClick={handleRetornarAviso}>Retornar OM para Edição</div>
-            <div style={{cursor:'pointer', backgroundColor: '#87d030', color: '#000', padding: 5, borderRadius:10 }} onClick={handleRevisarAviso}>Revisar OM</div>
-          </div>
-          }
-        </div>
       <div style={{display: 'flex', flexDirection: 'row', overflowX: 'auto' }}>
       <div className='left-side' >
           {missoes.map(item=>{
@@ -171,7 +159,7 @@ const RevisarOms = () => {
             )
           })}
       </div>
-      <div className='right-side' ref={pdfRef}>
+      <div className='right-side'>
       {loading && 
       <div  style={{
         position: 'absolute',
@@ -184,6 +172,12 @@ const RevisarOms = () => {
       }
           {missaoSelected != '' && 
             <>
+            <div className='right-side-top' style={{marginTop:10, flex:0.85, display: 'flex', justifyContent: 'center'}}>
+              <div style={{cursor:'pointer', backgroundColor: '#000', color: '#fff', padding: 5, borderRadius:10, marginRight:5 }} onClick={handleOpenHTML}>Download PDF</div>
+              <div style={{cursor:'pointer', backgroundColor: '#e9d604', color: '#000', padding: 5, borderRadius:10, marginRight:5 }} onClick={handleRetornarAviso}>Retornar OM para Edição</div>
+              <div style={{cursor:'pointer', backgroundColor: '#87d030', color: '#000', padding: 5, borderRadius:10 }} onClick={handleRevisarAviso}>Revisar OM</div>
+          </div>
+          <div ref={pdfRef}>
             <div className='cabecalho'>
               <div className='linha-cabecalho'>
                 <span className='bold'>Número da Missão:</span>
@@ -453,6 +447,7 @@ const RevisarOms = () => {
                   <span style={{fontSize:'1.3', marginBottom:20}}>{missaoSelected.Usuarios[0].Posto.nome} {missaoSelected.Usuarios[0].nome_guerra}</span>
                 </div>
               </div>
+            </div>
             </>
           }
       </div>

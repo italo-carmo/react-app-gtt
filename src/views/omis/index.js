@@ -169,6 +169,8 @@ const Omis = ({match}) => {
     var esforco = ''
   }
 
+  let index_saude = tripulacao.findIndex(i=>i.funcao == 'Médico' || i.funcao == 'Enfermeiro')
+
 
   return (
     <div>
@@ -288,6 +290,27 @@ const Omis = ({match}) => {
 
         </div>
       </div>
+
+      {
+        index_saude > -1 ?
+        <div className='div-tripulacao'>
+        <div className='div-pilotos'>
+          <span className='data-bold'>Equipe Médica</span>
+        </div>
+        {tripulacao.map(item=>{
+          if(item.funcao == 'Médico' || item.funcao == 'Enfermeiro') {
+            return (
+              <div className='div-tripulante'> 
+                <span className='tripulante'>{item.posto} {item.nome_completo} - IDENTIDADE ({item.identidade}) - SARAM ({item.saram})</span>
+              </div>
+            )
+          }
+        })}
+        <div>
+
+        </div>
+      </div> : null
+      }
 
       <div className='div-tripulacao'>
         <div className='div-pilotos'>

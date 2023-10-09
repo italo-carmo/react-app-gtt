@@ -2089,6 +2089,22 @@ const Dashboard = () => {
     </div>
 
     <div className='tripulante-row'>
+      <span style={{color:'#fff'}} className='tripulante'>Equipe Médica:</span>
+    </div>
+    <div className='caixa-tripulante'>
+      {tripulacao.map(item=>{
+        if (item.funcao == 'Médico' || item.funcao == 'Enfermeiro') {
+          return (
+            <div className='tripulante-item' >
+            {item.trigrama}
+            <img style={{marginLeft:5, cursor: 'pointer'}} onClick={()=>handleDeleteTrip(item.id)} src='https://www.1gtt.com.br/app/close.png' width='15px'/>
+          </div>
+          )
+        }
+        })}
+    </div>
+
+    <div className='tripulante-row'>
       <span style={{color:'#fff'}} className='tripulante'>OE-3:</span>
     </div>
     <div className='caixa-tripulante'>
