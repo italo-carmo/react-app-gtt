@@ -1,5 +1,7 @@
 const baseUrl = 'https://servidor-app-gtt.herokuapp.com'
 
+//https://servidor-app-gtt.herokuapp.com
+
 const request = async (method, endpoint, params, token = null) => {
     method = method.toLowerCase()
     let fullUrl = `${baseUrl}${endpoint}`
@@ -253,9 +255,9 @@ export default () => {
             let json = await request('GET', `/missoes/revisar/om/${id}` , null, token)
             return json
         },
-        retornarOm: async (id) => {
+        retornarOm: async (id, body) => {
             let token = localStorage.getItem('token')
-            let json = await request('GET', `/missoes/retornar/om/${id}` , null, token)
+            let json = await request('POST', `/missoes/retornar/om/${id}`, body, token)
             return json
         }
     }

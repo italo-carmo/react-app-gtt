@@ -12,15 +12,19 @@ import LoadingSpinner from 'src/components/Loading'
 import { useNavigate } from 'react-router-dom';
 import moment from 'moment'
 import { usePDF } from 'react-to-pdf';
+import MaskedObsTextArea from '../../components/masked-inpput-text-obs-textarea'
 
 const RevisarOms = () => {
   const { toPDF, targetRef } = usePDF({filename: 'omis.pdf'});
   const [missoes, setMissoes] = useState([])
   const [missaoSelected, setMissaoSelected] = useState('')
   const [loading, setLoading] = useState(false)
+  const [loadingRetornar, setLoadingRetornar] = useState(false)
   const [pernoites, setPernoites] = useState([])
   const [meiasDiarias, setMeiasDiarias] = useState([])
   const [idMissaoSelected, setIdMissaoSelected] = useState('')
+  const [caixaCreateVisibleRetornar, setCaixaCreateVisibleRetornar] = useState(false)
+  const [comentario, setComentario] = useState('')
 
   const pdfRef = useRef(null);
   const Api = useApi()
@@ -57,21 +61,24 @@ const RevisarOms = () => {
   }
 
 
-  const hendleRetornar = async () => {
-    let res = await Api.retornarOm(missaoSelected.id)
+  const handleRetornar = async () => {
+    setLoadingRetornar(true)
+    let res = await Api.retornarOm(missaoSelected.id, {texto: comentario})
     if(res.error) {
+      setLoadingRetornar(false)
       alert(res.error)
       return
     }
+    setLoadingRetornar(false)
+    setComentario('')
+    setCaixaCreateVisibleRetornar(false)
     alert(res.msg)
     getMissoes()
   }
 
   const handleRetornarAviso = () => {
-    const confirmacao = window.confirm('Deseja mesmo retornar essa OM para edição?');
-    if (confirmacao) {
-      hendleRetornar()
-    }
+    setCaixaCreateVisibleRetornar(true)
+    console.log('retornou')
   }
 
   const handleOpenHTML = () => {
@@ -451,6 +458,35 @@ const RevisarOms = () => {
             </>
           }
       </div>
+
+      { caixaCreateVisibleRetornar && <div className='modal-aviao'>
+       <div style={{display: 'flex', flexDirection: 'row', width: '100%', alignItems: 'center', justifyContent: 'space-between'}}>
+        <span style={{color: '#fff', fontSize: 24}}>Retornar OM</span>
+        <span onClick={()=>{
+            setCaixaCreateVisibleRetornar(false)
+          }}  className='title-modal' style={{color: '#fff', cursor: 'pointer'}}>X</span>
+        </div>
+            <div className='modal-body'>
+                <div className='item-body-modal' style={{width: '400px'}}>
+                  <span className='text-modal' style={{color: '#fff'}}>Comentários:</span>
+                </div>
+                <MaskedObsTextArea linhas={6} value={comentario} onChange={setComentario} /> 
+                </div>
+
+                {loadingRetornar && 
+                  <div  style={{display: 'flex', alignItems:'center', justifyContent: 'center'
+                  }}>
+                    <LoadingSpinner black={false} width="80px" />
+                  </div>
+                  }
+
+                <div className='modal-bottom'>
+                  <button onClick={handleRetornar} className='salvar'>Retornar OM</button>
+                </div>
+                <div className='modal-bottom'>
+                  <button onClick={null} className='excluir'>{'Cancelar'}</button>
+                </div>
+            </div> }
       </div>
       </CCard>
      
