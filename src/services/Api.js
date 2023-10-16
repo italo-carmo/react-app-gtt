@@ -259,7 +259,17 @@ export default () => {
             let token = localStorage.getItem('token')
             let json = await request('POST', `/missoes/retornar/om/${id}`, body, token)
             return json
-        }
+        },
+        retornarMissaoRevisao: async (id) => {
+            let token = localStorage.getItem('token')
+            let json = await request('POST', `/missoes/retornar/revisao/om/${id}` , null, token)
+            return json
+        },
+        finalizarOm: async (id) => {
+            let token = localStorage.getItem('token')
+            let json = await request('GET', `/missoes/finalizar/${id}` , null, token)
+            return json
+        },
     }
 
 }

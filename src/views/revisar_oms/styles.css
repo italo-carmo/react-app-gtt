@@ -660,6 +660,14 @@ tr:nth-child(odd) {
     border-top-left-radius: 5px;
 }
 
+.tag-cinza {
+    width:20px;
+    background-color:#bbb;
+    min-width:10px;
+    border-bottom-left-radius: 5px;
+    border-top-left-radius: 5px;
+}
+
 .tag {
     width:20px;
     background-color:#87d030;

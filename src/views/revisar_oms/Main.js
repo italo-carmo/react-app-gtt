@@ -25,6 +25,7 @@ const RevisarOms = () => {
   const [idMissaoSelected, setIdMissaoSelected] = useState('')
   const [caixaCreateVisibleRetornar, setCaixaCreateVisibleRetornar] = useState(false)
   const [comentario, setComentario] = useState('')
+  const [statusMissao, setStatusMissao] = useState('')
 
   const pdfRef = useRef(null);
   const Api = useApi()
@@ -50,6 +51,8 @@ const RevisarOms = () => {
       return
     }
     alert(res.msg)
+    setMissaoSelected('')
+    setIdMissaoSelected('')
     getMissoes()
   }
 
@@ -58,6 +61,46 @@ const RevisarOms = () => {
     if (confirmacao) {
       hendleRevisar()
     }
+  }
+
+  const handleRetornarRevisaoAviso = () => {
+    const confirmacao = window.confirm('Deseja mesmo retornar essa OM para Revisão?');
+    if (confirmacao) {
+      handleRetornarRevisao()
+    }
+  }
+
+  const handleAvancarAviso = () => {
+    const confirmacao = window.confirm('Deseja mesmo avançar essa OM para revisão?');
+    if (confirmacao) {
+      handleAvancar()
+    }
+  }
+
+  const handleAvancar = async () => {
+    let res = await Api.finalizarOm(missaoSelected.id)
+    if(res.error) {
+      alert(res.error)
+      return
+    }
+    setMissaoSelected('')
+    setIdMissaoSelected('')
+    alert(res.msg)
+    getMissoes()
+  }
+
+  const handleRetornarRevisao = async () => {
+    let res = await Api.retornarMissaoRevisao(missaoSelected.id)
+    if(res.error) {
+      alert(res.error)
+      return
+    }
+    setComentario('')
+    setCaixaCreateVisibleRetornar(false)
+    setMissaoSelected('')
+    setIdMissaoSelected('')
+    alert(res.msg)
+    getMissoes()
   }
 
 
@@ -72,6 +115,8 @@ const RevisarOms = () => {
     setLoadingRetornar(false)
     setComentario('')
     setCaixaCreateVisibleRetornar(false)
+    setMissaoSelected('')
+    setIdMissaoSelected('')
     alert(res.msg)
     getMissoes()
   }
@@ -126,6 +171,15 @@ const RevisarOms = () => {
       setMissaoSelected(missao_get)
       setIdMissaoSelected(missao_get.id)
       setLoading(false)
+      if(missao_get.finalizada) {
+        setStatusMissao('Finalizada')
+      }
+      if(missao_get.retornada) {
+        setStatusMissao('Retornada')
+      }
+      if(missao_get.revisada) {
+        setStatusMissao('Revisada')
+      }
       let res_pernoites = await Api.getPernoitesMissao(id)
       if(!res_pernoites.error) {
         setPernoites(res_pernoites.data)
@@ -150,14 +204,23 @@ const RevisarOms = () => {
       <div style={{display: 'flex', flexDirection: 'row', overflowX: 'auto' }}>
       <div className='left-side' >
           {missoes.map(item=>{
+            console.log(item)
             if(item.revisada) {
               var status = 'Revisada'
+              var classe = 'tag'
             } else {
-              var status = 'Finalizada'
+              if (item.retornada) {
+                var status = 'Retornada'
+                var classe = 'tag-amarela'
+              } else {
+                var status = 'Finalizada'
+                var classe = 'tag-cinza'
+              }
             }
             return (
+              
               <div className='item-omis' style={{backgroundColor: idMissaoSelected == item.id ? '#bbb' : '#fff'}} onClick={()=>{handleSelectOmis(item.id)}}>
-                <div className={status == 'Finalizada' ? 'tag-amarela' : 'tag'}></div>
+                <div className={classe}></div>
                 <div className='descricao-omis'>
                   <span className='numero'>{item.numero}</span>
                   <span className='numero'>{status}</span>
@@ -179,11 +242,31 @@ const RevisarOms = () => {
       }
           {missaoSelected != '' && 
             <>
-            <div className='right-side-top' style={{marginTop:10, flex:0.85, display: 'flex', justifyContent: 'center'}}>
-              <div style={{cursor:'pointer', backgroundColor: '#000', color: '#fff', padding: 5, borderRadius:10, marginRight:5 }} onClick={handleOpenHTML}>Download PDF</div>
-              <div style={{cursor:'pointer', backgroundColor: '#e9d604', color: '#000', padding: 5, borderRadius:10, marginRight:5 }} onClick={handleRetornarAviso}>Retornar OM para Edição</div>
-              <div style={{cursor:'pointer', backgroundColor: '#87d030', color: '#000', padding: 5, borderRadius:10 }} onClick={handleRevisarAviso}>Revisar OM</div>
-          </div>
+            {
+              statusMissao == 'Finalizada' &&
+
+              <div className='right-side-top' style={{marginTop:10, flex:0.85, display: 'flex', justifyContent: 'center'}}>
+                <div style={{cursor:'pointer', backgroundColor: '#000', color: '#fff', padding: 5, borderRadius:10, marginRight:5 }} onClick={handleOpenHTML}>Download PDF</div>
+                <div style={{cursor:'pointer', backgroundColor: '#e9d604', color: '#000', padding: 5, borderRadius:10, marginRight:5 }} onClick={handleRetornarAviso}>Retornar OM para Edição</div>
+                <div style={{cursor:'pointer', backgroundColor: '#87d030', color: '#000', padding: 5, borderRadius:10 }} onClick={handleRevisarAviso}>Revisar OM</div>
+              </div>
+            }
+             {
+              statusMissao == 'Revisada' &&
+
+              <div className='right-side-top' style={{marginTop:10, flex:0.85, display: 'flex', justifyContent: 'center'}}>
+                <div style={{cursor:'pointer', backgroundColor: '#000', color: '#fff', padding: 5, borderRadius:10, marginRight:5 }} onClick={handleOpenHTML}>Download PDF</div>
+                <div style={{cursor:'pointer', backgroundColor: '#bbb', color: '#000', padding: 5, borderRadius:10, marginRight:5 }} onClick={handleRetornarRevisaoAviso}>Retornar OM para Revisao</div>
+              </div>
+            }
+
+            {
+              statusMissao == 'Retornada' &&
+
+              <div className='right-side-top' style={{marginTop:10, flex:0.85, display: 'flex', justifyContent: 'center'}}>
+                <div style={{cursor:'pointer', backgroundColor: '#bbb', color: '#000', padding: 5, borderRadius:10, marginRight:5 }} onClick={handleAvancarAviso}>Avançar para Revisão</div>
+              </div>
+            }
           <div ref={pdfRef}>
             <div className='cabecalho'>
               <div className='linha-cabecalho'>
