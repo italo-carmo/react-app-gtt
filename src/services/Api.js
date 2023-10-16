@@ -270,6 +270,11 @@ export default () => {
             let json = await request('GET', `/missoes/finalizar/${id}` , null, token)
             return json
         },
+        getFeriasSolicitadas: async () => {
+            let token = localStorage.getItem('token')
+            let json = await request('GET', `/ferias/get/solicitadas` , null, token)
+            return json
+        },
     }
 
 }

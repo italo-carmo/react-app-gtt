@@ -767,6 +767,7 @@ th {
     margin-left:10px;
     margin-right:10px;
     border: 2px solid #000;
+    flex:1;
 }
 
 .title-card {

@@ -17,8 +17,17 @@ const Ferias = () => {
   const Api = useApi()
   const navigate = useNavigate()
   const [loading, setLoading] = useState(false)
+  const [solicitadas, setSolicitadas] = useState([])
+
+  const getSolicitadas = async () => {
+    let res = await Api.getFeriasSolicitadas()
+    if(!res.error) {
+      setSolicitadas(res.data)
+    }
+  }
 
   useEffect(()=>{
+    getSolicitadas()
   },[])
 
 
@@ -76,20 +85,27 @@ const Ferias = () => {
             <img src="https://www.1gtt.com.br/solicitar.png" width="80px;" />
             <div className='card-right'>
               <span className='title-card'>Solicitadas</span>
-              <span className='numero-card'>3</span>
+              <span className='numero-card'>{solicitadas.length}</span>
             </div>
           </div>
           <div className='card-sap' style={{backgroundColor: '#ccc'}}>
-            <img src="https://www.1gtt.com.br/check-mark.png" width="80px;" />
+            <img src="https://www.1gtt.com.br/computador-pessoal.png" width="80px;" />
             <div className='card-right'>
-              <span className='title-card'>Conferidas</span>
+              <span className='title-card'>Para Lançar</span>
               <span className='numero-card'>2</span>
             </div>
           </div>
           <div className='card-sap' style={{backgroundColor: '#84d077'}}>
-            <img src="https://www.1gtt.com.br/check-mark-white.png" width="80px;" />
+            <img src="https://www.1gtt.com.br/decolagem.png" width="80px;" />
             <div className='card-right'>
-              <span className='title-card' style={{color: '#fff'}}>Autorizadas</span>
+              <span className='title-card' style={{color: '#fff'}}>Para Início</span>
+              <span className='numero-card' style={{color: '#fff'}}>4</span>
+            </div>
+          </div>
+          <div className='card-sap' style={{backgroundColor: '#84d077'}}>
+            <img src="https://www.1gtt.com.br/pouso.png" width="80px;" />
+            <div className='card-right'>
+              <span className='title-card' style={{color: '#fff'}}>Para Término</span>
               <span className='numero-card' style={{color: '#fff'}}>4</span>
             </div>
           </div>
