@@ -459,7 +459,7 @@ const RevisarOms = () => {
           }
       </div>
 
-      { caixaCreateVisibleRetornar && <div className='modal-aviao'>
+      { caixaCreateVisibleRetornar && <div className='modal-retornar'>
        <div style={{display: 'flex', flexDirection: 'row', width: '100%', alignItems: 'center', justifyContent: 'space-between'}}>
         <span style={{color: '#fff', fontSize: 24}}>Retornar OM</span>
         <span onClick={()=>{

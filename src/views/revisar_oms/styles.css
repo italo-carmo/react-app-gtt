@@ -259,6 +259,20 @@ option {
     margin-left: -100px;
 }
 
+.modal-retornar {
+    display: flex;
+    flex-direction: column;
+    background-color: #000;
+    min-width: 250px;
+    min-height:200px;
+    padding:20px;
+    position: absolute;
+    top: 10%;
+    margin-top: -100px;
+    left: 50%;
+    margin-left: -100px;
+}
+
 .in {
     background-color: #c4302b;
 }
