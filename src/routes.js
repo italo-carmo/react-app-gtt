@@ -1,6 +1,7 @@
 import React from 'react'
 import Etapas from './views/etapas/Main'
 import Ferias from './views/ferias/Main'
+import ListaPauDeSebo from './views/pau-de-sebo/Main'
 import RevisarOms from './views/revisar_oms/Main'
 const Main = React.lazy(() => import('./views/main/Main'))
 const Graficos = React.lazy(() => import('./views/graficos/index'))
@@ -22,7 +23,7 @@ const routes = [
   { path: '/logout', name: 'Main', element: Logout },
   { path: '/grafico-esforco', name: 'Graficos', element: Graficos },
   { path: '/pau-de-sebo', name: 'Graficos', element: PauDeSebo },
-
+  { path: '/lista-pau-de-sebo', name: 'Pau de Sebo', element: ListaPauDeSebo },
 ]
 
 export default routes

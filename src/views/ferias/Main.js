@@ -12,12 +12,14 @@ import LoadingSpinner from 'src/components/Loading'
 import { useNavigate } from 'react-router-dom';
 import moment from 'moment'
 import { usePDF } from 'react-to-pdf';
+import Solicitadas from './Solicitadas/Main';
 
 const Ferias = () => {
   const Api = useApi()
   const navigate = useNavigate()
   const [loading, setLoading] = useState(false)
   const [solicitadas, setSolicitadas] = useState([])
+  const [statusClicado, setStatusClicado] = useState('')
 
   const getSolicitadas = async () => {
     let res = await Api.getFeriasSolicitadas()
@@ -36,7 +38,7 @@ const Ferias = () => {
       <CCard className="mb-6" style={{flexDirection: 'column', overflowX: 'auto' }}>
       <div style={{display: 'flex', flexDirection: 'row', overflowX: 'auto' }}>
       <div className='left-side' >
-        <div className='menu-item'>
+        <div className='menu-item' onClick={()=>{setStatusClicado('Solicitadas')}}>
           <img src="https://www.1gtt.com.br/fast-forward.png" width="30px" />
           <span className='item-menu'>Solicitadas</span>
         </div>
@@ -70,16 +72,8 @@ const Ferias = () => {
         </div>
       </div>
       <div className='right-side'>
-      {loading && 
-      <div  style={{
-        position: 'absolute',
-        left: '50%',
-        top: '50%',
-        transform: 'translate(-50%, -50%)',
-      }}>
-        <LoadingSpinner black={true} width="150px" />
-      </div>
-      }
+        {
+          statusClicado == '' &&
        <div className='area-top'>
           <div className='card-sap'>
             <img src="https://www.1gtt.com.br/solicitar.png" width="80px;" />
@@ -110,6 +104,12 @@ const Ferias = () => {
             </div>
           </div>
        </div>
+        }
+        {
+          statusClicado == 'Solicitadas' &&
+
+          <Solicitadas solicitadas={solicitadas} setStatusClicado={setStatusClicado} />
+        }
       </div>
       </div>
       </CCard>

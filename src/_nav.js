@@ -41,19 +41,33 @@ const _nav = [
     icon: <img src="https://www.1gtt.com.br/app/plane.png" style={{marginRight:20}} width="25px" height="25px"/>,
     items: [
       {
-        component: CNavItem,
-        name: 'Etapas',
-        to: '/etapas',
-      },
-      {
-        component: CNavItem,
-        name: 'Esforço Aéreo',
-        to: '/grafico-esforco',
-      },
-      {
-        component: CNavItem,
-        name: 'Pau de Sebo',
-        to: '/pau-de-sebo',
+        component: CNavGroup,
+        name: 'Estatística',
+        to: '',
+        items: [
+          {
+            component: CNavItem,
+            name: 'Etapas',
+            to: '/etapas',
+          },
+          {
+            component: CNavGroup,
+            name: 'Gráficos',
+            to: '',
+            items: [
+              {
+                component: CNavItem,
+                name: 'Esforço Aéreo',
+                to: '/grafico-esforco',
+              },
+              {
+                component: CNavItem,
+                name: 'Pau de Sebo',
+                to: '/pau-de-sebo',
+              }
+            ]
+          },
+        ]
       },
     ],
   },

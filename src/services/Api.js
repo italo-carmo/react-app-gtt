@@ -275,6 +275,31 @@ export default () => {
             let json = await request('GET', `/ferias/get/solicitadas` , null, token)
             return json
         },
+        getPauDeSebo: async (body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('POST', `/estatistica/paudesebo/tripulantes` , body, token)
+            return json
+        },
+        getRascunhos: async (body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('POST', `/rascunhos/data` , body, token)
+            return json
+        },
+        createRascunho: async (body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('POST', `/rascunhos/` , body, token)
+            return json
+        },
+        editRascunho: async (id, body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('PUT', `/rascunhos/${id}` , body, token)
+            return json
+        },
+        excluirRascunho: async (id) => {
+            let token = localStorage.getItem('token')
+            let json = await request('DELETE', `/rascunhos/${id}` , null, token)
+            return json
+        },
     }
 
 }

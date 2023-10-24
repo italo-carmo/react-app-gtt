@@ -17,6 +17,7 @@ import MaskedCombustivel from '../../components/masked-combustivel'
 import MaskedCiclos from '../../components/masked-ciclos'
 import MaskedHoras from '../../components/masked-horas'
 import MaskedObs from '../../components/masked-inpput-text-obs'
+import MaskedString from '../../components/masked-string'
 import MaskedObsTextArea from '../../components/masked-inpput-text-obs-textarea'
 import TimeMaskedInput from 'src/components/masked-hours'
 import DateMaskedInput from 'src/components/masked-date'
@@ -59,6 +60,7 @@ const Dashboard = () => {
   const [etapas, setEtapas] = useState({aviao: '', eventos:[]})
   const [aeronaveMissao, setAeronaveMissao] = useState([])
   const [idAeronaveMissao,setIdAeronaveMissao] = useState('')
+  const [idRascunhoToShow,setIdRascunhoToShow] = useState('')
   const [aeronaves, setAeronaves] = useState([])
   const [loadingExcluir, setLoadingExcluir] = useState(false)
   const [loadingSave, setLoadingSave] = useState(false)
@@ -84,6 +86,7 @@ const Dashboard = () => {
   const [caixaObsVisible, setCaixaObsVisible] = useState(false)
   const [obsText, setObsText] = useState('')
   const [isEditObs, setIsEditObs] = useState(false)
+  const [isEditRascunho, setIsEditRascunho] = useState(false)
   const [caixaCreateVisibleObsEdit, setCaixaCreateVisibleObsEdit]=useState(false)
   const [caixaCreateVisibleSobreaviso, setCaixaCreateVisibleSobreaviso]=useState(false)
   const [tituloObs, setTituloObs] = useState('')
@@ -107,8 +110,28 @@ const Dashboard = () => {
   const [dataSobreaviso,setDataSobreaviso] = useState(new Date())
   const [editSobreaviso, setEditSobreaviso] = useState(false)
   const [idSobreaviso,setIdSobreaviso] = useState('')
+  const [rascunhos,setRascunhos] = useState([])
+  const [caixaCreateVisibleRascunho, setCaixaCreateVisibleRascunho] = useState(false)
+  const [planejamento, setPlanejamento] = useState('')
+  const [ofrag, setOfrag] = useState('')
+  const [trip, setTrip] = useState('')
+  const [obs, setObs] = useState('')
+  const [dataRascunho, setDataRascunho] = useState('')
+  const [idAeronaveRascunho, setIdAeronaveRascunho] = useState('')
+  const [cor, setCor] = useState('#ccc')
+  const [statusSelected, setStatusSelected] = useState('#fff000')
+  const [idRascunho, setIdRascunho] = useState('')
+  const [selecao, setSelecao] = useState(false)
+  const [selecionados, setSelecionados] = useState([])
+  const [caixaCreateVisibleRascunhoAeronave, setCaixaCreateVisibleRascunhoAeronave] = useState(false)
+  const [aeronaveRascunho, setAeronaveRascunho] = useState('')
+  const [rascunhoToShow, setRascunhoToShow] = useState('')
+  const [caixaVisibleRascunho, setCaixaVisibleRascunho] = useState(false)
+
+  const [longPressTimer, setLongPressTimer] = useState(null);
 
   const situacoes = ["DI", "DO", "IN", "IS", "II"]
+  const cores = [{label: 'Planejamento', value: '#fff000'}, {label: 'PRPO', value: '#00ffff'}, {label: 'OPFM', value: '#FC0FC0'}]
   const inputPousoRef = useRef(null)
   const inputAltRef = useRef(null)
   const divRef = useRef(null);
@@ -136,9 +159,19 @@ const Dashboard = () => {
     setCaixaVisible(true);
   };
 
+  const handleMouseEnterRascunho = (rascunho) =>{
+    setIdRascunhoToShow(rascunho.id)
+    setRascunhoToShow(rascunho)
+    setCaixaVisibleRascunho(true);
+  }
+
   const handleMouseLeave = () => {
     setCaixaVisible(false);
   };
+
+  const handleMouseLeaveRascunho = () => {
+    setCaixaVisibleRascunho(false)
+  }
 
    const handleMouseEnterObs = (obs) => {
     setObsText(obs)
@@ -273,6 +306,17 @@ const Dashboard = () => {
     getSobreavisos(dias)
     getObservacoes(dias)
     getManutencoes(dias)
+    getRascunhos(dias)
+  }
+
+  const getRascunhos = async (dias) => {
+    let inicio = dias[0]
+    let fim = dias[6]
+    let res = await Api.getRascunhos({inicio, fim})
+    if(!res.error) {
+      console.log(res.data)
+      setRascunhos(res.data)
+    }
   }
 
   const getObservacoes = async (dias) => {
@@ -1596,6 +1640,209 @@ const Dashboard = () => {
     location.reload()
   }
 
+  const handleClickAddRascunho = (e,i, id_aeronave) =>{
+    if (e.target === e.currentTarget) {
+      // Verifique se o clique ocorreu na div maior e não na div menor
+      setCaixaCreateVisibleRascunho(true)
+      setDataRascunho(i)
+      setIdAeronaveRascunho(id_aeronave)
+    }
+  }
+
+  const handleEditarRascunho = (rascunho) => {
+    if(!selecao) {
+      setPlanejamento(rascunho.planejamento)
+      setOfrag(rascunho.ofrag)
+      setTrip(rascunho.trip)
+      setObs(rascunho.obs)
+      setIdAeronaveRascunho(rascunho.id_aeronave)
+      let [ano, mes, dia] = rascunho.data.split('-')
+      setDataRascunho(dia+'/'+mes+'/'+ano)
+      setIdRascunho(rascunho.id)
+      setStatusSelected(rascunho.cor)
+      setIsEditRascunho(true)
+      setCaixaCreateVisibleRascunho(true)
+    }
+  }
+
+  const handleCriarRascunho = async () =>{
+    if(!planejamento || planejamento == '') {
+      alert('Digite o planejamento')
+      return
+    }
+    let [dia_rascunho, mes_rascunho, ano_rascunho] = dataRascunho.split('/')
+    let item = {
+      data: ano_rascunho+'-'+mes_rascunho+'-'+dia_rascunho,
+      id_aeronave: idAeronaveRascunho,
+      planejamento,
+      ofrag,
+      trip, 
+      obs,
+      cor: statusSelected
+    }
+    if(isEditRascunho) {
+      var res = await Api.editRascunho(idRascunho,item)
+    } else {
+      var res = await Api.createRascunho(item)
+    }
+
+    if(res.error) {
+      alert(res.error)
+      return
+    }
+    setCaixaCreateVisibleRascunho(false)
+    setPlanejamento('')
+    setObs('')
+    setTrip('')
+    setOfrag('')
+    setIdAeronaveRascunho('')
+    setIsEditRascunho(false)
+    alert(res.msg)
+    location.reload()
+  }
+
+  const handleMouseDown = () => {
+    setLongPressTimer(setTimeout(handleLongPress, 1000)); // Defina o tempo limite para o clique longo (1 segundo, por exemplo).
+  }
+
+  const handleMouseUp = () => {
+    if (longPressTimer) {
+      clearTimeout(longPressTimer);
+    }
+  }
+
+  const handleLongPress = () => {
+      setSelecao(true)
+    // Realize a ação desejada para o clique longo aqui.
+  }
+
+  const handleBolaClick = (item) => {
+    console.log(item)
+    let selecionados_copy = [...selecionados]
+    let index = selecionados_copy.findIndex(i=>i.id == item.id)
+    if(index > -1) {
+      selecionados_copy = selecionados_copy.filter(it=>it.id != item.id)
+    } else {
+      selecionados_copy.push(item)
+    }
+    setSelecionados(selecionados_copy)
+  }
+
+  const handleLimparSelecao = () => {
+    setSelecionados([])
+    setSelecao(false)
+  }
+
+  const handleTrocarAeronave = () => {
+    if(selecionados.length < 1) {
+      alert('Selecione ao menos de 1 item para trocar a Aeronave!')
+      return
+    }
+    setCaixaCreateVisibleRascunhoAeronave(true)
+  }
+
+  const handleTrocarAeronaveSave = async () => {
+    for (const selecionado of selecionados) {
+      let item = {
+        id_aeronave: aeronaveRascunho
+      }
+
+      let res = await Api.editRascunho(selecionado.id, item)
+    }
+    setSelecionados([])
+    setSelecao(false)
+    setAeronaveRascunho()
+    alert('Aeronave trocada com sucesso')
+    location.reload()
+  }
+
+  const handleMesclarRascunhos = () => {
+    if(selecionados.length < 2) {
+      alert('Selecione ao menos dois itens para mesclar!')
+      return
+    }
+      const confirmacao = window.confirm('Deseja mesmo mesclar os itens selecionados?');
+      if (confirmacao) {
+        handleMesclarItens()
+      }
+  }
+
+  const handleAvancarRascunho = async () => {
+    if(selecionados.length < 1) {
+      alert('Selecione ao menos 1 item para avançar!')
+      return
+    }
+    for (const selecionado of selecionados) {
+      const dataMoment = moment(selecionado.data, 'YYYY-MM-DD');
+      const dataNova = dataMoment.add(1, 'days');
+      const dataFormatada = dataNova.format('YYYY-MM-DD');
+      let res = await Api.editRascunho(selecionado.id, {data:dataFormatada})
+    }
+    setSelecionados([])
+    setSelecao(false)
+    location.reload()
+  }
+
+  const handleRetrocederRascunho = async () => {
+    if(selecionados.length < 1) {
+      alert('Selecione ao menos 1 item para avançar!')
+      return
+    }
+    for (const selecionado of selecionados) {
+      const dataMoment = moment(selecionado.data, 'YYYY-MM-DD');
+      const dataNova = dataMoment.subtract(1, 'days');
+      const dataFormatada = dataNova.format('YYYY-MM-DD');
+      let res = await Api.editRascunho(selecionado.id, {data:dataFormatada})
+    }
+    setSelecionados([])
+    setSelecao(false)
+    location.reload()
+  }
+
+  
+
+  const handleExcluirItens = () => {
+    if(selecionados.length < 1) {
+      alert('Selecione ao menos 1 item para excluir!')
+      return
+    }
+      const confirmacao = window.confirm('Deseja mesmo excluir os itens selecionados?');
+      if (confirmacao) {
+        handleExcluirItensConfirmacao()
+      }
+  }
+
+
+
+  const handleExcluirItensConfirmacao = async () => {
+    for (const selecionado of selecionados) {
+      let res = await Api.excluirRascunho(selecionado.id)
+    }
+    setSelecionados([])
+    setSelecao(false)
+    alert('Itens excluidos com sucesso')
+    location.reload()
+  }
+
+  
+
+  const handleMesclarItens = async () => {
+    for (const [index, item] of selecionados.entries()) {
+      if(index != 0) {
+        let new_item = {
+          ofrag: selecionados[0].ofrag,
+          trip: selecionados[0].trip,
+          obs: selecionados[0].obs,
+          cor: selecionados[0].cor,
+        }
+        let res = await Api.editRascunho(item.id, new_item)
+      }
+    }
+    setSelecionados([])
+    setSelecao(false)
+    alert('Itens mesclados com sucesso')
+    location.reload()
+  }
 
   useEffect(()=>{
     handleTrocaAviao()
@@ -1663,6 +1910,19 @@ const Dashboard = () => {
             <button onClick={handleCreateManut} className='calendario'>Manutenção</button>
           </div>
         </div>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 10 }}>
+          { selecao &&
+          <div style={{display:'flex',alignItems: 'center', justifyContent: 'center'}}>
+            <img onClick={handleRetrocederRascunho} style={{marginRight:10, cursor: 'pointer'}} width="50px" src="https://www.1gtt.com.br/fast-backward.png" />
+            <button onClick={handleLimparSelecao} style={{marginRight:5}} className='calendario vermelho'>Limpar Seleção</button>
+            <button onClick={handleTrocarAeronave} style={{marginRight:5}} className='calendario'>Trocar Aeronave</button>
+            <button onClick={handleMesclarRascunhos} style={{marginRight:5}} className='calendario verde'>Mesclar</button>
+            <button onClick={handleExcluirItens} style={{marginRight:5}} className='calendario vermelho'>Excluir Itens</button>
+            <img onClick={handleAvancarRascunho} style={{marginLeft:10, cursor: 'pointer'}} width="50px" src="https://www.1gtt.com.br/fast-forward.png" />
+          </div>
+          }
+
+        </div>
          <div style={{display: 'flex', flexDirection:'column', width:'100%'}}>
           <div className='topo'>
             <div className='missao'>Avião</div>
@@ -1726,7 +1986,7 @@ const Dashboard = () => {
                 <span className='dados-aviao'>Horas: {item.horas}</span>
                 </div>
                 {semana.map(i=>{
-                 return <div className='item-missao'>
+                 return <div className='item-missao' style={{cursor: 'pointer'}} onClick={(e)=>handleClickAddRascunho(e, i, item.id)}>
                      {Object.keys(manutencoes).map((data) => {
                       const aeronaves = manutencoes[data];
                       return Object.keys(aeronaves).map((aeronave) => {
@@ -1740,6 +2000,64 @@ const Dashboard = () => {
                         });
                       });
                     })}
+                      {
+                        rascunhos.map(item_rascunho=>{
+                          let [ano,mes,dia] = item_rascunho.data.split('-')
+                          let new_date = dia+'/'+mes+'/'+ano
+                          if(new_date == i && item_rascunho.Aeronave.aeronave == item.aviao) {
+                            if (item_rascunho.trip.length > 30) {
+                              var trip = item_rascunho.trip.slice(0, 39)+'...';
+                            } else {
+                              var trip = item_rascunho.trip
+                            }
+                            return (
+                              <div className={selecionados.findIndex(i=>i.id == item_rascunho.id) == 0 ? 'missao-white rascunho-dashed' :'missao-white rascunho' }
+                              onMouseDown={handleMouseDown}
+                              onMouseUp={handleMouseUp}
+                              onMouseEnter={() => handleMouseEnterRascunho(item_rascunho)}
+                              onMouseLeave={handleMouseLeaveRascunho}
+                              onClick={()=>handleEditarRascunho(item_rascunho)} 
+                              style={{backgroundColor: item_rascunho.cor, borderRadius:5, display: 'flex', flexDirection: 'row'}}
+                              >
+                                         { caixaVisibleRascunho && idRascunhoToShow == item_rascunho.id && <div 
+                                  style={{
+                                    position: 'absolute',
+                                    top: '100%',
+                                    left: '0',
+                                    background: '#000',
+                                    color: '#fff',
+                                    padding: '10px',
+                                    border: '1px solid black',
+                                    zIndex: 1, // Definindo uma ordem de empilhamento maior para a div das informações
+                                  }}
+                                >
+                            <p style={{fontSize: '1vw'}}>Trip: {rascunhoToShow.trip}</p>
+                            
+                          </div>}
+                                <div className='left-rascunho' style={{display: 'flex', flexDirection: 'column'}}>
+                                  <span className='item-rascunho'>{item_rascunho.planejamento}</span>
+                                  <span className='item-rascunho'>{item_rascunho.ofrag}</span>
+                                  <span className='item-rascunho'>{trip}</span>
+                                  <span className='item-rascunho'>{item_rascunho.obs}</span>
+                                </div>
+                                <div className='right-rascunho'>
+                                  {
+                                    selecao && 
+                                    <>
+                                    {selecionados.findIndex(i=>i.id == item_rascunho.id) >= 0 ?
+                                    <img width="14px" height="14px" src="http://www.1gtt.com.br/correct.png" onClick={()=>handleBolaClick(item_rascunho)} /> :
+                                    <div className='bola' onClick={()=>handleBolaClick(item_rascunho)}>
+                                    </div>}
+                                    </>
+                        
+                                  }
+                                 
+                                </div>
+                              </div>
+                            )
+                          }
+                        })
+                      }
                       {item.eventos.length >0 && item.eventos.map(it=>{
                           if(it.data == i) {
                             return <div 
@@ -2466,6 +2784,75 @@ editSobreaviso ? <button className='cancelar' style={{fontSize: '1.3vw'}} onClic
                 <div className='modal-bottom'>
                   <button onClick={handleExcluiManutAviso} className='excluir'>{'Excluir'}</button>
                 </div>}
+            </div>
+                            
+            </div>}
+
+            { caixaCreateVisibleRascunho && <div className='modal-aviao' style={{alignItems: 'flex-start', width:300}}>
+       <span onClick={()=>{
+          setCaixaCreateVisibleRascunho(false)
+          setPlanejamento('')
+          setObs('')
+          setTrip('')
+          setOfrag('')
+          setIdAeronaveRascunho('')
+          setIsEditRascunho(false)
+        }}  className='title-modal' style={{color: '#fff', cursor: 'pointer'}}>X</span>
+            <div className='modal-body' style={{alignItems: 'flex-start', justifyContent: 'flex-start'}}>
+            <div className='item-body-modal' style={{display: 'flex', flexDirection: 'column'}}>
+              <span className='text-modal' style={{color: '#fff'}}>Status:</span>
+              <select style={{borderRadius: 10}} value={statusSelected} onChange={(e)=>{
+              setStatusSelected(e.target.value)
+              }}>
+              {cores.map((item, index)=>{
+                return <option key={index} value={item.value}>{item.label}</option>
+              })}
+            </select>
+            </div>
+
+                <div className='item-body-modal' style={{display: 'flex', flexDirection: 'column'}}>
+                  <span className='text-modal' style={{color: '#fff'}}>Planejamento::</span>
+                  <MaskedString value={planejamento} onChange={setPlanejamento} />
+                </div>
+                <div className='item-body-modal'>
+                  <span className='text-modal' style={{color: '#fff'}}>Ofrag:</span>
+                  <MaskedString style={{width: '100% !important'}} value={ofrag} onChange={setOfrag} />
+                </div>
+                <div className='item-body-modal'>
+                  <span className='text-modal' style={{color: '#fff'}}>Trip:</span>
+                  <MaskedString value={trip} onChange={setTrip} />
+                </div>
+                <div className='item-body-modal'>
+                  <span className='text-modal' style={{color: '#fff'}}>OBS:</span>
+                  <MaskedString value={obs} onChange={setObs} />
+                </div>
+                <div className='modal-bottom' style={{marginTop:10}}>
+                  <button onClick={handleCriarRascunho} className='salvar'>{isEditRascunho ? 'Editar' : 'Salvar'}</button>
+                </div>
+            </div>
+                            
+            </div>}
+
+            { caixaCreateVisibleRascunhoAeronave && <div className='modal-aviao' style={{alignItems: 'flex-start'}}>
+       <span onClick={()=>{
+          setCaixaCreateVisibleRascunhoAeronave(false)
+          setAeronaveRascunho('')
+          setIdAeronaveRascunho('')
+        }}  className='title-modal' style={{color: '#fff', cursor: 'pointer'}}>X</span>
+            <div className='modal-body' style={{alignItems: 'flex-start', justifyContent: 'flex-start'}}>
+            <div className='item-body-modal' style={{display: 'flex', flexDirection: 'column'}}>
+              <span className='text-modal' style={{color: '#fff'}}>Aeronave:</span>
+              <select style={{borderRadius: 10, marginTop:5}} value={aeronaveRascunho} onChange={(e)=>{
+              setAeronaveRascunho(e.target.value)
+              }}>
+              {aeronaves.map((item, index)=>{
+                return <option key={index} value={item.id}>{item.aeronave}</option>
+              })}
+            </select>
+            </div>
+                <div className='modal-bottom' style={{marginTop:10}}>
+                  <button onClick={handleTrocarAeronaveSave} className='salvar'>Trocar Aeronave</button>
+                </div>
             </div>
                             
             </div>}

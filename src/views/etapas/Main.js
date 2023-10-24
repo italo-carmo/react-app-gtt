@@ -26,10 +26,12 @@ const Etapas = () => {
   const [esforcos, setEsforcos] = useState([]);
   const [aeronaves, setAeronaves] = useState([]);
   const [horasTotais, setHorasTotais] = useState(0);
+  const [loading, setLoading] = useState(false)
 
   const Api = useApi()
 
   const getEtapas = async () => {
+    setLoading(true)
     let res = await Api.getEtapas()
     if(!res.error) {
       let res_filtered = res.data.filter(item=>{
@@ -51,6 +53,7 @@ const Etapas = () => {
       setEtapas(res_filtered)
       setEtapasFiltered(res_filtered)
     }
+    setLoading(false)
   }
   
   useEffect(()=>{
@@ -367,7 +370,7 @@ const Etapas = () => {
         </div>
 
     </div>
-        <table>
+        <table style={{marginBottom:50}}>
           <thead className='tabela-cabecalho'>
             <tr>
               <th>Checado</th>
@@ -536,6 +539,17 @@ const Etapas = () => {
                   <td></td>
               </tr>
         </table>
+        {loading &&
+                <div  style={{
+                  position: 'absolute',
+                  left: '50%',
+                  top: '80%',
+                  transform: 'translate(-50%, -50%)',
+                  zIndex:99
+                }}>
+                  <LoadingSpinner black={true} width="50px" />
+                </div>
+        }
       </CCard>
      
     </>

@@ -3,6 +3,26 @@
     flex-direction: column;
 }
 
+.menu-item {
+    display: flex;
+    align-items: center;
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 5px;
+    margin-bottom:5px;
+}
+
+.item-menu {
+    color: #000;
+    margin-left:10px;
+}
+
+.area-top {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 .aviao-item {
     background-color: #191c24;
 
@@ -13,81 +33,6 @@
     align-items: center;
     justify-content: center;
     display: flex;
-}
-
-.trigrama-sobreaviso {
-    font-size: 1vw;
-    color:#fff;
-    
-}
-
-.rascunho {
-    border: 1px solid #000 !important;
-    margin-left:0 !important;
-    position: relative;
-}
-.rascunho-dashed {
-    border: 1px dashed #000 !important;
-}
-
-.item-rascunho {
-    font-size: 0.7vw;
-    border-bottom: 1px solid #000;
-    width:100%;
-    text-align: center;
-    min-height:15px;
-}
-
-.right-rascunho {
-    display: flex;
-    height: 100%;
-}
-
-.left-rascunho {
-    flex:1;
-}
-
-.bola {
-    background-color: #000;
-    width:14px;
-    height:14px;
-    border-radius:7px;
-    margin-left:5px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.vermelho {
-    background-color: #c4302b !important;
-    border-color:#c4302b !important;
-}
-
-.verde {
-    background-color: #28a745 !important;
-    border-color:#28a745 !important;
-}
-
-.bola-interna {
-    background-color: #fff;
-    width:6px;
-    height:6px;
-    border-radius:3px;
-    z-index: 99;
-}
-
-.div-trigramas-sobreaviso {
-    background-color: #28a745;
-    border: 1px solid #fff;
-    border-radius: 10px;
-    margin:5px;
-    padding:5px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    flex:1;
-    width:90%;
-    cursor: pointer;
 }
 
 .aviao-item-topo {
@@ -152,8 +97,6 @@
     border-right: 1px solid #fff;
     border-bottom: 1px solid #fff;
     min-height:100px;
-    padding-top:5px;
-    padding-bottom:5px;
 }
 
 .input-obs {
@@ -612,4 +555,260 @@ input {
     border:0;
     border-radius: 10px;
     margin-bottom: 5px;
+}
+
+table {
+    border-collapse: collapse; /* Combina as bordas das células */
+    width: 100%;
+}
+
+/* Define o estilo das bordas das células */
+th, td {
+    border: 1px solid black; /* Borda preta de 1 pixel */
+    padding: 8px; /* Espaçamento interno para o conteúdo das células */
+    text-align: left; /* Alinhamento do texto à esquerda */
+    font-size:12px;
+    text-align: center; 
+}
+
+.tabela-cabecalho {
+    position: sticky;
+    top: 0;
+    background-color: #fff; /* Defina a cor de fundo desejada */
+    z-index: 1; /* Garante que o cabeçalho fique acima do conteúdo da tabela */
+  }
+
+th {
+    background-color: #ddd;
+    margin: 0;
+}
+
+tr:nth-child(odd) {
+    background-color: #ddd; /* Cor de fundo para linhas pares */
+}
+
+.bold {
+    font-weight: bold;
+}
+
+.buttons {
+    flex:1;
+    flex-direction: column;
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+}
+
+.check {
+    width:20px;
+    height:20px;
+    border-radius:10px;
+    margin:0;
+    border:2px solid #000;
+}
+
+.date {
+    font-size: 10px;
+}
+
+.check-green {
+    background-color: #28a745;
+    width:20px;
+    height:20px;
+    border-radius:10px;
+    margin:0;
+    border:2px solid #000;
+}
+
+.correct {
+    width:20px;
+    height:20px;
+    cursor: pointer;
+}
+
+.left-side {
+    flex:0.25 !important;
+    margin-right:10px;
+    padding:10px;
+    min-height:500px;
+    background-color: rgba(19, 21, 27, 0.95);
+    color:#fff;
+}
+
+.right-side {
+    flex:0.75 !important;
+    margin-left:10px;
+    border: 1px solid #000;
+    border-radius:10px;
+    padding:10px;
+    min-height:500px;
+    margin-top:10px;
+    margin-right:10px;
+    margin-bottom: 10px;
+    overflow: scroll;
+}
+
+.item-omis {
+    background-color: #fff;
+    color:#000;
+    margin-bottom:5px;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: row;
+    cursor: pointer;
+}
+
+.tag-amarela {
+    width:20px;
+    background-color:#e9d604;
+    min-width:10px;
+    border-bottom-left-radius: 5px;
+    border-top-left-radius: 5px;
+}
+
+.tag {
+    width:20px;
+    background-color:#87d030;
+    min-width:10px;
+    border-bottom-left-radius: 5px;
+    border-top-left-radius: 5px;
+}
+
+.numero {
+    margin-left:5px;
+}
+
+.descricao-omis {
+    display: flex;
+    align-items: space-between;
+    justify-content: space-between;
+    flex:1;
+    margin-right:5px;
+}
+
+.center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2vw;
+    font-weight: bold;
+    margin-top:20px;
+}
+
+.cabecalho {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width:100%;
+    margin-top:20px;
+}
+
+.table-area {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    margin-top:20px;
+    width:100%;
+}
+
+.margin-left {
+    margin-left:5px;
+}
+
+.linha-cabecalho {
+    width:90%;
+    display: flex;
+    align-items: center;
+}
+
+.linha-underline {
+    border-bottom: 1px solid #ccc;
+}
+
+.relato {
+    border:1px solid #000;
+    border-radius:10px;
+    min-height: 100px;
+    width:90%;
+    padding:10px;
+}
+
+table {
+    width:90%;
+    border-collapse: collapse;
+    break-inside: avoid;
+}
+
+td {
+    page-break-inside: avoid;
+}
+
+
+td, th {
+    border: 1px solid #fff;
+    text-align: center;
+    font-size: 12px;
+}
+
+td {
+    background-color:#eaebf5;
+}
+
+th {
+    background-color: #b6c5e7;
+}
+
+.card-sap {
+    padding:10px;
+    display: flex;
+    background-color: #ddd;
+    border-radius: 10px;
+    margin-left:10px;
+    margin-right:10px;
+    border: 2px solid #000;
+    flex:1;
+}
+
+.title-card {
+    font-size: 1.2vw;
+    font-weight: bold;
+}
+
+.card-right {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-left:10px;
+}
+
+.numero-card {
+    font-size: 1.5vw;
+    font-weight: bold;
+}
+
+.card-solicitadas {
+    border: 1px solid #ccc;
+    background-color: #eee;
+    border-radius:10px;
+    padding:10px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.left-solicitadas {
+
+}
+
+.right-solicitadas {
+
+}
+
+.botao-solitadas {
+    border-radius: 10px;
+    padding:10px;
+    background-color: #000;
+    margin-bottom:5px;
 }
