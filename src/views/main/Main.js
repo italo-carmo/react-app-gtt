@@ -2004,12 +2004,19 @@ const Dashboard = () => {
                         rascunhos.map(item_rascunho=>{
                           let [ano,mes,dia] = item_rascunho.data.split('-')
                           let new_date = dia+'/'+mes+'/'+ano
+                          let trip_split = item_rascunho.trip.split('/')
+                          if(trip_split.length > 0) {
+                            var trip = trip_split.join('/ ')
+                          } else {
+                            var trip = item_rascunho.trip
+                          }
                           if(new_date == i && item_rascunho.Aeronave.aeronave == item.aviao) {
-                            if (item_rascunho.trip.length > 30) {
-                              var trip = item_rascunho.trip.slice(0, 39)+'...';
+                            if (trip.length > 25) {
+                              trip = trip.slice(0, 25)+'...';
                             } else {
-                              var trip = item_rascunho.trip
+                              trip = trip.trip
                             }
+
                             return (
                               <div className={selecionados.findIndex(i=>i.id == item_rascunho.id) == 0 ? 'missao-white rascunho-dashed' :'missao-white rascunho' }
                               onMouseDown={handleMouseDown}
@@ -2017,7 +2024,7 @@ const Dashboard = () => {
                               onMouseEnter={() => handleMouseEnterRascunho(item_rascunho)}
                               onMouseLeave={handleMouseLeaveRascunho}
                               onClick={()=>handleEditarRascunho(item_rascunho)} 
-                              style={{backgroundColor: item_rascunho.cor, borderRadius:5, display: 'flex', flexDirection: 'row'}}
+                              style={{backgroundColor: item_rascunho.cor, borderRadius:5, display: 'flex', flexDirection: 'column'}}
                               >
                                          { caixaVisibleRascunho && idRascunhoToShow == item_rascunho.id && <div 
                                   style={{
@@ -2034,13 +2041,7 @@ const Dashboard = () => {
                             <p style={{fontSize: '1vw'}}>Trip: {rascunhoToShow.trip}</p>
                             
                           </div>}
-                                <div className='left-rascunho' style={{display: 'flex', flexDirection: 'column'}}>
-                                  <span className='item-rascunho'>{item_rascunho.planejamento}</span>
-                                  <span className='item-rascunho'>{item_rascunho.ofrag}</span>
-                                  <span className='item-rascunho'>{trip}</span>
-                                  <span className='item-rascunho'>{item_rascunho.obs}</span>
-                                </div>
-                                <div className='right-rascunho'>
+                          <div className='right-rascunho'>
                                   {
                                     selecao && 
                                     <>
@@ -2052,6 +2053,12 @@ const Dashboard = () => {
                         
                                   }
                                  
+                                </div>
+                                <div className='left-rascunho' style={{display: 'flex', flexDirection: 'column'}}>
+                                  <span className='item-rascunho'>{item_rascunho.planejamento}</span>
+                                  <span className='item-rascunho'>{item_rascunho.ofrag}</span>
+                                  <span className='item-rascunho'>{trip}</span>
+                                  <span className='item-rascunho'>{item_rascunho.obs}</span>
                                 </div>
                               </div>
                             )
