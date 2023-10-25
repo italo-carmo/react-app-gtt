@@ -1,4 +1,4 @@
-const baseUrl = 'http://localhost:4444'
+const baseUrl = 'https://servidor-app-gtt.herokuapp.com'
 
 //https://servidor-app-gtt.herokuapp.com
 
