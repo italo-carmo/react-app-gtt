@@ -1,4 +1,4 @@
-const baseUrl = 'https://servidor-app-gtt.herokuapp.com'
+const baseUrl = 'http://localhost:4444'
 
 //https://servidor-app-gtt.herokuapp.com
 
@@ -300,6 +300,32 @@ export default () => {
             let json = await request('DELETE', `/rascunhos/${id}` , null, token)
             return json
         },
+        getMissoesLancarQuadrinhos: async () => {
+            let token = localStorage.getItem('token')
+            let json = await request('GET', `/missoes/lancar/quadrinhos` , null, token)
+            return json
+        },
+        getMissoesLancadasQuadrinhos: async () => {
+            let token = localStorage.getItem('token')
+            let json = await request('GET', `/missoes/lancar/quadrinhos/lancadas` , null, token)
+            return json
+        },
+        getQuadrinhos: async () => {
+            let token = localStorage.getItem('token')
+            let json = await request('GET', `/quadrinhos/lista/get/all` , null, token)
+            return json
+        },
+        updateQuadrinho: async (id, body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('PUT', `/missoes/quadrinho/${id}` , body, token)
+            return json
+        },
+        getListaQuadrinhoFuncao: async (body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('POST', `/quadrinhos/lista/funcao` , body, token)
+            return json
+        },
+        
     }
 
 }

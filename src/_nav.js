@@ -42,6 +42,33 @@ const _nav = [
     items: [
       {
         component: CNavGroup,
+        name: 'Escala',
+        to: '',
+        items: [
+          {
+            component: CNavGroup,
+            name: 'Quadrinhos',
+            to: '',
+            items: [
+              {
+                class: 'nav-link nav-group-toggle submenu', // Adicione a classe CSS para ajustar o recuo
+                component: CNavItem,
+                name: 'Para Lançar',
+                to: '/lancar-quadrinhos',
+              },
+              {
+                class: 'nav-link nav-group-toggle submenu', // Adicione a classe CSS para ajustar o recuo
+                component: CNavItem,
+                name: 'Lista',
+                to: '/lista-quadrinhos',
+              },
+            ]
+          },
+        ],
+        root: true // Define o nível raiz para Escala
+      },
+      {
+        component: CNavGroup,
         name: 'Estatística',
         to: '',
         items: [
