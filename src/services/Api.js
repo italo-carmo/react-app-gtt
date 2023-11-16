@@ -325,7 +325,11 @@ export default () => {
             let json = await request('POST', `/quadrinhos/lista/funcao` , body, token)
             return json
         },
-        
+        getManobras: async () => {
+            let token = localStorage.getItem('token')
+            let json = await request('GET', `/manobras` , null, token)
+            return json
+        },
     }
 
 }

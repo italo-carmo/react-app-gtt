@@ -317,7 +317,7 @@ const Omis = ({match}) => {
           <span className='data-bold'>OE-3</span>
         </div>
         {tripulacao.map(item=>{
-          if(item.funcao == 'OE') {
+          if(item.funcao == 'O3') {
             return (
               <div className='div-tripulante'> 
                 <span className='tripulante'>{item.posto} {item.nome_completo} - IDENTIDADE ({item.identidade}) - SARAM ({item.saram})</span>

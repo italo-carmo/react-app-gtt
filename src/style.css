@@ -1,3 +1,10 @@
-.submenu {
+.nav-link-submenu {
+    display: block;
+    padding: var(--cui-nav-link-padding-y) var(--cui-nav-link-padding-x);
+    font-size: var(--cui-nav-link-font-size);
+    font-weight: var(--cui-nav-link-font-weight);
+    color: var(--cui-nav-link-color);
+    text-decoration: none;
     margin-left:20px !important;
+    transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
 }

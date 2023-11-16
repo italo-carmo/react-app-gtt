@@ -36,42 +36,29 @@ const _nav = [
   },
   {
     component: CNavGroup,
-    name: 'Operações',
+    name: 'Escala',
     to: '/base',
     icon: <img src="https://www.1gtt.com.br/app/plane.png" style={{marginRight:20}} width="25px" height="25px"/>,
     items: [
-      {
-        component: CNavGroup,
-        name: 'Escala',
-        to: '',
-        items: [
-          {
-            component: CNavGroup,
-            name: 'Quadrinhos',
-            to: '',
-            items: [
               {
-                class: 'nav-link nav-group-toggle submenu', // Adicione a classe CSS para ajustar o recuo
                 component: CNavItem,
-                name: 'Para Lançar',
+                name: 'Lançar Quadrinhos',
+                class: 'nav-link-submenu',
                 to: '/lancar-quadrinhos',
               },
               {
-                class: 'nav-link nav-group-toggle submenu', // Adicione a classe CSS para ajustar o recuo
                 component: CNavItem,
-                name: 'Lista',
+                name: 'Ver Quadrinhos',
                 to: '/lista-quadrinhos',
               },
-            ]
-          },
-        ],
-        root: true // Define o nível raiz para Escala
-      },
-      {
-        component: CNavGroup,
-        name: 'Estatística',
-        to: '',
-        items: [
+    ],
+  },
+  {
+    component: CNavGroup,
+    name: 'Estatística',
+    to: '/base',
+    icon: <img src="https://www.1gtt.com.br/estatisticas.png" style={{marginRight:20}} width="25px" height="25px"/>,
+    items: [
           {
             component: CNavItem,
             name: 'Etapas',
@@ -95,8 +82,6 @@ const _nav = [
             ]
           },
         ]
-      },
-    ],
   },
   {
     component: CNavGroup,

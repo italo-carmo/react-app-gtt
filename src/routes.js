@@ -3,6 +3,7 @@ import Etapas from './views/etapas/Main'
 import Ferias from './views/ferias/Main'
 import LancarQuadrinhos from './views/lancar-quadrinhos-missoes/Main'
 import ListaQuadrinhos from './views/lista-quadrinhos/Main'
+import LancarManobras from './views/manobras/Main'
 import ListaPauDeSebo from './views/pau-de-sebo/Main'
 import RevisarOms from './views/revisar_oms/Main'
 const Main = React.lazy(() => import('./views/main/Main'))
@@ -28,6 +29,7 @@ const routes = [
   { path: '/lista-pau-de-sebo', name: 'Pau de Sebo', element: ListaPauDeSebo },
   { path: '/lancar-quadrinhos', name: 'Lançar Quadrinhos', element: LancarQuadrinhos },
   { path: '/lista-quadrinhos', name: 'Lista Quadrinhos', element: ListaQuadrinhos },
+  { path: '/manobras', name: 'Manobras', element: LancarManobras },
 ]
 
 export default routes
