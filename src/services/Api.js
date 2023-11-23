@@ -1,5 +1,7 @@
 const baseUrl = 'https://servidor-app-gtt.herokuapp.com'
 
+//https://servidor-app-gtt.herokuapp.com
+
 const request = async (method, endpoint, params, token = null) => {
     method = method.toLowerCase()
     let fullUrl = `${baseUrl}${endpoint}`
@@ -53,6 +55,16 @@ export default () => {
             let json = await request('POST', '/missoes/avioes/lista' , body, token)
             return json
         },
+        getManutencoesAvioes: async (body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('POST', '/manutencoes/datas' , body, token)
+            return json
+        },
+        getMissoesAvioesId: async (id) => {
+            let token = localStorage.getItem('token')
+            let json = await request('POST', `/missoes/avioes/lista/${id}` , null, token)
+            return json
+        },
         getEsforcoAereo: async (body) => {
             let token = localStorage.getItem('token')
             let json = await request('GET', '/esforcos' , null, token)
@@ -103,6 +115,11 @@ export default () => {
             let json = await request('PUT', `/missoes/${id}` , body, token)
             return json
         },
+        getMissao: async (id) => {
+            let token = localStorage.getItem('token')
+            let json = await request('GET', `/missoes/${id}` , null, token)
+            return json
+        },
         getTrigrama: async (trigrama) => {
             let token = localStorage.getItem('token')
             let json = await request('GET', `/trigramas/dados/${trigrama}` , null, token)
@@ -143,6 +160,176 @@ export default () => {
             let json = await request('PUT', `/aeronaves/${id}` , body, token)
             return json
         },
-        
+        getObservacoesData: async (body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('POST', '/observacoes/dias' , body, token)
+            return json
+        },
+        updateObservacao: async (body, id) => {
+            let token = localStorage.getItem('token')
+            let json = await request('PUT', `/observacoes/${id}` , body, token)
+            return json
+        },
+        createObservacao: async (body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('POST', '/observacoes' , body, token)
+            return json
+        },
+        deleteObservacao: async (id) => {
+            let token = localStorage.getItem('token')
+            let json = await request('DELETE', `/observacoes/${id}` , null, token)
+            return json
+        },
+        createManutencao: async (body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('POST', '/manutencoes' , body, token)
+            return json
+        },
+        updateManutencao: async (body, id) => {
+            let token = localStorage.getItem('token')
+            let json = await request('PUT', `/manutencoes/${id}` , body, token)
+            return json
+        },
+        deleteManutencao: async (id) => {
+            let token = localStorage.getItem('token')
+            let json = await request('DELETE', `/manutencoes/${id}` , null, token)
+            return json
+        },
+        getEtapas: async () => {
+            let token = localStorage.getItem('token')
+            let json = await request('GET', '/estatistica/paudesebo' , null, token)
+            return json
+        },
+        checkEtapa: async (id, body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('POST', `/etapas/check/${id}` , body, token)
+            return json
+        },
+        getSobreavisos: async (body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('POST', '/sobreaviso/data' , body, token)
+            return json
+        },
+        createSobreaviso: async (body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('POST', '/sobreaviso' , body, token)
+            return json
+        },
+        updateSobreaviso: async (id, body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('PUT', `/sobreaviso/${id}` , body, token)
+            return json
+        },
+        deleteSobreaviso: async (id) => {
+            let token = localStorage.getItem('token')
+            let json = await request('DELETE', `/sobreaviso/${id}` , null, token)
+            return json
+        },
+        getEtapaById: async (id) => {
+            let token = localStorage.getItem('token')
+            let json = await request('GET', `/etapas/getbyid/${id}` , null, token)
+            return json
+        },
+        getPermissoes: async () => {
+            let token = localStorage.getItem('token')
+            let json = await request('GET', `/permissoes_usuarios/minhas` , null, token)
+            return json
+        },
+        getMissoesRevisar: async () => {
+            let token = localStorage.getItem('token')
+            let json = await request('GET', `/missoes/revisar/lista` , null, token)
+            return json
+        },
+        getPernoitesMissao: async (id) => {
+            let token = localStorage.getItem('token')
+            let json = await request('GET', `/pernoites/missao/${id}` , null, token)
+            return json
+        },
+        getMeiasDiariasMissao: async (id) => {
+            let token = localStorage.getItem('token')
+            let json = await request('GET', `/meias-diarias/missao/${id}` , null, token)
+            return json
+        },
+        revisarOm: async (id) => {
+            let token = localStorage.getItem('token')
+            let json = await request('GET', `/missoes/revisar/om/${id}` , null, token)
+            return json
+        },
+        retornarOm: async (id, body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('POST', `/missoes/retornar/om/${id}`, body, token)
+            return json
+        },
+        retornarMissaoRevisao: async (id) => {
+            let token = localStorage.getItem('token')
+            let json = await request('POST', `/missoes/retornar/revisao/om/${id}` , null, token)
+            return json
+        },
+        finalizarOm: async (id) => {
+            let token = localStorage.getItem('token')
+            let json = await request('GET', `/missoes/finalizar/${id}` , null, token)
+            return json
+        },
+        getFeriasSolicitadas: async () => {
+            let token = localStorage.getItem('token')
+            let json = await request('GET', `/ferias/get/solicitadas` , null, token)
+            return json
+        },
+        getPauDeSebo: async (body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('POST', `/estatistica/paudesebo/tripulantes` , body, token)
+            return json
+        },
+        getRascunhos: async (body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('POST', `/rascunhos/data` , body, token)
+            return json
+        },
+        createRascunho: async (body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('POST', `/rascunhos/` , body, token)
+            return json
+        },
+        editRascunho: async (id, body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('PUT', `/rascunhos/${id}` , body, token)
+            return json
+        },
+        excluirRascunho: async (id) => {
+            let token = localStorage.getItem('token')
+            let json = await request('DELETE', `/rascunhos/${id}` , null, token)
+            return json
+        },
+        getMissoesLancarQuadrinhos: async () => {
+            let token = localStorage.getItem('token')
+            let json = await request('GET', `/missoes/lancar/quadrinhos` , null, token)
+            return json
+        },
+        getMissoesLancadasQuadrinhos: async () => {
+            let token = localStorage.getItem('token')
+            let json = await request('GET', `/missoes/lancar/quadrinhos/lancadas` , null, token)
+            return json
+        },
+        getQuadrinhos: async () => {
+            let token = localStorage.getItem('token')
+            let json = await request('GET', `/quadrinhos/lista/get/all` , null, token)
+            return json
+        },
+        updateQuadrinho: async (id, body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('PUT', `/missoes/quadrinho/${id}` , body, token)
+            return json
+        },
+        getListaQuadrinhoFuncao: async (body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('POST', `/quadrinhos/lista/funcao` , body, token)
+            return json
+        },
+        getManobras: async () => {
+            let token = localStorage.getItem('token')
+            let json = await request('GET', `/manobras` , null, token)
+            return json
+        },
     }
+
 }

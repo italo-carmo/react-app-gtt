@@ -1,0 +1,110 @@
+
+            
+              {aviao1.map((item, index)=>{
+                if(index == (aviao1.length -1)) {
+                  var classItem = 'item-missao-last'
+                } else {
+                  var classItem = 'item-missao'
+                }
+                let html = 
+                <div className={classItem}>
+                    {item.missoes.map(i=>{
+                      return <div className='missao white'
+                                  onMouseEnter={() => handleMouseEnter(i.missao.id,i.missao.tripulacao)}
+                                  onMouseLeave={handleMouseLeave}
+                                  onClick={()=>handleEditMission(i.missao.id)}
+                                >
+                                {i.missao.horaDep}Z {i.missao.dep} - {i.missao.pouso} {i.missao.horaPouso}Z 
+                                {caixaVisible && id == i.missao.id &&
+                                <div
+                                    style={{
+                                      position: 'absolute',
+                                      top: '100%',
+                                      left: '0',
+                                      background: 'black',
+                                      borderRadius: 5,
+                                      color: '#fff',
+                                      padding: '10px',
+                                      border: '1px solid black',
+                                      zIndex: 1, // Definindo uma ordem de empilhamento maior para a div das informações
+                                    }}
+                                  >
+                                   <p>Tripulação: {tripulacao.map((it,idx)=>{
+                                    if(idx != (tripulacao.length-1)) {
+                                      return it+'/'
+                                    } else {
+                                      return it
+                                    }
+                                     
+                                    })}</p>
+                                    <p>OMIS: {i.missao.omis}</p>
+                                </div>
+                                }
+                            </div>
+                    })}
+
+                </div>
+                return html
+                })}
+
+            <div className='missao-item'>
+            <div className='missao aviao'>FAB 2855</div>
+            {aviao2.map((item, index)=>{
+                if(index == (aviao2.length -1)) {
+                  var classItem = 'item-missao-last'
+                } else {
+                  var classItem = 'item-missao'
+                }
+                let html = 
+                <div className={classItem}>
+                    {item.missoes.map(i=>{
+                      return <div className='missao white'>
+                                {i.missao.horaDep}Z {i.missao.dep} - {i.missao.pouso} {i.missao.horaPouso}Z 
+                            </div>
+                    })}
+
+                </div>
+                return html
+                })}
+           
+            </div>
+            <div className='missao-item'>
+            <div className='missao aviao'>FAB 2856</div>
+            {aviao3.map((item, index)=>{
+                if(index == (aviao3.length -1)) {
+                  var classItem = 'item-missao-last'
+                } else {
+                  var classItem = 'item-missao'
+                }
+                let html = 
+                <div className={classItem}>
+                    {item.missoes.map(i=>{
+                      return <div className='missao white'>
+                                {i.missao.horaDep}Z {i.missao.dep} - {i.missao.pouso} {i.missao.horaPouso}Z 
+                            </div>
+                    })}
+
+                </div>
+                return html
+                })}
+            </div>
+            <div className='missao-item'>
+            <div className='missao aviao'>FAB 2857</div>
+            {aviao4.map((item, index)=>{
+                if(index == (aviao4.length -1)) {
+                  var classItem = 'item-missao-last'
+                } else {
+                  var classItem = 'item-missao'
+                }
+                let html = 
+                <div className={classItem}>
+                    {item.missoes.map(i=>{
+                      return <div className='missao white'>
+                                {i.missao.horaDep}Z {i.missao.dep} - {i.missao.pouso} {i.missao.horaPouso}Z 
+                            </div>
+                    })}
+
+                </div>
+                return html
+                })}
+            </div>

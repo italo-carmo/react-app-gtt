@@ -1,0 +1,39 @@
+table {
+    width:90%;
+    border-collapse: collapse;
+    break-inside: avoid;
+}
+
+td {
+    page-break-inside: avoid;
+}
+
+
+td, th {
+    border: 1px solid #fff;
+    text-align: center;
+    font-size: 12px;
+}
+
+td {
+    background-color:#eaebf5;
+}
+
+th {
+    background-color: #b6c5e7;
+}
+
+.bg-red {
+    background-color: #c4302b;
+}
+
+.bg-yellow {
+    background-color: #e9d604;
+}
+
+.botao-salvar {
+    background-color: #28a745;
+    color: #fff;
+    padding:5px;
+    border-radius: 10px;
+}

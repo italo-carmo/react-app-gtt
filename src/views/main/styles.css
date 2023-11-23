@@ -15,6 +15,84 @@
     display: flex;
 }
 
+.trigrama-sobreaviso {
+    font-size: 1vw;
+    color:#fff;
+    
+}
+
+.rascunho {
+    border: 1px solid #000 !important;
+    margin-left:0 !important;
+    position: relative;
+}
+.rascunho-dashed {
+    border: 1px dashed #000 !important;
+}
+
+.item-rascunho {
+    font-size: 0.7vw;
+    border-bottom: 1px solid #000;
+    width:100%;
+    text-align: center;
+    min-height:15px;
+}
+
+.right-rascunho {
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
+    width: 100%;
+}
+
+.left-rascunho {
+    flex:1;
+    width: 100%;
+}
+
+.bola {
+    background-color: #000;
+    width:14px;
+    height:14px;
+    border-radius:7px;
+    margin-left:5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.vermelho {
+    background-color: #c4302b !important;
+    border-color:#c4302b !important;
+}
+
+.verde {
+    background-color: #28a745 !important;
+    border-color:#28a745 !important;
+}
+
+.bola-interna {
+    background-color: #fff;
+    width:6px;
+    height:6px;
+    border-radius:3px;
+    z-index: 99;
+}
+
+.div-trigramas-sobreaviso {
+    background-color: #28a745;
+    border: 1px solid #fff;
+    border-radius: 10px;
+    margin:5px;
+    padding:5px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    flex:1;
+    width:90%;
+    cursor: pointer;
+}
+
 .aviao-item-topo {
     background-color: #191c24;
     color:#fff;
@@ -77,6 +155,21 @@
     border-right: 1px solid #fff;
     border-bottom: 1px solid #fff;
     min-height:100px;
+    padding-top:5px;
+    padding-bottom:5px;
+}
+
+.input-obs {
+    background-color: #fff;
+    color:#000;
+    padding:5px;
+    border-radius:10px;
+}
+
+.item-modal-body {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
 
 .item-missao-last {
@@ -119,6 +212,20 @@
     padding:10px;
     width: 90%;
 }
+.missao-red {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-right: 1px solid #c4302b;
+    border-bottom: 1px solid #c4302b;
+    font-size: 1vw;
+    padding:10px;
+    width: 90%;
+    color:#fff;
+}
+
+
 
 .bottom-table {
     display: flex;
@@ -150,6 +257,37 @@ option {
     border-radius: 5px;
     position: relative;
     cursor: pointer;
+    border: 1px solid #000;
+}
+
+.data {
+    display: flex;
+    flex-direction: column;
+}
+
+
+
+.green {
+    background-color:  #28a745;
+    margin: 5px;
+    padding: 5px;
+    border: 1px solid #fff;
+    font-size: 0.6vw;
+    border-radius: 5px;
+    position: relative;
+    cursor: pointer;
+    color:#fff;
+}
+
+.red {
+    background-color: #c4302b;
+    margin: 5px;
+    padding: 5px;
+    font-size: 0.6vw;
+    border-radius: 5px;
+    position: relative;
+    cursor: pointer;
+    border: 1px solid #fff;
 }
 
 .modal-create {
@@ -240,17 +378,29 @@ option {
     .modal-create-visible {
         width: 40%;
     }
+    .item-rascunho {
+        font-size: 0.7vw;
+    }
 }
 
 @media (max-width:870px) {
     .modal-create-visible {
         width: 50%;
     }
+    .item-rascunho {
+        font-size: 0.7vw;
+        margin-top:2px;
+        min-height:10px
+    }
 }
 
 @media (max-width:690px) {
     .modal-create-visible {
         width: 60%;
+    }
+
+    .rascunho {
+        padding: 3px !important;
     }
     .aviao {
         font-size: 2vw;
@@ -270,7 +420,7 @@ option {
     }
 
     span {
-        font-size: 3vw;
+        font-size: 1.5vw;
     }
 
     .adicionar {
@@ -292,6 +442,13 @@ option {
 }
 
 @media (max-width:580px) {
+    .white, .red {
+        font-size: 0.9vw;
+    }
+
+    .text-missao {
+        font-size: 1vw !important;
+    }
     .modal-create-visible {
         width: 80%;
     }
@@ -309,7 +466,7 @@ option {
     color:#fff;
     border-radius: 5px;
     cursor: pointer;
-    font-size: 1.5vw;
+    font-size: 1.2vw;
 }
 
 .botao-aviao {
@@ -342,6 +499,17 @@ option {
 
 .salvar {
     background-color: #28a745;
+    padding: 2px;
+    color:#fff;
+    border-radius: 5px;
+    cursor: pointer;
+    border:0;
+    margin-top:10px;
+    width: 100%;
+}
+
+.excluir {
+    background-color: #ff0000;
     padding: 2px;
     color:#fff;
     border-radius: 5px;
@@ -386,6 +554,7 @@ option {
     min-height: 50px;
     border-radius:10px;
     display:flex;
+    flex-wrap: wrap;
 }
 
 .add-trip {

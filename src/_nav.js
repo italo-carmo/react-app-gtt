@@ -36,33 +36,65 @@ const _nav = [
   },
   {
     component: CNavGroup,
-    name: 'Operações',
+    name: 'Escala',
     to: '/base',
     icon: <img src="https://www.1gtt.com.br/app/plane.png" style={{marginRight:20}} width="25px" height="25px"/>,
     items: [
-      {
-        component: CNavItem,
-        name: 'Esforço Aéreo',
-        to: '/grafico-esforco',
-      },
-      {
-        component: CNavItem,
-        name: 'Pau de Sebo',
-        to: '/pau-de-sebo',
-      },
-      {
-        component: CNavItem,
-        name: 'Abastecimento',
-        to: '/abastecimento',
-      },
+              {
+                component: CNavItem,
+                name: 'Lançar Quadrinhos',
+                class: 'nav-link-submenu',
+                to: '/lancar-quadrinhos',
+              },
+              {
+                component: CNavItem,
+                name: 'Ver Quadrinhos',
+                to: '/lista-quadrinhos',
+              },
     ],
+  },
+  {
+    component: CNavGroup,
+    name: 'Estatística',
+    to: '/base',
+    icon: <img src="https://www.1gtt.com.br/estatisticas.png" style={{marginRight:20}} width="25px" height="25px"/>,
+    items: [
+          {
+            component: CNavItem,
+            name: 'Etapas',
+            to: '/etapas',
+          },
+          {
+            component: CNavGroup,
+            name: 'Gráficos',
+            to: '',
+            items: [
+              {
+                component: CNavItem,
+                name: 'Esforço Aéreo',
+                to: '/grafico-esforco',
+              },
+              {
+                component: CNavItem,
+                name: 'Pau de Sebo',
+                to: '/pau-de-sebo',
+              }
+            ]
+          },
+        ]
   },
   {
     component: CNavGroup,
     name: 'Apoio',
     to: '/base',
     icon: <img src="https://www.1gtt.com.br/app/contract.png" style={{marginRight:20}} width="25px" height="25px"/>,
-    items: [],
+    items: [
+      {
+      component: CNavItem,
+      name: 'Revisar OMS',
+      to: '/revisar-oms',
+    },
+  ],
   },
 ]
 
