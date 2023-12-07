@@ -330,6 +330,84 @@ export default () => {
             let json = await request('GET', `/manobras` , null, token)
             return json
         },
+        createManobra: async (body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('POST', `/manobras` , body, token)
+            return json
+        },
+        createManobraUsuarios: async (body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('POST', `/manobras/users` , body, token)
+            return json
+        },
+        excluirManobra: async (id) => {
+            let token = localStorage.getItem('token')
+            let json = await request('DELETE', `/manobras/${id}` , null, token)
+            return json
+        },
+        editManobra: async (id, body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('PUT', `/manobras/${id}` , body, token)
+            return json
+        },
+        editManobraUsuarios: async (id, body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('PUT', `/manobras/usuarios/${id}` , body, token)
+            return json
+        },
+        getQuadrinhosManobras: async (body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('POST', `/manobras/quadrinhos/user` , body, token)
+            return json
+        },
+        getMissoesExterior: async () => {
+            let token = localStorage.getItem('token')
+            let json = await request('GET', `/missoes-exterior` , null, token)
+            return json
+        },
+        createMissaoExterior: async (body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('POST', `/missoes-exterior` , body, token)
+            return json
+        },
+        createMissaoExteriorUsuarios: async (body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('POST', `/missoes-exterior/users` , body, token)
+            return json
+        },
+        getListaQuadrinhoFuncaoExterior: async (body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('POST', `/missoes-exterior/quadrinhos/lista` , body, token)
+            return json
+        },
+
+        editMissaoExterior: async (id, body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('PUT', `/missoes-exterior/${id}` , body, token)
+            return json
+        },
+        editMissaoExteriorUsuarios: async (id, body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('PUT', `/missoes-exterior/usuarios/${id}` , body, token)
+            return json
+        },
+        excluirMissaoExterior: async (id) => {
+            let token = localStorage.getItem('token')
+            let json = await request('DELETE', `/missoes-exterior/${id}` , null, token)
+            return json
+        },
+        getTurmas: async (body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('GET', `/users/turma` , body, token)
+            return json
+        },
+        updateTurma: async (id, body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('PUT', `/users/turma/${id}` , body, token)
+            return json
+        },
+
+        
     }
 
 }

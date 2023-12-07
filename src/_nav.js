@@ -32,7 +32,12 @@ const _nav = [
     name: 'Usuário',
     to: '/base',
     icon: <img src="https://www.1gtt.com.br/app/user.png" style={{marginRight:20}} width="25px" height="25px"/>,
-    items: [],
+    items: [ {
+      component: CNavItem,
+      name: 'Turmas de Chegada',
+      class: 'nav-link-submenu',
+      to: '/turmas-de-chegada',
+    },],
   },
   {
     component: CNavGroup,
@@ -46,6 +51,13 @@ const _nav = [
                 class: 'nav-link-submenu',
                 to: '/lancar-quadrinhos',
               },
+              {
+                component: CNavItem,
+                name: 'Missões no Exterior',
+                class: 'nav-link-submenu',
+                to: '/missoes-exterior',
+              },
+
               {
                 component: CNavItem,
                 name: 'Ver Quadrinhos',
@@ -65,6 +77,11 @@ const _nav = [
             to: '/etapas',
           },
           {
+            component: CNavItem,
+            name: 'Pau de Sebo',
+            to: '/pau-de-sebo',
+          },
+          {
             component: CNavGroup,
             name: 'Gráficos',
             to: '',
@@ -77,7 +94,7 @@ const _nav = [
               {
                 component: CNavItem,
                 name: 'Pau de Sebo',
-                to: '/pau-de-sebo',
+                to: '/grafico-pau-de-sebo',
               }
             ]
           },
