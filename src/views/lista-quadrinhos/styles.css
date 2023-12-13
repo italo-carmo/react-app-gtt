@@ -2,6 +2,7 @@ table {
     width:90%;
     border-collapse: collapse;
     break-inside: avoid;
+    text-align: left !important;
 }
 
 td {
@@ -20,7 +21,28 @@ td {
     margin-right:5px;
 }
 
+.input-obs {
+    border: 1px solid #000;
+    border-radius: 10px;
+}
 
+.indisp {
+    background-color: #c4302b;
+    border-radius: 5px;
+    padding:3px;
+    color: #fff;
+    cursor: pointer;
+    margin-left:5px;
+}
+
+.modal-body {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    flex:1;
+    width: 100%;
+}
 
 .coluna {
     display: flex;
@@ -58,9 +80,58 @@ td {
 
 }
 
+.operacionalidade {
+    padding:3px;
+    color: #fff;
+    border-radius:5px;
+    margin-left:5px;
+}
+
+.situacao {
+    padding:3px;
+    color: #fff;
+    border-radius:5px;
+    margin-left:5px;
+}
+
+.diaria {
+    background-color: #28a745;
+    color: #fff;
+    padding: 3px;
+    border-radius:5px;
+}
+
+.comissionamento {
+    background-color: #000;
+    color: #fff;
+    padding: 3px;
+    border-radius:5px;
+}
+
+.qualificacao {
+    background-color: rgb(80, 79, 79);
+}
+
+.operacional {
+    background-color: rgb(80, 79, 79);
+}
+.basico {
+    background-color: #ccc;
+    color: #000;
+}
+
+.aluno {
+    background-color: rgb(250, 2, 221);
+}
+
+.instrutor {
+    background-color: rgb(47, 72, 213);
+}
+
 td, th {
     border: 1px solid #fff;
     font-size: 12px;
+    text-align: left !important;
 }
 
 td {

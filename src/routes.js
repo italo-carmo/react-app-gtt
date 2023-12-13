@@ -1,4 +1,5 @@
 import React from 'react'
+import AlterarOperacionalidades from './views/alterar-operacionalidades/Main'
 import Etapas from './views/etapas/Main'
 import Ferias from './views/ferias/Main'
 import LancarQuadrinhos from './views/lancar-quadrinhos-missoes/Main'
@@ -34,6 +35,7 @@ const routes = [
   { path: '/manobras', name: 'Manobras', element: LancarManobras },
   { path: '/missoes-exterior', name: 'Missões Exterior', element: LancarMissoesExterior },
   { path: '/turmas-de-chegada', name: 'Turmas de Chegada', element: TurmasDeChegada },
+  { path: '/alterar-operacionalidades', name: 'Alterar Operacionalidades', element: AlterarOperacionalidades },
 ]
 
 export default routes

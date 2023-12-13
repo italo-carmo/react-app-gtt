@@ -398,7 +398,7 @@ export default () => {
         },
         getTurmas: async (body) => {
             let token = localStorage.getItem('token')
-            let json = await request('GET', `/users/turma` , body, token)
+            let json = await request('GET', `/users/lista/turma` , body, token)
             return json
         },
         updateTurma: async (id, body) => {
@@ -406,7 +406,49 @@ export default () => {
             let json = await request('PUT', `/users/turma/${id}` , body, token)
             return json
         },
+        updateDataOperacional: async (id, body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('PUT', `/users/data-operacional/${id}` , body, token)
+            return json
+        },
+        getIndisponibilidadesData: async (body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('POST', `/indisponibilidades/data` , body, token)
+            return json
+        },
 
+        getSubprogramas: async () => {
+            let token = localStorage.getItem('token')
+            let json = await request('GET', `/subprogramas` , null, token)
+            return json
+        },
+
+        getFases: async (id) => {
+            let token = localStorage.getItem('token')
+            let json = await request('GET', `/fases/${id}` , null, token)
+            return json
+        },
+        filterUsers: async (id) => {
+            let token = localStorage.getItem('token')
+            let json = await request('GET', `/cois/filter/users/${id}` , null, token)
+            return json
+        },
+        getUsersOperacionalidades: async () => {
+            let token = localStorage.getItem('token')
+            let json = await request('GET', `/users/lista/operacionalidades` , null, token)
+            return json
+        },
+        updateOperacionalidade: async (id, body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('PUT', `/users/operacionalidade/${id}` , body, token)
+            return json
+        },
+        getOperacionalidades: async () => {
+            let token = localStorage.getItem('token')
+            let json = await request('GET', `/operacionalidades` , null, token)
+            return json
+        },
+        
         
     }
 
