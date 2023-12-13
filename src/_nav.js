@@ -15,16 +15,14 @@ import {
 } from '@coreui/icons'
 import { CNavGroup, CNavItem, CNavTitle } from '@coreui/react'
 
+
+
 const _nav = [
   {
     component: CNavItem,
     name: 'Home',
     to: '/main',
     icon: <CIcon icon={cilSpeedometer} customClassName="nav-icon" />,
-    badge: {
-      color: 'info',
-      text: 'NOVO',
-    },
   },
   
   {
@@ -44,6 +42,10 @@ const _nav = [
     name: 'Escala',
     to: '/base',
     icon: <img src="https://www.1gtt.com.br/app/plane.png" style={{marginRight:20}} width="25px" height="25px"/>,
+    badge: {
+      color: 'info',
+      text: '',
+    },
     items: [
               {
                 component: CNavItem,
