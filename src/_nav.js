@@ -53,6 +53,12 @@ const _nav = [
               },
               {
                 component: CNavItem,
+                name: 'Lançar Manobras',
+                class: 'nav-link-submenu',
+                to: '/manobras',
+              },
+              {
+                component: CNavItem,
                 name: 'Missões no Exterior',
                 class: 'nav-link-submenu',
                 to: '/missoes-exterior',

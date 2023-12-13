@@ -34,7 +34,7 @@ const ListaQuadrinhos = () => {
   const [fase, setFase] = useState('')
   const [operacionalidades, setOperacionalidades] = useState([])
   const [comissionamento, setComissionamento] = useState([])
-  const [criterio, setCriterio] = useState('quantidade-up')
+  const [criterio, setCriterio] = useState('quantidade')
 
   const funcoes = [{label: 'Pilotos', value: 'Piloto'}, {label: 'Mecânicos', value: 'Mecânico de Voo'}, {label: 'Loadmasters', value: 'Loadmaster'}, {label: 'Comissários', value: 'Comissário'}, {label: 'OE-3', value: 'O3'}]
   
@@ -138,8 +138,31 @@ const ListaQuadrinhos = () => {
       setIndisponibilidades(res_indisp.data)
     }
 
+    var res_pau_de_sebo = await Api.getPauDeSebo({funcao})
+    if(!res_pau_de_sebo.error) {
+      setPauDeSebo(res_pau_de_sebo.data)
+    }
+
     if(quadrinhoSelected == 'Manobras') {
       var res = await Api.getQuadrinhosManobras({funcao})
+      if(!res.error) {
+        res.data = res.data.map(item=>{
+          let index = res_pau_de_sebo.data.findIndex(i=>i.Trigrama == item.trigrama)
+          if(index >=0) {
+            item.horas = res_pau_de_sebo.data[index]['Horas']
+            item.ultimo_voo = res_pau_de_sebo.data[index]['Ultimo_voo']
+            item.dias_sem_voar = res_pau_de_sebo.data[index]['Dias_sem_voar']
+          } else {
+            item.horas = '00:00'
+            item.ultimo_voo = '-'
+            item.dias_sem_voar = '-'
+          }
+          return item
+        })
+        setDados(res.data)
+        handleChangeCriterio()
+      }
+      
     } else {
       let item = {
         id_quadrinho: quadrinhoSelected,
@@ -161,13 +184,6 @@ const ListaQuadrinhos = () => {
         }
       } else {
         var res = await Api.getListaQuadrinhoFuncao(item)
-
-        console.log(res.data)
-
-        let res_pau_de_sebo = await Api.getPauDeSebo({funcao})
-        if(!res_pau_de_sebo.error) {
-          setPauDeSebo(res_pau_de_sebo.data)
-        }
         res.data = res.data.map(item=>{
           let index = res_pau_de_sebo.data.findIndex(i=>i.Trigrama == item.trigrama)
           if(index >=0) {
@@ -726,7 +742,13 @@ const compararPorDiasSemVoarDecrescente = (a, b) => {
                     <td>{index_pau_de_sebo >=0 ? pauDeSebo[index_pau_de_sebo].Horas : '-'}</td>
                     <td><div className={situacao == 'DIÁRIA'? 'diaria' : 'comissionamento'}>{situacao}</div></td>
                     <td>{index_comissionamento >=0 ? comissionamento[index_comissionamento]['DETOT'] : ''}</td>
-                    <td>{it.dias_sem_voar}</td>
+                    <td>
+                      <div style={{display: 'flex', alignItems: 'center'}}>
+                        <span>{it.dias_sem_voar}</span>
+                        {parseInt(it.dias_sem_voar) > 45 && <div style={{marginLeft: 5}} className='situacao desadaptado blink'>Desadaptado</div>}
+                        {parseInt(it.dias_sem_voar) > 40 && parseInt(it.dias_sem_voar) < 45 &&  <div style={{marginLeft: 5}} className='situacao desadaptando blink'>Desadaptando</div>}
+                      </div>
+                      </td>
                     <td>{index_pau_de_sebo >=0 ? dia+'/'+mes+'/'+ano : '-'}</td>
                   </tr>
                 )
@@ -852,6 +874,7 @@ const compararPorDiasSemVoarDecrescente = (a, b) => {
                               padding: '10px',
                               border: '1px solid black',
                               display: 'flex',
+                              width: '200px !important',
                               flexDirection: 'column',
                               alignItems: 'flex-start',
                               zIndex: 1, // Definindo uma ordem de empilhamento maior para a div das informações
@@ -861,7 +884,7 @@ const compararPorDiasSemVoarDecrescente = (a, b) => {
                           {indisponibilidadeUser.motivo.substring(0, 11) == 'Sobreaviso' && <p style={{fontSize: '1vw'}}>Sobreaviso</p>}
                             {indisponibilidadeUser.motivo.substring(0, 3) != 'Voo' && indisponibilidadeUser.motivo.substring(0, 11) != 'Sobreaviso' && <p style={{fontSize: '0.7vw'}}>Início: {indisponibilidadeUser ? new Date (indisponibilidadeUser.data_inicio).toLocaleString([], { year: 'numeric', month: '2-digit', day: '2-digit', hour: 'numeric', minute: 'numeric',  timeZone: 'UTC'})+'Z' : null}</p>}
                             {indisponibilidadeUser.motivo.substring(0, 3) != 'Voo' && indisponibilidadeUser.motivo.substring(0, 11) != 'Sobreaviso' && <p style={{fontSize: '0.7vw'}}>Fim: {indisponibilidadeUser ? new Date (indisponibilidadeUser.data_fim).toLocaleString([], { year: 'numeric', month: '2-digit', day: '2-digit', hour: 'numeric', minute: 'numeric',  timeZone: 'UTC'})+'Z' : null}</p>}
-                            <p style={{fontSize: '1vw'}}>Motivo: {indisponibilidadeUser ? indisponibilidadeUser.motivo : null}</p>
+                            <p style={{fontSize: '0.7vw'}}>Motivo: {indisponibilidadeUser ? indisponibilidadeUser.motivo : null}</p>
                           </div>}
                        
                        </div> : null}
