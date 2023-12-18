@@ -448,8 +448,69 @@ export default () => {
             let json = await request('GET', `/operacionalidades` , null, token)
             return json
         },
-        
-        
+        getCois: async () => {
+            let token = localStorage.getItem('token')
+            let json = await request('GET', `/cois` , null, token)
+            return json
+        },
+        getProgramas: async () => {
+            let token = localStorage.getItem('token')
+            let json = await request('GET', `/programas` , null, token)
+            return json
+        },
+        getSubProgramas: async (id) => {
+            let token = localStorage.getItem('token')
+            let json = await request('GET', `/subprogramas/${id}` , null, token)
+            return json
+        },
+        getFuncoes: async () => {
+            let token = localStorage.getItem('token')
+            let json = await request('GET', `/funcoes_a_bordo` , null, token)
+            return json
+        },
+        getFases: async (id) => {
+            let token = localStorage.getItem('token')
+            let json = await request('GET', `/fases/${id}` , null, token)
+            return json
+        },
+
+        createCoi: async (body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('POST', `/cois` , body, token)
+            return json
+        },
+        createCoiUsuarios: async (body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('POST', `/coisusers` , body, token)
+            return json
+        },
+        createCoiFases: async (body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('POST', `/coisfases` , body, token)
+            return json
+        },
+        deleteCoi: async (id) => {
+            let token = localStorage.getItem('token')
+            let json = await request('DELETE', `/cois/${id}` , null, token)
+            return json
+        },
+
+        updateCoi: async (id, body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('PUT', `/cois/${id}` , body, token)
+            return json
+        },
+        updateCoiUsuarios: async (id, body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('PUT', `/coisusers/${id}` , body, token)
+            return json
+        },
+        updateCoiFases: async (id, body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('PUT', `/coisfases/${id}` , body, token)
+            return json
+        },
+    
     }
 
 }

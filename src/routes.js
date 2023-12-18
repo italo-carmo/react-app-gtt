@@ -13,6 +13,7 @@ const Graficos = React.lazy(() => import('./views/graficos/index'))
 const PauDeSebo = React.lazy(() => import('./views/grafico-pau-de-sebo/index'))
 const Logout = React.lazy(() => import('./views/logout'))
 const TurmasDeChegada = React.lazy(() => import('./views/turmas-de-chegada/Main'))
+const Cois = React.lazy(() => import('./views/cois/Main'))
 
 
 // Notifications
@@ -36,6 +37,8 @@ const routes = [
   { path: '/missoes-exterior', name: 'Missões Exterior', element: LancarMissoesExterior },
   { path: '/turmas-de-chegada', name: 'Turmas de Chegada', element: TurmasDeChegada },
   { path: '/alterar-operacionalidades', name: 'Alterar Operacionalidades', element: AlterarOperacionalidades },
+  { path: '/cois', name: 'Conselhos de Instrução', element:  Cois},
+
 ]
 
 export default routes
