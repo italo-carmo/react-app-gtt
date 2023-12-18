@@ -110,6 +110,19 @@ const _nav = [
   },
   {
     component: CNavGroup,
+    name: 'Instrução',
+    to: '/base',
+    icon: <img src="https://www.1gtt.com.br/graduacao.png" style={{marginRight:20}} width="25px" height="25px"/>,
+    items: [
+          {
+            component: CNavItem,
+            name: 'Conselhos de Instrução',
+            to: '/cois',
+          },
+        ]
+  },
+  {
+    component: CNavGroup,
     name: 'Apoio',
     to: '/base',
     icon: <img src="https://www.1gtt.com.br/app/contract.png" style={{marginRight:20}} width="25px" height="25px"/>,

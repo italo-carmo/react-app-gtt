@@ -450,7 +450,7 @@ const Etapas = () => {
               <tr>
                   <td>
                     {!item.checada ? <button onClick={()=>handleCheck(item.id, !item.checada)} className='check'/> : 
-                    <img onClick={()=>handleCheck(item.id, !item.checada)} className='correct' src='https://www.1gtt.com.br/correct.png' />
+                    <img onClick={()=>handleCheck(item.id, !item.checada)} className='correct' src='https://www.1gtt.com.br/app/correct.png' />
                      }
                     </td>
                   <td>{transformData(item.dep)}</td>
