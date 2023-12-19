@@ -510,6 +510,11 @@ export default () => {
             let json = await request('PUT', `/coisfases/${id}` , body, token)
             return json
         },
+        getEsforcos: async () => {
+            let token = localStorage.getItem('token')
+            let json = await request('GET', `/esforcos/lista/quantidade` , null, token)
+            return json
+        },
     
     }
 

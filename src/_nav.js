@@ -86,6 +86,11 @@ const _nav = [
           },
           {
             component: CNavItem,
+            name: 'Esforços Aéreos',
+            to: '/esforcos-aereos',
+          },
+          {
+            component: CNavItem,
             name: 'Pau de Sebo',
             to: '/pau-de-sebo',
           },

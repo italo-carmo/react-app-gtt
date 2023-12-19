@@ -1,5 +1,6 @@
 import React from 'react'
 import AlterarOperacionalidades from './views/alterar-operacionalidades/Main'
+import EsforcosAereos from './views/esforcos-aereos/Main'
 import Etapas from './views/etapas/Main'
 import Ferias from './views/ferias/Main'
 import LancarQuadrinhos from './views/lancar-quadrinhos-missoes/Main'
@@ -38,7 +39,7 @@ const routes = [
   { path: '/turmas-de-chegada', name: 'Turmas de Chegada', element: TurmasDeChegada },
   { path: '/alterar-operacionalidades', name: 'Alterar Operacionalidades', element: AlterarOperacionalidades },
   { path: '/cois', name: 'Conselhos de Instrução', element:  Cois},
-
+  { path: '/esforcos-aereos', name: 'Esforços Aéreos', element:  EsforcosAereos},
 ]
 
 export default routes

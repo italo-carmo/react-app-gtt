@@ -92,7 +92,13 @@ const ListaPauDeSebo = () => {
                   <td>{it.Trigrama}</td>
                   <td>{it.Horas}</td>
                   <td>{dia+'/'+mes+'/'+ano}</td>
-                  <td className={parseInt(it.Dias_sem_voar) > 45 ? 'bg-red' : parseInt(it.Dias_sem_voar) > 40 ? 'bg-yellow' : ''}>{it.Dias_sem_voar}</td>
+                  <td>
+                  <div style={{display: 'flex', alignItems: 'center'}}>
+                    <span>{it.Dias_sem_voar}</span>                        
+                    {parseInt(it.Dias_sem_voar) > 45 && <div style={{marginLeft: 5}} className='situacao desadaptado blink'>Desadaptado</div>}
+                      {parseInt(it.Dias_sem_voar) > 40 && parseInt(it.dias_sem_voar) < 45 &&  <div style={{marginLeft: 5}} className='situacao desadaptando blink'>Desadaptando</div>}
+                      </div>
+                    </td>
                 </tr>
               )
             })
