@@ -1,0 +1,84 @@
+table {
+    width:100%;
+    border-collapse: collapse;
+}
+
+
+td, th {
+    border: 1px solid black;
+    text-align: center;
+    font-size: 12px;
+}
+
+th {
+    background-color: #bbb;
+}
+
+.bg-red {
+    background-color: #c4302b;
+}
+
+.bg-yellow {
+    background-color: #e9d604;
+}
+
+.card-missoes-quadrinhos {
+    background-color: #eee;
+    border: 1px solid #ccc;
+    border-radius:10px;
+    padding:10px;
+    flex:1;
+    margin-top:10px;
+    width:90%;
+    display: flex;
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+}
+.right-quadrinhos {
+    display: flex;
+    flex-direction: column !important;
+}
+
+.left-botoes-quadrinhos {
+    margin-right:10px;
+}
+
+.row-left-botos-quadrinhos {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom:5px;
+}
+
+.botao-salvar {
+    background-color: #28a745;
+    color: #fff;
+    padding:5px;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.calendarioBranco {
+    background-color: #fff;
+    border: 0;
+    border-radius: 5px;
+}
+
+.botao-limpar {
+    background-color: #c4302b;
+    color: #fff;
+    padding:5px;
+    border-radius: 10px;
+    margin-left:10px;
+    cursor: pointer;
+}
+
+
+.botao-lancar{
+    background-color: #000;
+    color: #fff;
+    padding:5px;
+    border-radius: 10px;
+    cursor: pointer;
+}

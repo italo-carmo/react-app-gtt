@@ -144,7 +144,6 @@ const Omis = ({match}) => {
   const dados_params = params.get('dados');
 
   const dados = JSON.parse(decodeURIComponent(dados_params));
-  console.log(dados)
   if(dados) {
     var tripulacao = dados.tripulacao
     var etapas = dados.etapas
@@ -154,6 +153,9 @@ const Omis = ({match}) => {
     var ofrag = dados.ofrag
     var horas = dados.horas
     var omis = dados.omis
+    var comentarios = dados.comentarios ? dados.comentarios : 'NIL'
+    var configuracao = dados.configuracao ? dados.configuracao : ''
+    var esforco = dados.esforco
   } else {
     var tripulacao = []
     var etapas = []
@@ -163,7 +165,11 @@ const Omis = ({match}) => {
     var ofrag = ''
     var horas = ''
     var omis = ''
+    var comentarios = ''
+    var esforco = ''
   }
+
+  let index_saude = tripulacao.findIndex(i=>i.funcao == 'Médico' || i.funcao == 'Enfermeiro')
 
 
   return (
@@ -285,12 +291,33 @@ const Omis = ({match}) => {
         </div>
       </div>
 
+      {
+        index_saude > -1 ?
+        <div className='div-tripulacao'>
+        <div className='div-pilotos'>
+          <span className='data-bold'>Equipe Médica</span>
+        </div>
+        {tripulacao.map(item=>{
+          if(item.funcao == 'Médico' || item.funcao == 'Enfermeiro') {
+            return (
+              <div className='div-tripulante'> 
+                <span className='tripulante'>{item.posto} {item.nome_completo} - IDENTIDADE ({item.identidade}) - SARAM ({item.saram})</span>
+              </div>
+            )
+          }
+        })}
+        <div>
+
+        </div>
+      </div> : null
+      }
+
       <div className='div-tripulacao'>
         <div className='div-pilotos'>
           <span className='data-bold'>OE-3</span>
         </div>
         {tripulacao.map(item=>{
-          if(item.funcao == 'OE') {
+          if(item.funcao == 'O3') {
             return (
               <div className='div-tripulante'> 
                 <span className='tripulante'>{item.posto} {item.nome_completo} - IDENTIDADE ({item.identidade}) - SARAM ({item.saram})</span>
@@ -324,20 +351,22 @@ const Omis = ({match}) => {
         </tr>
         {
           etapas.map(item=>{
-            return(
-              <tr>
-                <td>{item.data}</td>
-                <td>{item.horaDep}</td>
-                <td>{item.dep}</td>
-                <td>{item.horaPouso}</td>
-                <td>{item.pouso}</td>
-                <td>{item.tev}</td>
-                <td>{item.solo}</td>
-                <td>{item.alternativa}</td>
-                <td>{item.tev_alt}</td>
-                <td>{item.combustivel}</td>
-              </tr>
-            )
+            if(item.horaDep != item.horaPouso) {
+              return(
+                <tr>
+                  <td>{item.data}</td>
+                  <td>{item.horaDep}</td>
+                  <td>{item.dep}</td>
+                  <td>{item.horaPouso}</td>
+                  <td>{item.pouso}</td>
+                  <td>{item.tev}</td>
+                  <td>{item.solo}</td>
+                  <td>{item.alternativa}</td>
+                  <td>{item.tev_alt}</td>
+                  <td>{item.combustivel}</td>
+                </tr>
+              )
+            }
           })
         }
       </table>
@@ -349,7 +378,7 @@ const Omis = ({match}) => {
 SUPERIOR A 15 MIN, EM QUALQUER PERNA DESCRITA NA OM;</span>
         <span className='ordem'>2 - ANORMALIDADES DA MISSÃO DEVEM SER IMEDIATAMENTE REPORTADAS AO OCC DA BAAN
 (62) 99948-9751;</span>
-        <span className='ordem'>3 - CONFIGURAÇÃO INICIAL: 36 ASSENTOS + 7 PALLETS;</span>
+        <span className='ordem'>3 - CONFIGURAÇÃO INICIAL: {configuracao}</span>
         <div className='bottom-ordens'>
           <div className='ofrag-div'>
             <span className='ofrag-bold'>OFRAG:</span>
@@ -357,17 +386,23 @@ SUPERIOR A 15 MIN, EM QUALQUER PERNA DESCRITA NA OM;</span>
           </div>
           <div className='ofrag-div'>
             <span className='ofrag-bold'>Esforço Aéreo:</span>
-            <span>CONFORME OFRAG</span>
+            <span>{esforco}</span>
           </div>
+        </div>
+        <div className='ofrag-div'>
+          <span className='ofrag-bold'>Comentários:</span>
+          <span>{comentarios}</span>
         </div>
       </div>
 
       <div className='assinatura'>
         <div className='operacoes'>
+          <div><span className='nome'>______________________________________</span></div>
           <div><span className='nome'>RAFAEL PORTELLA SANTOS Maj Av</span></div>
           <div><span>Operações</span></div>
         </div>
         <div className='comandante'>
+        <div><span className='nome'>______________________________________</span></div>
        <div><span className='nome'>BRUNO AMÉRICO PEREIRA Ten Cel Av</span></div>
         <div><span>Comandante</span></div>
         </div>
