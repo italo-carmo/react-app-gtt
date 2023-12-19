@@ -204,6 +204,20 @@ const LancarQuadrinhos = () => {
           var [ano_termino, mes_termino, dia_termino] = data_termino.split('-')
           var data_moment = dia+'/'+mes+'/'+ano
           var data_moment_fim = dia_termino+'/'+mes_termino+'/'+ano_termino
+
+          const data_formatada_date_inicio = new Date(i.Etapas[0].dep);
+          const data_formatada_date_termino = new Date(i.Etapas[i.Etapas.length-1].pouso);
+
+
+          // O método getDay() retorna um número de 0 (domingo) a 6 (sábado)
+          const diaDaSemanaInicio = data_formatada_date_inicio.getDay();
+          const diaDaSemanatermino = data_formatada_date_termino.getDay();
+
+          // Se você quiser o nome do dia da semana, pode criar um array
+          const diasDaSemana = ["Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado"];
+          var nomeDoDiaDaSemanaInicio = diasDaSemana[diaDaSemanaInicio];
+          var nomeDoDiaDaSemanaTermino = diasDaSemana[diaDaSemanatermino];
+
         } else {
           var data_moment = ''
         }
@@ -231,11 +245,11 @@ const LancarQuadrinhos = () => {
             </div>
             <div className='row-card-quadrinhos'>
               <span className='bold'>Data Início:</span>
-              <span> {data_moment.toString()}</span>
+              <span> {data_moment.toString()} - {nomeDoDiaDaSemanaInicio}</span>
             </div>
             <div className='row-card-quadrinhos'>
               <span className='bold'>Data Fim:</span>
-              <span> {data_moment_fim.toString()}</span>
+              <span> {data_moment_fim.toString()} - {nomeDoDiaDaSemanaTermino}</span>
             </div>
               {missaoShow && missaoShow.id == i.id &&
               <>

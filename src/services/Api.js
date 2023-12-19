@@ -330,6 +330,196 @@ export default () => {
             let json = await request('GET', `/manobras` , null, token)
             return json
         },
+        createManobra: async (body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('POST', `/manobras` , body, token)
+            return json
+        },
+        createManobraUsuarios: async (body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('POST', `/manobras/users` , body, token)
+            return json
+        },
+        excluirManobra: async (id) => {
+            let token = localStorage.getItem('token')
+            let json = await request('DELETE', `/manobras/${id}` , null, token)
+            return json
+        },
+        editManobra: async (id, body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('PUT', `/manobras/${id}` , body, token)
+            return json
+        },
+        editManobraUsuarios: async (id, body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('PUT', `/manobras/usuarios/${id}` , body, token)
+            return json
+        },
+        getQuadrinhosManobras: async (body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('POST', `/manobras/quadrinhos/user` , body, token)
+            return json
+        },
+        getMissoesExterior: async () => {
+            let token = localStorage.getItem('token')
+            let json = await request('GET', `/missoes-exterior` , null, token)
+            return json
+        },
+        createMissaoExterior: async (body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('POST', `/missoes-exterior` , body, token)
+            return json
+        },
+        createMissaoExteriorUsuarios: async (body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('POST', `/missoes-exterior/users` , body, token)
+            return json
+        },
+        getListaQuadrinhoFuncaoExterior: async (body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('POST', `/missoes-exterior/quadrinhos/lista` , body, token)
+            return json
+        },
+
+        editMissaoExterior: async (id, body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('PUT', `/missoes-exterior/${id}` , body, token)
+            return json
+        },
+        editMissaoExteriorUsuarios: async (id, body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('PUT', `/missoes-exterior/usuarios/${id}` , body, token)
+            return json
+        },
+        excluirMissaoExterior: async (id) => {
+            let token = localStorage.getItem('token')
+            let json = await request('DELETE', `/missoes-exterior/${id}` , null, token)
+            return json
+        },
+        getTurmas: async (body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('GET', `/users/lista/turma` , body, token)
+            return json
+        },
+        updateTurma: async (id, body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('PUT', `/users/turma/${id}` , body, token)
+            return json
+        },
+        updateDataOperacional: async (id, body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('PUT', `/users/data-operacional/${id}` , body, token)
+            return json
+        },
+        getIndisponibilidadesData: async (body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('POST', `/indisponibilidades/data` , body, token)
+            return json
+        },
+
+        getSubprogramas: async () => {
+            let token = localStorage.getItem('token')
+            let json = await request('GET', `/subprogramas` , null, token)
+            return json
+        },
+
+        getFases: async (id) => {
+            let token = localStorage.getItem('token')
+            let json = await request('GET', `/fases/${id}` , null, token)
+            return json
+        },
+        filterUsers: async (id) => {
+            let token = localStorage.getItem('token')
+            let json = await request('GET', `/cois/filter/users/${id}` , null, token)
+            return json
+        },
+        getUsersOperacionalidades: async () => {
+            let token = localStorage.getItem('token')
+            let json = await request('GET', `/users/lista/operacionalidades` , null, token)
+            return json
+        },
+        updateOperacionalidade: async (id, body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('PUT', `/users/operacionalidade/${id}` , body, token)
+            return json
+        },
+        getOperacionalidades: async () => {
+            let token = localStorage.getItem('token')
+            let json = await request('GET', `/operacionalidades` , null, token)
+            return json
+        },
+        getCois: async () => {
+            let token = localStorage.getItem('token')
+            let json = await request('GET', `/cois` , null, token)
+            return json
+        },
+        getProgramas: async () => {
+            let token = localStorage.getItem('token')
+            let json = await request('GET', `/programas` , null, token)
+            return json
+        },
+        getSubProgramas: async (id) => {
+            let token = localStorage.getItem('token')
+            let json = await request('GET', `/subprogramas/${id}` , null, token)
+            return json
+        },
+        getFuncoes: async () => {
+            let token = localStorage.getItem('token')
+            let json = await request('GET', `/funcoes_a_bordo` , null, token)
+            return json
+        },
+        getFases: async (id) => {
+            let token = localStorage.getItem('token')
+            let json = await request('GET', `/fases/${id}` , null, token)
+            return json
+        },
+
+        createCoi: async (body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('POST', `/cois` , body, token)
+            return json
+        },
+        createCoiUsuarios: async (body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('POST', `/coisusers` , body, token)
+            return json
+        },
+        createCoiFases: async (body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('POST', `/coisfases` , body, token)
+            return json
+        },
+        deleteCoi: async (id) => {
+            let token = localStorage.getItem('token')
+            let json = await request('DELETE', `/cois/${id}` , null, token)
+            return json
+        },
+
+        updateCoi: async (id, body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('PUT', `/cois/${id}` , body, token)
+            return json
+        },
+        updateCoiUsuarios: async (id, body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('PUT', `/coisusers/${id}` , body, token)
+            return json
+        },
+        updateCoiFases: async (id, body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('PUT', `/coisfases/${id}` , body, token)
+            return json
+        },
+        getEsforcos: async () => {
+            let token = localStorage.getItem('token')
+            let json = await request('GET', `/esforcos/lista/quantidade` , null, token)
+            return json
+        },
+        getQuadrinhosSobreaviso: async (body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('POST', `/sobreaviso/quadrinhos/user` , body, token)
+            return json
+        },
     }
 
 }

@@ -13,7 +13,7 @@ import { useAsyncError, useNavigate } from 'react-router-dom';
 import moment from 'moment'
 import MaskedInputTrigrama from '../../components/masked-trigrama'
 
-const LancarManobras = () => {
+const LancarMissoesExterior = () => {
   const navigate = useNavigate()
   const divRef = useRef(null);
 
@@ -31,13 +31,19 @@ const LancarManobras = () => {
   const [dataInicio, setDataInicio] = useState(new Date())
   const [dataFim, setDataFim] = useState(new Date())
   const [idManobraEdit, setIdManobraEdit] = useState('')
+  const [quadrinhos, setQuadrinhos] = useState([])
+  const [quadrinhoSelected, setQuadrinhoSelected] = useState('')
+  const [quantidadeSelected, setQuantidadeSelected] = useState('')
+  const [exterior, setExterior] = useState(false)
+  const [lastro, setLastro] = useState(false)
+  const [disabled, setDisabled] = useState(false)
 
   const Api = useApi()
 
-  const getManobras = async () => {
+  const getMissoes = async () => {
     setManobras([])
     setLoading(true)
-    var res = await Api.getManobras()
+    var res = await Api.getMissoesExterior()
 
     if(!res.error) {
       setManobras(res.data)
@@ -45,9 +51,35 @@ const LancarManobras = () => {
     setLoading(false)
   }
 
+  const getQuadrinhos = async () => {
+    let res = await Api.getQuadrinhos()
+    if(!res.error) {
+      var dados = res.data
+      let dados_final = dados.filter(item=>{
+        if(item.nome == 'BPEX' || item.nome == 'AMENOR' || item.nome == 'AMESUL' || item.nome == 'EUROPA' || item.nome == 'RESTO MUN') {
+          return (
+           item
+          )
+        }
+      })
+      dados_final = dados_final.map(item=>{
+        return (
+          {label: item.nome,
+            value: item.id
+          }
+        )
+      })
+      console.log(dados_final)
+      setQuadrinhos(dados_final)
+    }
+  }
+
+
   useEffect(()=>{
-    getManobras()
+    getMissoes()
+    getQuadrinhos()
   },[])
+
 
   const inputStyle = {
     padding: '5px',
@@ -111,18 +143,47 @@ const LancarManobras = () => {
     setComentarios('')
     setEditMission(false)
     setIdManobraEdit('')
+    setQuadrinhoSelected('')
+    setQuantidadeSelected('')
     setTripulacao([])
   }
+
+  const handleChangeQuadrinho = (e) => {
+    setQuadrinhoSelected(e.target.value)
+  }
+
+  const handleChangeLastro = (e) => {
+    setLastro(e.target.value)
+    if(e.target.value == 'true') {
+      console.log('entrou')
+      setComentarios('LASTRO')
+      setDisabled(true)
+    } else {
+      setDisabled(false)
+    }
+  }
+
+  
 
   const handleEditSaveMission = async () => {
     setLoadingSave(true)
     if(!comentarios) {
-      alert('Nome da Manobra é obrigatório!')
+      alert('Nome da Missão é obrigatório!')
       setLoadingSave(false)
       return
     }
     if(tripulacao.length < 1) {
       alert('Ao menos um tripulante é necessário!')
+      setLoadingSave(false)
+      return
+    }
+    if(quadrinhoSelected == '') {
+      alert('Quadrinho é obrigatório!')
+      setLoadingSave(false)
+      return
+    }
+    if(quantidadeSelected == '') {
+      alert('Quantidade é obrigatória!')
       setLoadingSave(false)
       return
     }
@@ -137,37 +198,39 @@ const LancarManobras = () => {
     let item = {
       nome: comentarios,
       inicio: dataInicioEditada,
-      fim: dataFimEditada
+      fim: dataFimEditada,
+      quantidade: quantidadeSelected,
+      id_quadrinho: quadrinhoSelected
     }
 
     let id_usuarios = tripulacao.map(i=>i.id)
-    let manobra = await Api.editManobra(idManobraEdit, item)
+    let missao = await Api.editMissaoExterior(idManobraEdit, item)
 
-    if(manobra.error) {
-      alert(manobra.error)
+    if(missao.error) {
+      alert(missao.error)
       setLoadingSave(false)
       return
     }
 
 
 
-    let item_manobra_usuarios = {
+    let item_missao_usuarios = {
       id_usuarios
     }
 
-    let manobras_usuarios = await Api.editManobraUsuarios(idManobraEdit, item_manobra_usuarios)
+    let missao_exterior_usuarios = await Api.editMissaoExteriorUsuarios(idManobraEdit, item_missao_usuarios)
 
-    if(manobras_usuarios.error) {
-      alert(manobras_usuarios.error)
+    if(missao_exterior_usuarios.error) {
+      alert(missao_exterior_usuarios.error)
       setLoadingSave(false)
       return
     }
     setLoadingSave(false)
     setCaixaCreateVisible(false)
     handleLimparMissao()
-    getManobras()
+    getMissoes()
 
-    alert(manobras_usuarios.msg)
+    alert(missao_exterior_usuarios.msg)
 
   }
 
@@ -179,12 +242,12 @@ const LancarManobras = () => {
   }
 
   const handleExcluirManobra = async (id) => {
-    let res = await Api.excluirManobra(id)
+    let res = await Api.excluirMissaoExterior(id)
     if(res.error) {
       alert(res.error)
       return
     }
-    getManobras()
+    getMissoes()
     alert(res.msg)
   }
 
@@ -198,24 +261,41 @@ const LancarManobras = () => {
     })
     setTripulacao(tripulacao_get)
     setComentarios(i.nome)
+    setQuantidadeSelected(i.quantidade)
     const inicio = new Date(i.inicio+'T10:00:00Z')
     const fim = new Date(i.fim+'T10:00:00Z')
     setDataInicio(inicio)
     setDataFim(fim)
+    setQuadrinhoSelected(i.Quadrinho.id)
     setIdManobraEdit(i.id)
     setEditMission(true)
     setCaixaCreateVisible(true)
   }
 
+  const handleInputChange = (e) => {
+    const value = e.target.value;
+
+    // Remove caracteres não numéricos usando uma expressão regular
+    const numericValue = value.replace(/\D/g, '');
+
+    // Atualiza o estado apenas se o valor for numérico
+    setQuantidadeSelected(numericValue);
+  };
+
   const handleSaveMissao = async () => {
     setLoadingSave(true)
     if(!comentarios) {
-      alert('Nome da Manobra é obrigatório!')
+      alert('Nome da Missão é obrigatório!')
       setLoadingSave(false)
       return
     }
     if(tripulacao.length < 1) {
       alert('Ao menos um tripulante é necessário!')
+      setLoadingSave(false)
+      return
+    }
+    if(quadrinhoSelected == '') {
+      alert('Quadrinho é obrigatório!')
       setLoadingSave(false)
       return
     }
@@ -230,38 +310,40 @@ const LancarManobras = () => {
     let item = {
       nome: comentarios,
       inicio: dataInicioEditada,
-      fim: dataFimEditada
+      fim: dataFimEditada,
+      quantidade: quantidadeSelected,
+      id_quadrinho: quadrinhoSelected
     }
 
     let id_usuarios = tripulacao.map(i=>i.id)
-    let manobra = await Api.createManobra(item)
+    let missao = await Api.createMissaoExterior(item)
 
-    if(manobra.error) {
-      alert(manobra.error)
+    if(missao.error) {
+      alert(missao.error)
       setLoadingSave(false)
       return
     }
 
 
 
-    let item_manobra_usuarios = {
-      id_manobra: manobra.data.id,
+    let item_missao_usuarios = {
+      id_missao: missao.data.id,
       id_usuarios
     }
 
-    let manobras_usuarios = await Api.createManobraUsuarios(item_manobra_usuarios)
+    let missoes_usuarios = await Api.createMissaoExteriorUsuarios(item_missao_usuarios)
 
-    if(manobras_usuarios.error) {
-      alert(manobras_usuarios.error)
+    if(missoes_usuarios.error) {
+      alert(missoes_usuarios.error)
       setLoadingSave(false)
       return
     }
 
     handleLimparMissao()
     setCaixaCreateVisible(false)
-    getManobras()
+    getMissoes()
     setLoadingSave(false)
-    alert(manobras_usuarios.msg)
+    alert(missoes_usuarios.msg)
 
   }
 
@@ -273,7 +355,7 @@ const LancarManobras = () => {
     <>
       <CCard className="mb-6" style={{flexDirection: 'column', minHeight:600 }}>
       <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginTop:10 }}>
-        <div className='botao-lancar' onClick={()=>setCaixaCreateVisible(true)}>Lançar Manobra</div>
+        <div className='botao-lancar' onClick={()=>setCaixaCreateVisible(true)}>Lançar Missão Exterior</div>
       </div>
       {loading && <div style={{display: 'flex', alignItems: 'center', justifyContent:'center', marginTop:50}}><LoadingSpinner width="200px" black={true}/></div>}
       <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -297,6 +379,14 @@ const LancarManobras = () => {
             <div className='row-card-quadrinhos'>
               <span className='bold'>Data Fim:</span>
               <span> {i.fim}</span>
+            </div>
+            <div className='row-card-quadrinhos'>
+              <span className='bold'>Quadrinho:</span>
+              <span> {i.Quadrinho.nome}</span>
+            </div>
+            <div className='row-card-quadrinhos'>
+              <span className='bold'>Quantidade:</span>
+              <span> {i.quantidade}</span>
             </div>
             {manobraShow && manobraShow.id == i.id &&
               <>
@@ -329,11 +419,30 @@ const LancarManobras = () => {
               <div onClick={handleCloseModal} style={{color:'#fff'}}>X</div>
             </div>
             <div className='criar-div'>
-              <h3 style={{color:'#fff'}}>{editMission ? 'Editar' :  'Criar'} Manobra</h3>
+              <h3 style={{color:'#fff'}}>{editMission ? 'Editar' :  'Criar'} Missão Exterior</h3>
             </div>
-    <div style={{marginTop: 30, display: 'flex', flexDirection: 'column'}}>
-      <span style={{color:'#fff'}}>Nome da Manobra: </span>
-      <input value={comentarios} onChange={(e)=>setComentarios(e.target.value)} style={{borderRadius: 10, padding:5}}/>
+      <div style={{marginTop: 30, display: 'flex', flexDirection: 'row' , alignItems: 'center', justifyContent: 'space-between'}}>
+        <span style={{color:'#fff'}}>Lastro?: </span>
+        <select style={inputStyle} value={lastro} onChange={handleChangeLastro}>
+                <option value="">Selecione</option>
+                <option value={false}>NÃO</option>
+                <option value={true}>SIM</option>
+              </select>
+      </div>
+    <div style={{marginTop: 10, display: 'flex', flexDirection: 'column'}}>
+      <span style={{color:'#fff'}}>Nome da Missão: </span>
+      <input disabled={disabled} value={comentarios} onChange={(e)=>setComentarios(e.target.value)} style={{borderRadius: 10, padding:5}}/>
+    </div>
+    <div style={{marginTop: 10, display: 'flex', flexDirection: 'column'}}>
+    <span style={{color:'#fff'}}>Quadrinho: </span>
+            <select style={inputStyle} value={quadrinhoSelected} onChange={handleChangeQuadrinho}>
+              <option value="">Selecione</option>
+              {quadrinhos.map(i=>{
+                return (
+                  <option value={i.value}>{i.label}</option>
+                )
+              })}
+            </select>
     </div>
     <div style={{marginTop: 30, display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
       <span style={{color:'#fff'}}>Data de Início: </span>
@@ -368,6 +477,10 @@ const LancarManobras = () => {
                         dateFormat="LL"
                         />
       </div>
+    </div>
+    <div style={{marginTop: 10, display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
+      <span style={{color:'#fff'}}>Quantidade: </span>
+      <input value={quantidadeSelected} onChange={handleInputChange} style={{borderRadius: 10, padding:5}}/>
     </div>
     <div className='add-trip' style={{marginTop:20}}>
     <span style={{color:'#fff'}}>Tripulação:</span>
@@ -477,7 +590,7 @@ const LancarManobras = () => {
 
     <div className='botoes-add-etapa' style={{marginTop:30}}>
     <button className='cancelar' style={{fontSize: '1vw'}} onClick={handleLimparMissao}>Limpar</button>
-      {loadingSave ? <LoadingSpinner/> : <button className='adicionar' style={{fontSize: '1vw'}} onClick={editMission ? handleEditSaveMission : handleSaveMissao}>{editMission ? 'Editar Manobra' : 'Criar Manobra'}</button>}
+      {loadingSave ? <LoadingSpinner/> : <button className='adicionar' style={{fontSize: '1vw'}} onClick={editMission ? handleEditSaveMission : handleSaveMissao}>{editMission ? 'Editar Missao' : 'Criar Missão'}</button>}
     </div>
 
     <div className='botoes-add-etapa' style={{marginTop:30, justifyContent:'center'}}>
@@ -494,4 +607,4 @@ const LancarManobras = () => {
   )
 }
 
-export default LancarManobras
+export default LancarMissoesExterior
