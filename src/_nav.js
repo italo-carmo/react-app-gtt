@@ -35,7 +35,8 @@ const _nav = [
       name: 'Turmas de Chegada',
       class: 'nav-link-submenu',
       to: '/turmas-de-chegada',
-    },],
+    },
+    ,],
   },
   {
     component: CNavGroup,
@@ -124,6 +125,12 @@ const _nav = [
             name: 'Conselhos de Instrução',
             to: '/cois',
           },
+          {
+            component: CNavItem,
+            name: 'Operacionalidades',
+            class: 'nav-link-submenu',
+            to: '/alterar-operacionalidades',
+          }
         ]
   },
   {
