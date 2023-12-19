@@ -515,7 +515,11 @@ export default () => {
             let json = await request('GET', `/esforcos/lista/quantidade` , null, token)
             return json
         },
-    
+        getQuadrinhosSobreaviso: async (body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('POST', `/sobreaviso/quadrinhos/user` , body, token)
+            return json
+        },
     }
 
 }

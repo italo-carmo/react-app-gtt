@@ -44,7 +44,7 @@ const ListaQuadrinhos = () => {
     let res = await Api.getQuadrinhos()
     if(!res.error) {
       var dados = res.data
-      dados.push({nome: 'Manobras', id: null})
+      dados.push({nome: 'Manobras', id: null}, {nome: 'Sobreaviso Preto', id: null}, {nome: 'Sobreaviso Vermelho', id: null})
       let dados_final = dados.map(item=>{
         return (
           {label: item.nome,
@@ -183,7 +183,16 @@ const ListaQuadrinhos = () => {
           return
         }
       } else {
-        var res = await Api.getListaQuadrinhoFuncao(item)
+        if(quadrinhoSelected == 'Sobreaviso Preto' || quadrinhoSelected == 'Sobreaviso Vermelho') {
+          if(quadrinhoSelected == 'Sobreaviso Preto') {
+            item.tipo = 'preto'
+          } else {
+            item.tipo = 'vermelho'
+          }
+          var res = await Api.getQuadrinhosSobreaviso(item)
+        } else {
+          var res = await Api.getListaQuadrinhoFuncao(item)
+        }
         res.data = res.data.map(item=>{
           let index = res_pau_de_sebo.data.findIndex(i=>i.Trigrama == item.trigrama)
           if(index >=0) {
@@ -212,6 +221,7 @@ const ListaQuadrinhos = () => {
           });
           setDados(res.data)
         }
+    
       }
 
     }
@@ -630,6 +640,16 @@ const compararPorDiasSemVoarDecrescente = (a, b) => {
                   var [ano, mes, dia] = data.split('-')
                   var [hora, minuto] = horas.split(':')
                 }
+                var tipo_indisp = 'INDISP'
+                if(index >=0) {
+                  if(indisponibilidades[index].motivo.substring(0, 3) == 'Voo') {
+                    tipo_indisp = 'VOANDO'
+                  }
+                  if(indisponibilidades[index].motivo.substring(0, 11) == 'Sobreaviso') {
+                    tipo_indisp = 'SOBREAVISO'
+                  }
+          
+                }
 
                 let index_qualificacao = usersData.findIndex(i=>i == it.trigrama)
                 if(index_qualificacao >=0) {
@@ -713,7 +733,7 @@ const compararPorDiasSemVoarDecrescente = (a, b) => {
                       onMouseEnter={index >= 0 ? () => handleMouseEnter(index) : null}
                       onMouseLeave={handleMouseLeave}
                       className='indisp'
-                       >INDISP
+                       >{tipo_indisp}
                                      {caixaVisible  && indisponibilidadeUser && (it.trigrama == indisponibilidadeUser.Usuario.Trigrama.trigrama) &&  <div
                             style={{
                               position: 'absolute',
