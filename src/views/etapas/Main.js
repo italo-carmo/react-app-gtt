@@ -35,7 +35,7 @@ const Etapas = () => {
     let res = await Api.getEtapas()
     if(!res.error) {
       let res_filtered = res.data.filter(item=>{
-        if(item.Usuarios.length > 0) {
+        if(item.Usuarios && item.Usuarios.length > 0) {
           return item
         } 
       })

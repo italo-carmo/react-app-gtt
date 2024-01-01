@@ -48,21 +48,7 @@ const _nav = [
       text: '',
     },
     items: [
-      {
-        component: CNavItem,
-        name: 'Esforço Aéreo',
-        to: '/grafico-esforco',
-      },
-      {
-        component: CNavItem,
-        name: 'Pau de Sebo',
-        to: '/pau-de-sebo',
-      },
-      {
-        component: CNavItem,
-        name: 'Abastecimento',
-        to: '/abastecimento',
-      },
+
               {
                 component: CNavItem,
                 name: 'Lançar Quadrinhos',
