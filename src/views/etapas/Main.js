@@ -504,8 +504,8 @@ const Etapas = () => {
                   <td></td>
                   <td></td>
                   <td></td>
-                  <td>{minutosParaHorasMinutos(horasTotais)}</td>
                   <td></td>
+                  <td>{minutosParaHorasMinutos(horasTotais)}</td>
                   <td></td>
                   <td></td>
                   <td></td>
