@@ -16,6 +16,7 @@ const Abastecimento = React.lazy(() => import('./views/abastecimento/index'))
 const Logout = React.lazy(() => import('./views/logout'))
 const TurmasDeChegada = React.lazy(() => import('./views/turmas-de-chegada/Main'))
 const Cois = React.lazy(() => import('./views/cois/Main'))
+const Planejamento = React.lazy(() => import('./views/planejamento/Main'))
 
 
 // Notifications
@@ -42,6 +43,7 @@ const routes = [
   { path: '/alterar-operacionalidades', name: 'Alterar Operacionalidades', element: AlterarOperacionalidades },
   { path: '/cois', name: 'Conselhos de Instrução', element:  Cois},
   { path: '/esforcos-aereos', name: 'Esforços Aéreos', element:  EsforcosAereos},
+  { path: '/planejamento', name: 'Planejamento', element:  Planejamento},
 ]
 
 export default routes

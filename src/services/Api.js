@@ -520,6 +520,11 @@ export default () => {
             let json = await request('POST', `/sobreaviso/quadrinhos/user` , body, token)
             return json
         },
+        getPlanejamento: async (body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('POST', `/planejamento/lista` , body, token)
+            return json
+        },
     }
 
 }
