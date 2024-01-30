@@ -195,9 +195,9 @@ export default () => {
             let json = await request('DELETE', `/manutencoes/${id}` , null, token)
             return json
         },
-        getEtapas: async () => {
+        getEtapas: async (body) => {
             let token = localStorage.getItem('token')
-            let json = await request('GET', '/estatistica/paudesebo' , null, token)
+            let json = await request('POST', '/estatistica/paudesebo' , body, token)
             return json
         },
         checkEtapa: async (id, body) => {

@@ -27,13 +27,17 @@ const Etapas = () => {
   const [aeronaves, setAeronaves] = useState([]);
   const [horasTotais, setHorasTotais] = useState(0);
   const [loading, setLoading] = useState(false)
+  const [limite, setLimite] = useState(10)
 
   const Api = useApi()
 
   const getEtapas = async () => {
     setLoading(true)
-    let res = await Api.getEtapas()
+    setEtapas([])
+    setEtapasFiltered([])
+    let res = await Api.getEtapas({limit:limite})
     if(!res.error) {
+      res.data.reverse()
       let res_filtered = res.data.filter(item=>{
         if(item.Usuarios && item.Usuarios.length > 0) {
           return item
@@ -60,7 +64,9 @@ const Etapas = () => {
     getEtapas()
     getEsforcos()
     getAeronaves()
-  },[])
+  },[limite])
+
+  const limites = [10,20,50,100,200,1000,10000]
 
 
   const transformHora = (date) => {
@@ -78,6 +84,21 @@ const Etapas = () => {
    const transformTime = (time) => {
     let [hora, minuto, segundo] = time.split(':')
     return hora+':'+minuto
+   }
+
+   const transformMinutesToTime = (minutes) => {
+    if (minutes == 0) {
+      return '00:00'
+    }
+    const horas = Math.floor(minutes / 60);
+    const minutosRestantes = minutes % 60;
+
+    const formatoHora = (num) => (num < 10 ? "0" + num : num);
+
+    const horaFormatada = formatoHora(horas);
+    const minutosFormatados = formatoHora(minutosRestantes);
+
+    return horaFormatada + ":" + minutosFormatados;
    }
 
    const transformOfrag = (texto) => {
@@ -162,6 +183,11 @@ const Etapas = () => {
     setAeronave(e.target.value);
   };
 
+  const handleChangeLimit = (e) => {
+    setLimite(e.target.value);
+  };
+  
+
   const handleTrigramaChange = (e) => {
     setTrigrama(e.target.value);
   };
@@ -200,14 +226,16 @@ const Etapas = () => {
     return `${horasFormatadas}:${minutosFormatados}`;
   }
 
-  const handleCheck = async (id, check) => {
+  const handleCheck = async (id, check, index) => {
     let res = await Api.checkEtapa(id, {check})
     if(res.error) {
       alert(res.error)
       return
     } else {
       alert(res.msg)
-      getEtapas()
+      let etapasFiltered_copy = [...etapasFiltered]
+      etapasFiltered_copy[index].checada = true
+      setEtapasFiltered(etapasFiltered_copy)
     }
   }
 
@@ -370,6 +398,20 @@ const Etapas = () => {
         </div>
 
     </div>
+    <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px', marginLeft:10, marginRight:10 }}>
+    <div style={{ marginRight: '20px' }}>
+        <label style={{marginRight: 5}}>Últimos:</label>
+        <select style={inputStyle} value={limite} onChange={handleChangeLimit}>
+          <option value="">Selecione</option>
+          {limites.map(i=>{
+            return (
+              <option value={i}>{i}</option>
+            )
+          })}
+        </select>
+      </div>   
+
+    </div>
         <table style={{marginBottom:50}}>
           <thead className='tabela-cabecalho'>
             <tr>
@@ -382,6 +424,10 @@ const Etapas = () => {
               <th>DEP</th>
               <th>ARR</th>
               <th>TEV</th>
+              <th>IFR</th>
+              <th>Noturno</th>
+              <th>NVG?</th>
+              <th>Procedimentos</th>
               <th>Esforço Aéreo</th>
               <th>ANV</th>
               <th>1P</th>
@@ -449,7 +495,7 @@ const Etapas = () => {
             return (
               <tr>
                   <td>
-                    {!item.checada ? <button onClick={()=>handleCheck(item.id, !item.checada)} className='check'/> : 
+                    {!item.checada ? <button onClick={()=>handleCheck(item.id, !item.checada, index)} className='check'/> : 
                     <img onClick={()=>handleCheck(item.id, !item.checada)} className='correct' src='https://www.1gtt.com.br/app/correct.png' />
                      }
                     </td>
@@ -461,6 +507,21 @@ const Etapas = () => {
                   <td>{transformHora(item.dep)}</td>
                   <td>{transformHora(item.pouso)}</td>
                   <td>{transformTime(item.tempo_de_voo)}</td>
+                  <td>{transformMinutesToTime(item.horas_instrumento)}</td>
+                  <td>{transformMinutesToTime(item.horas_noturnas)}</td>
+                  <td>{item.nvg ? 'SIM' : 'NÃO'}</td>
+                  <td>
+                    {
+                      item.Procedimentos.map(it=>{
+                        return (
+                          <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', marginBottom: 5, border: '1px solid #000', padding:5, borderRadius: 5}}>
+                          <span>{it.local}</span>
+                          <span>{it.quantidade}</span>
+                          <span>{it.procedimento}</span>
+                          </div>
+                        )
+                      })
+                    }</td>
                   <td>{item.esforco_aereo}</td>
                   <td>{item.Aeronave.aeronave}</td>
                   <td>{index_1p > -1 ? item.Usuarios[index_1p].Trigrama.trigrama : ''}</td>
