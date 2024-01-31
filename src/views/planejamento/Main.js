@@ -106,12 +106,23 @@ const Etapas = () => {
     return fadigaBase;
   };
 
-    // Função para formatar o tempo de solo em hh:mm
-    const formatarTempoSolo = (tempoSolo) => {
-      const horas = Math.floor(tempoSolo / 60);
-      const minutos = tempoSolo % 60;
-      return `${horas.toString().padStart(2, '0')}:${minutos.toString().padStart(2, '0')}`;
-    };
+  function arredondarTempoDeVooEmMilissegundos(milissegundos) {
+    console.log('arredondando: '+milissegundos)
+    // Convertendo milissegundos para minutos e arredondando para cima
+    const minutos = (milissegundos / 60000);
+    console.log(minutos)
+    // Verificando se os minutos são múltiplos de 5
+    if (minutos % 5 === 0) {
+      return milissegundos;
+
+    } else {
+      // Arredondando para cima para torná-los múltiplos de 5
+      const minutosArredondados = Math.ceil(minutos / 5) * 5;
+      const milissegundosArredondados = minutosArredondados * 60000;
+      console.log('retornando: '+milissegundosArredondados)
+      return milissegundosArredondados;
+    }
+  }
 
 
     const getPlanejamento = async () => {
@@ -137,7 +148,7 @@ const Etapas = () => {
           destino: trecho.destino,
           DEP: horaDecolagem.toISOString(),
           ARR: horaPouso.toISOString(),
-          TEV: millisToHoursAndMinutes(trecho.tempo),
+          TEV: millisToHoursAndMinutes(arredondarTempoDeVooEmMilissegundos(trecho.tempo)),
           tempoSolo: millisToHoursAndMinutes(tempoSoloMillis),
         });
     
@@ -271,6 +282,39 @@ const Etapas = () => {
   const handleRotaChange = (e) => {
     setRota(e.target.value.toUpperCase());
   };
+
+  function editTev(tempoDeVoo, aumentar) {
+    // Convertendo o tempo de voo para minutos
+    const partes = tempoDeVoo.split(':');
+    const horas = parseInt(partes[0]);
+    const minutos = parseInt(partes[1]);
+    let totalMinutos = horas * 60 + minutos;
+  
+    // Aumentar ou reduzir o tempo em 5 minutos
+    totalMinutos = aumentar ? totalMinutos + 5 : totalMinutos - 5;
+  
+    // Garantir que o resultado não seja negativo
+    totalMinutos = Math.max(0, totalMinutos);
+  
+    // Converter de volta para o formato "hh:mm"
+    const horasAjustadas = Math.floor(totalMinutos / 60);
+    const minutosAjustados = totalMinutos % 60;
+  
+    // Formatar as partes para garantir dois dígitos
+    const horasFormatadas = horasAjustadas.toString().padStart(2, '0');
+    const minutosFormatados = minutosAjustados.toString().padStart(2, '0');
+  
+    // Retornar o resultado no formato desejado
+    return `${horasFormatadas}:${minutosFormatados}`;
+  }
+
+  const handleChangeTev = (idx, index, increase)=> {
+    let planejamento_copy = [...planejamento]
+
+    planejamento_copy[idx][index].TEV = editTev(planejamento_copy[idx][index].TEV, increase)
+    
+    setPlanejamento(planejamento_copy)
+  }
 
   const minutosParaHorasMinutos = (minutos) => {
     const horas = Math.floor(minutos / 60);
@@ -436,7 +480,13 @@ const Etapas = () => {
                   <td>{voo.destino}</td>
                   <td>{voo.TEV.length == 5 ? isoDateToHourMinutes(dep) : ''}</td>
                   <td>{voo.TEV.length == 5 ? isoDateToHourMinutes(pouso_edit) : ''}</td>
-                  <td>{voo.TEV}</td>
+                  <td>
+                    <div style={{display: 'flex'}}>
+                    {voo.TEV}
+                    <img width="20px" height="20px" src="https://www.1gtt.com.br/seta-cima.png" onClick={()=>handleChangeTev(idx, index, true)} style={{marginLeft:5, marginRight:5, cursor: 'pointer'}} />
+                    <img width="20px" height="20px" src="https://www.1gtt.com.br/seta-baixo.png"onClick={()=>handleChangeTev(idx, index, false)} style={{cursor: 'pointer'}} />
+                    </div>
+                  </td>
                   <td>
                   <input
                       type="text"
