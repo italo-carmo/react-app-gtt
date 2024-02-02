@@ -11,6 +11,9 @@ import { forwardRef } from 'react'
 import LoadingSpinner from 'src/components/Loading'
 import ReactDatePicker from 'react-datepicker';
 import { getQuarter, setHours } from 'date-fns';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { atomDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import XMLParser from 'react-xml-parser';
 
 const Etapas = () => {
 
@@ -25,6 +28,9 @@ const Etapas = () => {
   const [fadigas, setFadigas] = useState([]);
   const [edit, setEdit] = useState(false);
   const [indexEdit, setIndexEdit] = useState('');
+  const [notamResponse, setNotamResponse] = useState('');
+  const [icaoNotam, setIcaoNotam] = useState('');
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const Api = useApi()
 
@@ -47,6 +53,62 @@ const Etapas = () => {
   
     return `${formattedHours}:${formattedMinutes}`;
   }
+
+  const fetchData = async (icao) => {
+    try {
+      const response = await fetch('https://aisweb.decea.mil.br/?i=notam', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Connection': 'keep-alive',
+          'Sec-Fetch-Site': 'cross-site',
+          'Sec-Fetch-Mode': 'cors',
+          'User-Agent': 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36',
+          'sec-ch-ua': '"Not_A Brand";v="8", "Chromium";v="120", "Google Chrome";v="120"',
+          'Cookie': 'f5_cspm=1234; cftoken=0; cfid=974639be-c0d5-4394-a1c3-3d6918253192'
+
+        },
+        body: `icaocode=${icao}&tipo=N&busca=localidade`
+      });
+
+      if (!response.ok) {
+        alert('Erro na requisição.');
+      }
+
+      const responseData = await response.text();
+      console.log(responseData)
+      setNotamResponse(responseData);
+    } catch (error) {
+      alert('Erro na requisição:', error);
+      setNotamResponse('Erro na requisição.');
+    }
+  };
+
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleButtonClick = async (icao) => {
+    let res = await Api.getNotam({icao})
+    if(res.error) {
+      alert(res.error)
+      return
+    }
+    res.data = res.data.replace(/CLSD/g, '<span class="red-span">CLSD</span>')
+    res.data = res.data.replace(/U\/S/g, '<span class="red-span">U/S</span>')
+    res.data = res.data.replace(/TORA/g, '<span class="red-span">TORA</span>')
+    res.data = res.data.replace(/TODA/g, '<span class="red-span">TODA</span>')
+    res.data = res.data.replace(/LDA/g, '<span class="red-span">LDA</span>')
+    res.data = res.data.replace(/ASDA/g, '<span class="red-span">ASDA</span>')
+    res.data = res.data.replace('<h4 id="notam_number_display" class="heading-primary mt-4 text-center">NOTAM (Carregando ...)</h4>', '')
+    setNotamResponse(res.data)
+    setIsModalOpen(true)
+  };
+
 
   const isoDateToHourMinutes = (date) => {
     try {
@@ -476,8 +538,14 @@ const Etapas = () => {
                   <td style={{fontWeight: 'bold'}}>
                   {voo.TEV.length == 5 ? isoDateToDate(dep) : ''}
                     </td>
-                  <td>{voo.origem}</td>
-                  <td>{voo.destino}</td>
+                  <td>
+                    {voo.origem}
+                    <button className='pegar-notam' onClick={()=>{handleButtonClick(voo.origem)}}>Pegar NOTAM</button>
+                  </td>
+                  <td>
+                    {voo.destino}
+                    <button className='pegar-notam'  onClick={()=>{handleButtonClick(voo.destino)}}>Pegar NOTAM</button>
+                    </td>
                   <td>{voo.TEV.length == 5 ? isoDateToHourMinutes(dep) : ''}</td>
                   <td>{voo.TEV.length == 5 ? isoDateToHourMinutes(pouso_edit) : ''}</td>
                   <td>
@@ -519,7 +587,14 @@ const Etapas = () => {
             )
             })
           }
-       
+                   {isModalOpen && (
+              <div className="modal-notam">
+                  <span className="close-modal" onClick={closeModal}>&times;</span>
+                <div className='modal-content'>
+                  <div dangerouslySetInnerHTML={{ __html: notamResponse }} />
+                </div>
+              </div>
+            )}
         {loading &&
                 <div  style={{
                   position: 'absolute',

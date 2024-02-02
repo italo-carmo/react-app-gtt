@@ -525,6 +525,11 @@ export default () => {
             let json = await request('POST', `/planejamento/lista` , body, token)
             return json
         },
+        getNotam: async (body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('POST', `/notam` , body, token)
+            return json
+        },
     }
 
 }

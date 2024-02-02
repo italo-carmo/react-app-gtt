@@ -15,6 +15,52 @@
     display: flex;
 }
 
+.modal-notam {
+    background-color: rgba(0, 0, 0, 0.7);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    min-height: 200px; /* Adicione um valor fixo aqui */
+    z-index: 9999;
+}
+
+.modal-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 80%;
+    height: 80%;
+    transform: translate(-50%, -50%);
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    max-height: 80vh;
+    overflow: auto;
+}
+
+.close-modal {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    font-size: 50px;
+    cursor: pointer;
+    color: #fff;
+    z-index: 10000; /* Aumente o z-index para garantir que fique sobre outros elementos */
+}
+
+.pegar-notam {
+    background-color: #b6c5e7;
+    border: 0;
+    padding:5;
+    margin-left:10px;   
+    border-radius:5px;
+    font-weight: bold;
+}
+  
+  
+
 .aviao-item-topo {
     background-color: #191c24;
     color:#fff;
@@ -210,6 +256,12 @@ option {
     border: 1px solid #fff;
 }
 
+.red-span {
+    background-color: #ff0000;
+    color: #fff;
+    padding:3px;
+}
+
 .modal-create {
     background-color: #191c24;
     opacity: 0.95;
@@ -310,6 +362,8 @@ option {
   .datePickerTime {
     flex: 1; /* Para ocupar o espaço disponível */
   }
+
+
 
 @media (max-width:1150px) {
     .modal-create-visible {

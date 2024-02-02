@@ -18,6 +18,7 @@ const Etapas = () => {
   const [loading, setLoading] = useState(false)
   const [limite, setLimite] = useState(100)
   const [dados, setDados] = useState([])
+  
 
   let meses = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"]
 
@@ -76,6 +77,8 @@ const Etapas = () => {
     }
     setLoading(false)
   }
+
+  
   
   useEffect(()=>{
     getEtapas()
@@ -88,8 +91,8 @@ const Etapas = () => {
       <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px', marginLeft:10, marginRight:10 }}>
 
     </div>
-    
-    <table>
+    <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+    <table style={{width: '80%', marginBottom: 20}}>
       <tr>
         <th>
           Mês
@@ -119,6 +122,7 @@ const Etapas = () => {
         )
       })}
     </table>
+    </div>
 
         {loading &&
                 <div  style={{
