@@ -31,7 +31,8 @@ const Etapas = () => {
   const [notamResponse, setNotamResponse] = useState('');
   const [icaoNotam, setIcaoNotam] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
-
+  const [isModalOpenLoading, setIsModalOpenLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const Api = useApi()
 
   const DateInput = ({ value, onClick }) => (
@@ -93,9 +94,11 @@ const Etapas = () => {
   };
 
   const handleButtonClick = async (icao) => {
+    setIsModalOpenLoading(true)
     let res = await Api.getNotam({icao})
     if(res.error) {
       alert(res.error)
+      setIsModalOpenLoading(false)
       return
     }
     res.data = res.data.replace(/CLSD/g, '<span class="red-span">CLSD</span>')
@@ -106,6 +109,7 @@ const Etapas = () => {
     res.data = res.data.replace(/ASDA/g, '<span class="red-span">ASDA</span>')
     res.data = res.data.replace('<h4 id="notam_number_display" class="heading-primary mt-4 text-center">NOTAM (Carregando ...)</h4>', '')
     setNotamResponse(res.data)
+    setIsModalOpenLoading(false)
     setIsModalOpen(true)
   };
 
@@ -188,7 +192,8 @@ const Etapas = () => {
 
 
     const getPlanejamento = async () => {
-      let rota_split = rota.split(',')
+      let rota_trim = rota.replace(/ /g, '')
+      let rota_split = rota_trim.split(',')
       let res = await Api.getPlanejamento({rota: rota_split})
     
       if (res.error) {
@@ -222,14 +227,18 @@ const Etapas = () => {
     
 
     const getDados = async () => {
+      setIsLoading(true)
       if (!rota) {
         alert('Rota é obrigatória')
+        setIsLoading(false)
         return
       }
-      let rota_split = rota.split(',')
-
+      let rota_trim = rota.replace(/ /g, '')
+      let rota_split = rota_trim.split(',')
+      console.log(rota_trim)
       if(rota_split.length<=1) {
         alert('Digite ao menos 2 ICAO')
+        setIsLoading(false)
         return
       }
 
@@ -237,25 +246,28 @@ const Etapas = () => {
 
       if (!allICAOsValid) {
         alert('Confira os ICAOS');
+        setIsLoading(false)
         return;
       }
 
       if (!dataInicio) {
         alert('Data Inicial é obrigatória')
+        setIsLoading(false)
         return
       }
       if(!edit) {
        let dados = await getPlanejamento()
-       dados.rota = rota
+       dados.rota = rota.replace(/ /g, '')
        var planejamento_copy = [...planejamento]
        planejamento_copy.push(dados)
       } else {
         let dados = await getPlanejamento()
-       dados.rota = rota
+        dados.rota = rota.replace(/ /g, '')
        var planejamento_copy = [...planejamento]
        planejamento_copy[indexEdit] = dados
       }
       setPlanejamento(planejamento_copy)
+      setIsLoading(false)
       
       setRota(rota_split[rota_split.length - 1])
       setEdit(false)
@@ -432,7 +444,7 @@ const Etapas = () => {
        {/* Filtro de ICAO */}
        <div style={{ marginRight: '20px' }}>
         <label style={{marginRight:5}}>ROTA:</label>
-        <input type="text" value={rota} onKeyPress={handleKeyPress} onChange={handleRotaChange} style={inputStyleLow}/>
+        <input type="text" value={rota} placeholder="Digite os ICAO separados por vírgula..." onKeyPress={handleKeyPress} onChange={handleRotaChange} style={inputStyleLow}/>
       </div>
         {/* Botão "Pesquisar" */}
         <div className='buttons'>
@@ -455,6 +467,11 @@ const Etapas = () => {
         </select>
       </div>
       </div>
+      {isLoading &&
+                  <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+                  <LoadingSpinner width='100px' black={true} />
+                  </div>
+                }
           {
             planejamento.map((item, idx)=>{
               var limite_fadiga = new Date(item[0].DEP)
@@ -592,6 +609,16 @@ const Etapas = () => {
                   <span className="close-modal" onClick={closeModal}>&times;</span>
                 <div className='modal-content'>
                   <div dangerouslySetInnerHTML={{ __html: notamResponse }} />
+                </div>
+              </div>
+            )}
+                    {isModalOpenLoading && (
+              <div className="modal-notam">
+                <div className='modal-content' style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+                  <h1 style={{marginBottom:20}}>Aguarde...</h1>
+                  <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+                  <LoadingSpinner black={true} width="200px" />
+                  </div>
                 </div>
               </div>
             )}
