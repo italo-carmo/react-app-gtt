@@ -33,6 +33,7 @@ const Etapas = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalOpenLoading, setIsModalOpenLoading] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [tempoMissao, setTempoMissao] = useState(0);
   const Api = useApi()
 
   const DateInput = ({ value, onClick }) => (
@@ -53,6 +54,17 @@ const Etapas = () => {
     const formattedMinutes = String(minutes).padStart(2, '0');
   
     return `${formattedHours}:${formattedMinutes}`;
+  }
+
+  function minutosParaFormatoHora(minutos) {  
+    const horas = Math.floor(minutos / 60);
+    const minutosRestantes = minutos % 60;
+  
+    // Adicionando zero à esquerda se o valor for menor que 10
+    const horasFormatadas = horas < 10 ? `0${horas}` : horas;
+    const minutosFormatados = minutosRestantes < 10 ? `0${minutosRestantes}` : minutosRestantes;
+  
+    return `${horasFormatadas}:${minutosFormatados}`;
   }
 
   const fetchData = async (icao) => {
@@ -225,6 +237,21 @@ const Etapas = () => {
       return(tabelaVoos)
     }
     
+    const getTempoTotal = () => {
+      let planejamento_copy = [...planejamento]
+      let total = 0
+
+      planejamento_copy.forEach(item=>{
+        item.forEach(voo=>{
+          let [horas, minutos] = voo.TEV.split(':')
+          let tempo_total = (parseInt(horas)*60) + parseInt(minutos)
+          console.log('somando: '+tempo_total)
+          total+= tempo_total
+        })
+      })
+      
+      setTempoMissao(total)
+    }
 
     const getDados = async () => {
       setIsLoading(true)
@@ -275,7 +302,8 @@ const Etapas = () => {
     }
 
   useEffect(()=>{
-  },[])
+    getTempoTotal()
+  },[planejamento])
 
 
    const transformTime = (time) => {
@@ -472,6 +500,11 @@ const Etapas = () => {
                   <LoadingSpinner width='100px' black={true} />
                   </div>
                 }
+      <div>
+      <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px',  marginLeft:10, marginRight:10 }}>
+        <span style={{fontWeight: 'bold', marginRight: 5}}>Total de horas da missão:</span> <span> {minutosParaFormatoHora(parseInt(tempoMissao))}</span>
+      </div>
+      </div>
           {
             planejamento.map((item, idx)=>{
               var limite_fadiga = new Date(item[0].DEP)
