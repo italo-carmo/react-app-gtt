@@ -27,7 +27,7 @@ const Etapas = () => {
   const [aeronaves, setAeronaves] = useState([]);
   const [horasTotais, setHorasTotais] = useState(0);
   const [loading, setLoading] = useState(false)
-  const [limite, setLimite] = useState(10)
+  const [limite, setLimite] = useState(20)
 
   const Api = useApi()
 
@@ -38,12 +38,16 @@ const Etapas = () => {
     let res = await Api.getEtapas({limit:limite})
     if(!res.error) {
       res.data.reverse()
-      let res_filtered = res.data.filter(item=>{
-        if(item.Usuarios && item.Usuarios.length > 0) {
-          return item
-        } 
-      })
+      let res_filtered = res.data
       var horas_totais = 0
+
+      res_filtered = res_filtered.map(it=>{
+        if(it.Usuarios.length == 0) {
+          it.tempo_de_voo = '00:00'
+        }
+        return it
+      })
+
       res_filtered.forEach(item => {
         let [horasStr, minutosStr] = item.tempo_de_voo.split(':');
         const horas = parseInt(horasStr, 10);
@@ -466,6 +470,12 @@ const Etapas = () => {
             if(index == 0) {
               horas_iniciais = 0
             }
+
+            if(item.Usuarios.length > 0) {
+              var realizada = true
+            } else {
+              var realizada = false
+            }
              let index_1p = item.Usuarios.findIndex(i=>i.posicao == '1P')
              let index_2p = item.Usuarios.findIndex(i=>i.posicao == '2P')
              let index_in = item.Usuarios.findIndex(i=>i.posicao == 'IN')
@@ -493,7 +503,7 @@ const Etapas = () => {
              let index_i3 = item.Usuarios.findIndex(i=>i.posicao == 'I3')
              let index_a3 = item.Usuarios.findIndex(i=>i.posicao == 'A3')
             return (
-              <tr>
+              <tr className={realizada ? '' : 'prevista'}>
                   <td>
                     {!item.checada ? <button onClick={()=>handleCheck(item.id, !item.checada, index)} className='check'/> : 
                     <img onClick={()=>handleCheck(item.id, !item.checada)} className='correct' src='https://www.1gtt.com.br/app/correct.png' />

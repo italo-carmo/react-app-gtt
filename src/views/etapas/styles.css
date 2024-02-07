@@ -587,6 +587,10 @@ tr:nth-child(odd) {
     border:2px solid #000;
 }
 
+.prevista {
+    color: #c4302b !important;
+}
+
 .date {
     font-size: 10px;
 }
