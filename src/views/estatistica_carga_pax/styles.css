@@ -1,0 +1,611 @@
+.tabela {
+    display: flex;
+    flex-direction: column;
+}
+
+.aviao-item {
+    background-color: #191c24;
+
+    color:#fff;
+    min-height:100px;
+    border-bottom: 1px solid #fff;
+    border-right: 1px solid #fff;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+}
+
+td {
+    background-color:#eaebf5;
+}
+
+th {
+    background-color: #b6c5e7;
+}
+
+.aviao-item-topo {
+    background-color: #191c24;
+    color:#fff;
+    border-bottom: 1px solid #fff;
+    border-right: 1px solid #fff;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    height:10%;
+}
+
+
+.topo {
+    background-color: #191c24;
+    width: 100%;
+    color:#fff;
+    display: flex;
+    height:10%;
+}
+
+.dia {
+    padding: 10px;
+    flex:1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-right:1px solid #fff;
+}
+
+.dia-last {
+    padding: 10px;
+    flex:1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.missoes {
+    display: flex;
+    flex-direction: column;
+    flex:1;
+}
+
+.missao-item {
+    flex:1;
+    display: flex;
+    width: 100%;
+}
+
+
+.item-missao {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex:1;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    background-color: #999;
+    border-right: 1px solid #fff;
+    border-bottom: 1px solid #fff;
+    min-height:100px;
+}
+
+.input-obs {
+    background-color: #fff;
+    color:#000;
+    padding:5px;
+    border-radius:10px;
+}
+
+.item-modal-body {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.item-missao-last {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex:1;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    background-color: #999;
+    border-right: 1px solid #fff;
+    border-bottom: 1px solid #fff;
+}
+
+
+.missao {
+    flex:1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-right: 1px solid #fff;
+    border-bottom: 1px solid #fff;
+    font-size: 1vw;
+}
+
+.dados-aviao {
+    font-size: 0.8vw;
+}
+
+.missao-white {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-right: 1px solid #fff;
+    border-bottom: 1px solid #fff;
+    font-size: 1vw;
+    padding:10px;
+    width: 90%;
+}
+.missao-red {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-right: 1px solid #c4302b;
+    border-bottom: 1px solid #c4302b;
+    font-size: 1vw;
+    padding:10px;
+    width: 90%;
+    color:#fff;
+}
+
+
+
+.bottom-table {
+    display: flex;
+}
+
+.bottom {
+    width: 100%;
+}
+
+.aviao {
+    background-color: #191c24;
+    color:#fff;
+    font-size: 1.5vw;
+}
+
+#select-box * {
+    background-color: #fff;
+}
+
+option {
+    background-color: #fff;
+}
+
+.white {
+    background-color: #fff;
+    margin: 5px;
+    padding: 5px;
+    font-size: 0.6vw;
+    border-radius: 5px;
+    position: relative;
+    cursor: pointer;
+    border: 1px solid #000;
+}
+
+.data {
+    display: flex;
+    flex-direction: column;
+}
+
+
+
+.green {
+    background-color:  #28a745;
+    margin: 5px;
+    padding: 5px;
+    border: 1px solid #fff;
+    font-size: 0.6vw;
+    border-radius: 5px;
+    position: relative;
+    cursor: pointer;
+    color:#fff;
+}
+
+.red {
+    background-color: #c4302b;
+    margin: 5px;
+    padding: 5px;
+    font-size: 0.6vw;
+    border-radius: 5px;
+    position: relative;
+    cursor: pointer;
+    border: 1px solid #fff;
+}
+
+.modal-create {
+    background-color: #191c24;
+    opacity: 0.95;
+    z-index: 9999;
+    position: fixed;
+    top: 0%;
+    right: 0;
+    height: 100%;
+    width:30%;
+    padding:20px;
+    overflow: scroll;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.8);
+    visibility: hidden;
+    opacity: 0;
+    transition: visibility 0s linear 500ms, opacity 600ms;
+}
+
+.modal-create-visible {
+    background-color: #191c24;
+    opacity: 0.95;
+    z-index: 9999;
+    position: fixed;
+    top: 0%;
+    right: 0;
+    height: 100%;
+    width:30%;
+    padding:20px;
+    overflow: scroll;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.8);
+    visibility: visible;
+    opacity: 1;
+    transition-delay: 0ms;
+    transition: visibility 0s linear, opacity 600ms;
+}
+
+.modal-aviao {
+    display: flex;
+    flex-direction: column;
+    background-color: #000;
+    min-width: 250px;
+    min-height:200px;
+    padding:20px;
+    position: absolute;
+    top: 50%;
+    margin-top: -100px;
+    left: 50%;
+    margin-left: -100px;
+}
+
+.in {
+    background-color: #c4302b;
+}
+
+.title-modal {
+    font-size: 1.3vw;
+    border-bottom: 1px solid #fff;
+}
+
+.text-modal {
+    font-size: 1.0vw;
+    margin-right:10px;
+}
+
+.item-body-modal {
+    margin-top:15px;    
+}
+
+.nome-aviao {
+    display: flex;
+    flex:1;
+}
+
+.modal-topo {
+    display: flex;
+    width:100%;
+    justify-content: flex-end;
+}
+
+.modal-bottom{
+    display: flex;
+    width:100%;
+    justify-content: center;
+}
+
+@media (max-width:1150px) {
+    .modal-create-visible {
+        width: 40%;
+    }
+}
+
+@media (max-width:870px) {
+    .modal-create-visible {
+        width: 50%;
+    }
+}
+
+@media (max-width:690px) {
+    .modal-create-visible {
+        width: 60%;
+    }
+    .aviao {
+        font-size: 2vw;
+    }
+    .calendario {
+        font-size: 2vw;
+    }
+    .missao {
+        font-size: 1.5vw;
+    }
+    .botao-aviao {
+        font-size: 3vw;
+    }
+
+    .dados-aviao {
+        font-size: 1.2vw;
+    }
+
+    span {
+        font-size: 1.5vw;
+    }
+
+    .adicionar {
+        width: 30%;
+        font-size: 2.4vw !important;
+    }
+
+    .cumprir {
+        font-size: 2.5vw !important;
+    }
+
+    .cancelar {
+        font-size: 2.4vw !important;
+    }
+
+    h3 {
+        font-size: 4vw;
+    }
+}
+
+@media (max-width:580px) {
+    .white, .red {
+        font-size: 0.9vw;
+    }
+
+    .text-missao {
+        font-size: 1vw !important;
+    }
+    .modal-create-visible {
+        width: 80%;
+    }
+    .text-modal {
+        font-size: 2.5vw;
+    }
+    .title-modal {
+        font-size: 3vw;
+    }
+}
+
+.calendario {
+    background-color: #191c24;
+    padding: 5px;
+    color:#fff;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1.2vw;
+}
+
+.botao-aviao {
+    background-color: #191c24;
+    padding: 3px;
+    color:#fff;
+    border-radius: 5px;
+    cursor: pointer;
+    border:0;
+}
+
+.botoes {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color:#fff;
+    border-radius: 5px;
+    padding: 5px;
+    cursor: pointer;
+}
+
+.cumprir {
+    background-color: #28a745;
+    padding: 3px;
+    color:#fff;
+    border-radius: 5px;
+    cursor: pointer;
+    border:0;
+    margin-left:5px;
+}
+
+.salvar {
+    background-color: #28a745;
+    padding: 2px;
+    color:#fff;
+    border-radius: 5px;
+    cursor: pointer;
+    border:0;
+    margin-top:10px;
+    width: 100%;
+}
+
+.excluir {
+    background-color: #ff0000;
+    padding: 2px;
+    color:#fff;
+    border-radius: 5px;
+    cursor: pointer;
+    border:0;
+    margin-top:10px;
+    width: 100%;
+}
+
+.item-botao {
+    margin-left:5px ;
+}
+
+.criar {
+    background-color: #000;
+    color:#fff;
+    border-radius: 5px;
+    font-size: 2vw;
+}
+
+.criar-div {
+    border-bottom: 1px solid #fff;
+    display: flex;
+    justify-content: space-between;
+}
+
+.add-etapa {
+    margin-top:30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.tripulante-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.caixa-tripulante {
+    background-color: #fff;
+    min-height: 50px;
+    border-radius:10px;
+    display:flex;
+    flex-wrap: wrap;
+}
+
+.add-trip {
+    margin-top:50px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+}
+
+.tripulante {
+    margin-top:20px;
+}
+
+
+.tripulante-item {
+    margin:5px;
+    border:1px solid #000;
+    padding:3px;
+    border-radius: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;;
+}
+
+.form-add {
+    display: flex;
+    justify-content: space-between;
+    margin-top:10px;
+}
+
+input {
+    border-radius: 10px;
+    padding-left:10px;
+}
+
+.form-area {
+    background-color: #fff;
+    padding:10px;
+    margin-top:30px;
+    border-radius: 10px;
+}
+
+.botoes-add-etapa {
+    display: flex;
+    justify-content: space-between;
+    margin-top:20px;
+}
+
+.adicionar {
+    background-color: #28a745;
+    border:0;
+    color: #fff;
+    border-radius: 5px;
+}
+
+.cancelar {
+    background-color: #dc3545;
+    border:0;
+    color: #fff;
+    border-radius: 5px;
+}
+
+.text-missao {
+    font-size: 0.8vw;
+}
+
+.ver-omis {
+    border:0;
+    border-radius: 10px;
+    margin-bottom: 5px;
+}
+
+table {
+    border-collapse: collapse; /* Combina as bordas das células */
+    width: 100%;
+}
+
+/* Define o estilo das bordas das células */
+th, td {
+    border: 1px solid black; /* Borda preta de 1 pixel */
+    padding: 8px; /* Espaçamento interno para o conteúdo das células */
+    text-align: left; /* Alinhamento do texto à esquerda */
+    font-size:12px;
+    text-align: center; 
+}
+
+.tabela-cabecalho {
+    position: sticky;
+    top: 0;
+    background-color: #fff; /* Defina a cor de fundo desejada */
+    z-index: 1; /* Garante que o cabeçalho fique acima do conteúdo da tabela */
+  }
+
+
+tr:nth-child(odd) {
+    background-color: #ddd; /* Cor de fundo para linhas pares */
+}
+
+.bold {
+    font-weight: bold;
+}
+
+.buttons {
+    flex:1;
+    flex-direction: column;
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+}
+
+.check {
+    width:20px;
+    height:20px;
+    border-radius:10px;
+    margin:0;
+    border:2px solid #000;
+}
+
+.date {
+    font-size: 10px;
+}
+
+.check-green {
+    background-color: #28a745;
+    width:20px;
+    height:20px;
+    border-radius:10px;
+    margin:0;
+    border:2px solid #000;
+}
+
+.correct {
+    width:20px;
+    height:20px;
+    cursor: pointer;
+}

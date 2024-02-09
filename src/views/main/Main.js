@@ -2057,7 +2057,7 @@ const Dashboard = () => {
                                 <div className='left-rascunho' style={{display: 'flex', flexDirection: 'column'}}>
                                   <span className='item-rascunho'>{item_rascunho.planejamento}</span>
                                   <span className='item-rascunho'>{item_rascunho.ofrag}</span>
-                                  <span className='item-rascunho'>{trip}</span>
+                                  <span className='item-rascunho'>{item_rascunho.trip}</span>
                                   <span className='item-rascunho'>{item_rascunho.obs}</span>
                                 </div>
                               </div>

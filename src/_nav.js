@@ -73,6 +73,11 @@ const _nav = [
                 name: 'Ver Quadrinhos',
                 to: '/lista-quadrinhos',
               },
+              {
+                component: CNavItem,
+                name: 'Planejamento',
+                to: '/planejamento',
+              },
     ],
   },
   {

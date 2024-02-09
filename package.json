@@ -32,17 +32,19 @@
     "prop-types": "^15.8.1",
     "react": "^18.2.0",
     "react-app-polyfill": "^3.0.0",
-    "react-datepicker": "^4.11.0",
     "react-chartjs-2": "^5.2.0",
     "react-datepicker": "^4.11.0",
     "react-dom": "^18.2.0",
     "react-html2pdf": "^1.0.1",
     "react-redux": "^8.0.5",
     "react-router-dom": "^6.8.2",
+    "react-syntax-highlighter": "^15.5.0",
     "react-to-pdf": "^1.0.1",
     "react-transition-group": "^4.4.5",
+    "react-xml-parser": "^1.1.8",
     "redux": "4.2.1",
-    "simplebar-react": "^2.4.3"
+    "simplebar-react": "^2.4.3",
+    "xml2js": "^0.6.2"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^5.16.5",
