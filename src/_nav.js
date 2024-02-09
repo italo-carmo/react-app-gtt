@@ -98,6 +98,11 @@ const _nav = [
           },
           {
             component: CNavItem,
+            name: 'Pax, Carga e PQD',
+            to: '/estatistica-carga-pax',
+          },
+          {
+            component: CNavItem,
             name: 'Pau de Sebo',
             to: '/pau-de-sebo',
           },

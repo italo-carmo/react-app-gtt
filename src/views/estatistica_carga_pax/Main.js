@@ -58,12 +58,14 @@ const Etapas = () => {
           voosPorMes.push({
             mes: mesPartida,
             carga: voo.Cargas.reduce((total, carga) => total + carga.peso, 0) || 0,
+            pqd: voo.Assaets.reduce((total, pqd) => total + pqd.quantidade_paraquedistas, 0) || 0,
             pax: voo.pax || 0,
             combustivel: voo.combustivel || 0,
           });
         } else {
           // Se o mês já existir no array, atualize as estatísticas existentes
           mesExistente.carga += voo.Cargas.reduce((total, carga) => total + carga.peso, 0) || 0;
+          mesExistente.pqd += voo.Assaets.reduce((total, pqd) => total + pqd.quantidade_paraquedistas, 0) || 0,
           mesExistente.pax += voo.pax || 0;
           mesExistente.combustivel += voo.combustivel || 0;
         }
@@ -104,6 +106,9 @@ const Etapas = () => {
           Pax
         </th>
         <th>
+          Pqd
+        </th>
+        <th>
           Combustível - Kg
         </th>
         <th>
@@ -116,6 +121,7 @@ const Etapas = () => {
             <td>{meses[item.mes]}</td>
             <td>{formatarNumero(item.carga)}</td>
             <td>{item.pax}</td>
+            <td>{item.pqd}</td>
             <td>{formatarNumero(item.combustivel)}</td>
             <td>{formatarNumero(item.combustivel/0.8)}</td>
           </tr>

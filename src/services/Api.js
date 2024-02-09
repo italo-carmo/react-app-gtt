@@ -530,6 +530,11 @@ export default () => {
             let json = await request('POST', `/notam` , body, token)
             return json
         },
+        ocultarAnv: async (id, body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('PUT', `/aeronaves/oculta/${id}` , body, token)
+            return json
+        },
     }
 
 }

@@ -314,7 +314,6 @@ const Dashboard = () => {
     let fim = dias[6]
     let res = await Api.getRascunhos({inicio, fim})
     if(!res.error) {
-      console.log(res.data)
       setRascunhos(res.data)
     }
   }
@@ -343,7 +342,6 @@ const Dashboard = () => {
     let res_manutencoes = await Api.getManutencoesAvioes({inicio, fim})
     if(!res_manutencoes.error) {
       setManutencoes(res_manutencoes.data)
-      console.log(res_manutencoes)
     }
   }
 
@@ -653,7 +651,6 @@ const Dashboard = () => {
            let res_etapa = await Api.createEtapa(data_item)
          
            if(res_etapa.error) {
-            console.log(res_etapa)
              alert(res.etapa.error)
              return
            } else {
@@ -1717,7 +1714,6 @@ const Dashboard = () => {
   }
 
   const handleBolaClick = (item) => {
-    console.log(item)
     let selecionados_copy = [...selecionados]
     let index = selecionados_copy.findIndex(i=>i.id == item.id)
     if(index > -1) {
@@ -1824,7 +1820,13 @@ const Dashboard = () => {
     location.reload()
   }
 
-  
+  const handleOcultaAviao = async (index, item) => {
+    console.log(item)
+    let data_copy =  {...data}
+    let res = await Api.ocultarAnv(item.id, {oculta: !data_copy.avioes[index].oculta})
+    data_copy.avioes[index].oculta = !data_copy.avioes[index].oculta
+    setData(data_copy)
+  }
 
   const handleMesclarItens = async () => {
     for (const [index, item] of selecionados.entries()) {
@@ -1977,13 +1979,17 @@ const Dashboard = () => {
                 </div>
             })}
           </div>
-            {(data.avioes.length > 0 ) && data.avioes.map(item=>{
+            {(data.avioes.length > 0 ) && data.avioes.map((item, index)=>{
+              console.log(item)
               return <div className='missao-item'>
                 <div className={(item.situacao == 'IN' || item.situacao == 'IS' || item.situacao == 'II') ? 'missao aviao in' : 'missao aviao'}>
                 <span style={{cursor: 'pointer'}} onClick={()=>selectAviao(item.aviao, item.id, item.ciclos, item.horas, item.situacao, item.atualizador, item.atualizado)}>{item.aviao}</span>
-                <span className='dados-aviao'>Situação: {item.situacao}</span>
+                {
+                  !item.oculta ? <><span className='dados-aviao'>Situação: {item.situacao}</span>
                 <span className='dados-aviao'>Ciclos: {item.ciclos}</span>
-                <span className='dados-aviao'>Horas: {item.horas}</span>
+                <span className='dados-aviao'>Horas: {item.horas}
+                </span></> : null}
+                {item.oculta ? <img onClick={()=>handleOcultaAviao(index, item)} style={{marginTop: 5, marginBottom: 5, cursor: 'pointer'}} width="30px" height="30px" src="https://1gtt.com.br/down-white.png"/> : <img onClick={()=>handleOcultaAviao(index, item)} style={{marginTop: 5, marginBottom: 5, cursor: 'pointer'}} width="30px" height="30px" src="https://1gtt.com.br/up-white.png"/>}
                 </div>
                 {semana.map(i=>{
                  return <div className='item-missao' style={{cursor: 'pointer'}} onClick={(e)=>handleClickAddRascunho(e, i, item.id)}>
