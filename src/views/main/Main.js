@@ -2072,9 +2072,12 @@ const Dashboard = () => {
                         })
                       }
                       {item.eventos.length >0 && item.eventos.map(it=>{
+                        if(!it.trip_voada) {
+                          it.trip_voada = []
+                        }
                           if(it.data == i) {
                             return <div 
-                            onClick={()=>handleEditMission(item, it)} className={it.missao.tripulacao.length<=0 ? 'missao-white white' : 'missao-white green'}
+                            onClick={()=>handleEditMission(item, it)}  className={`missao-white ${it.trip_voada.length > 0 ? 'green' : it.missao.tripulacao.length <= 0 ? 'white' : 'gray'}`}
                             onMouseEnter={() => handleMouseEnter(it.missao.id, it.missao, it)}
                             onMouseLeave={handleMouseLeave}
                             >  
