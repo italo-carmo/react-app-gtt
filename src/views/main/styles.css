@@ -16,7 +16,7 @@
 }
 
 .trigrama-sobreaviso {
-    font-size: 1vw;
+    font-size: 0.8vw;
     color:#fff;
     
 }
@@ -143,6 +143,7 @@
 }
 
 
+
 .item-missao {
     display: flex;
     align-items: center;
@@ -151,10 +152,10 @@
     height: auto;
     display: flex;
     flex-direction: column;
-    background-color: #999;
+    background-color: #bbb;
     border-right: 1px solid #fff;
     border-bottom: 1px solid #fff;
-    min-height:100px;
+    min-height:50px;
     padding-top:5px;
     padding-bottom:5px;
 }
@@ -269,7 +270,7 @@ option {
 
 .green {
     background-color:  #28a745;
-    margin: 5px;
+    margin: 2px;
     padding: 5px;
     border: 1px solid #fff;
     font-size: 0.6vw;

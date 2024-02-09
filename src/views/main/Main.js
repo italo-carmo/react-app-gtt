@@ -1958,7 +1958,7 @@ const Dashboard = () => {
           <div className='missao-item'> 
             <div className='missao aviao'>OBS</div>
             {semana.map(i=>{
-                return <div className='item-missao'>
+                return <div className='item-missao obs-style'>
                   {observacoes.map(it=>{
                     const [dia, mes, ano] = i.split("/");
                     const data = new Date(ano, mes - 1, dia);
@@ -1989,7 +1989,7 @@ const Dashboard = () => {
                 <span className='dados-aviao'>Ciclos: {item.ciclos}</span>
                 <span className='dados-aviao'>Horas: {item.horas}
                 </span></> : null}
-                {item.oculta ? <img onClick={()=>handleOcultaAviao(index, item)} style={{marginTop: 5, marginBottom: 5, cursor: 'pointer'}} width="30px" height="30px" src="https://1gtt.com.br/down-white.png"/> : <img onClick={()=>handleOcultaAviao(index, item)} style={{marginTop: 5, marginBottom: 5, cursor: 'pointer'}} width="30px" height="30px" src="https://1gtt.com.br/up-white.png"/>}
+                {item.oculta ? <img onClick={()=>handleOcultaAviao(index, item)} style={{marginBottom: 5, cursor: 'pointer'}} width="20px" height="20px" src="https://1gtt.com.br/down-white.png"/> : <img onClick={()=>handleOcultaAviao(index, item)} style={{marginBottom: 5, cursor: 'pointer'}} width="20px" height="20px" src="https://1gtt.com.br/up-white.png"/>}
                 </div>
                 {semana.map(i=>{
                  return <div className='item-missao' style={{cursor: 'pointer'}} onClick={(e)=>handleClickAddRascunho(e, i, item.id)}>
