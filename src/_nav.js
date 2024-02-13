@@ -67,6 +67,12 @@ const _nav = [
                 class: 'nav-link-submenu',
                 to: '/missoes-exterior',
               },
+              {
+                component: CNavItem,
+                name: 'Exercícios',
+                class: 'nav-link-submenu',
+                to: '/exercicios',
+              },
 
               {
                 component: CNavItem,

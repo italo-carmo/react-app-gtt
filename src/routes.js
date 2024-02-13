@@ -18,6 +18,7 @@ const TurmasDeChegada = React.lazy(() => import('./views/turmas-de-chegada/Main'
 const Cois = React.lazy(() => import('./views/cois/Main'))
 const Planejamento = React.lazy(() => import('./views/planejamento/Main'))
 const EstatisticaCargaPax = React.lazy(() => import('./views/estatistica_carga_pax/Main'))
+const Exercicios = React.lazy(() => import('./views/timeline-exercicios/Main'))
 
 
 // Notifications
@@ -46,6 +47,7 @@ const routes = [
   { path: '/esforcos-aereos', name: 'Esforços Aéreos', element:  EsforcosAereos},
   { path: '/planejamento', name: 'Planejamento', element:  Planejamento},
   { path: '/estatistica-carga-pax', name: 'Estatística de Carga e PAX', element:  EstatisticaCargaPax},
+  { path: '/exercicios', name: 'Exercícios', element:  Exercicios},
 ]
 
 export default routes
