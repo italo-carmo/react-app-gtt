@@ -62,8 +62,9 @@
     padding:10px;
     border-radius: 5px !important;
     color:#fff;
-    min-height:100px;
+    min-height:50px;
     flex-direction: column;
+    
 }
 
 .bottom-card {
@@ -105,4 +106,15 @@
     margin-bottom:5px;
     padding:3px;
     }
+}
+
+.vertical-bar {
+    width: 2px;
+    background-color: rgb(129, 128, 128);
+    margin-right: 20px;
+}
+
+.teste  {
+    align-self: center;
+    margin-right: 20px;
 }

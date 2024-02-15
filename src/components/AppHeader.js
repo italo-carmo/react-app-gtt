@@ -83,75 +83,62 @@ const AppHeader = () => {
   <div>
       <CHeader style={{backgroundColor: '#191c24'}} position="sticky" className="mb-4">
       <CContainer fluid>
-        <CHeaderToggler
-          className="ps-1 white-color"
-          onClick={() => dispatch({ type: 'set', sidebarShow: !sidebarShow })}
-        >
+        
+        <CHeaderNav style={{width: '100%', padding: 5, alignItems: 'center'}}>
+          <CHeaderToggler
+            className="ps-1 white-color"
+            onClick={() => dispatch({ type: 'set', sidebarShow: !sidebarShow })}
+          >
           <CIcon icon={cilMenu} size="lg" />
         </CHeaderToggler>
         <AppBreadcrumb />
-
-        <CHeaderNav className="d-none d-md-flex me-auto">
-        </CHeaderNav>
-        <CHeaderNav>
-
-        </CHeaderNav>
-        <CHeaderNav className="ms-3">
+        
+          <div className="d-md-flex me-auto">
+          <div className='teste'>
+            <p style={{color: 'rgba(255,255,255)', padding:2, borderRadius:3}}>
+              <img src="https://www.1gtt.com.br/app/plane.png" width="25px" height="25px" style={{padding: 2}}/>  Horas Voadas este ano:</p>
+          </div>
+          <div className='teste'>
+            {loadingHoras && <Loading/>}
+            <p style={{color: 'rgba(255,255,255)', padding:2, borderRadius:3}}>{horas}</p>
+          </div>
+          <div class="vertical-bar"></div>
+          <div className='teste'>
+            <p style={{color: 'rgba(255,255,255)', padding:2, borderRadius:3}}>
+              <img src="https://www.1gtt.com.br/app/dollar.png" width="25px" height="25px" style={{padding: 2}}/>  Situação:</p>
+          </div>
+          <div className='teste'>
+            {loadingDias && <Loading/>}
+            <p style={{color: 'rgba(255,255,255)', padding:2, borderRadius:3}}>{situacao}</p>
+          </div>
+          <div class="vertical-bar"></div>
+          <div className='teste'>
+            <p style={{color: 'rgba(255,255,255)', padding:2, borderRadius:3, marginRight: 2}}>
+              <img src="https://www.1gtt.com.br/app/calendar.png" width="25px" height="25px" style={{padding: 2}}/>  Dias Previstos:</p>
+          </div>
+          <div className='teste'>
+            {loadingDias && <Loading/>}
+            <p style={{color: 'rgba(255,255,255)', padding:2, borderRadius:3}}>{diasPrevistos}</p>
+          </div>
+          <div class="vertical-bar"></div>
+          <div className='teste'>
+            <p style={{color: 'rgba(255,255,255)', padding:2, borderRadius:3}}>
+              <img src="https://www.1gtt.com.br/app/appointment.png" width="25px" height="25px" style={{padding: 2}}/>  Dias Realizados:</p>
+          </div>
+          <div className='teste'>
+            {loadingDias && <Loading/>}
+            <p style={{color: 'rgba(255,255,255)', padding:2, borderRadius:3}}>{diasRealizados}</p>
+          </div>
+          </div>
+          <CHeaderNav className="ms-3">
           <AppHeaderDropdown />
         </CHeaderNav>
+        </CHeaderNav>
+   
       </CContainer>
 
     </CHeader>
-    <div className='bottom-header'>
-      <div className='card-header card-background '>
-          <div >
-            <p className='titulo-header horas' style={{color: 'rgba(255,255,255)',  backgroundColor: 'rgba(0,0,0, 0.7)', padding:2, borderRadius:3}}>Horas Voadas este ano</p>
-          </div>
-          <div>
-            {loadingHoras && <Loading/>}
-            <p className='nome-header' style={{ backgroundColor: 'rgba(0,0,0, 0.7)', padding:2, borderRadius:3}}>{horas}</p>
-          </div>
-      </div>
-
-      <div className='card-header card-model'>
-      <div className='div-nome-card'>
-          <p className='titulo-header' style={{color: 'rgba(255,255,255,0.7)'}}>Situação</p>
-      </div>
-      <div className='bottom-card'>
-        <img src='https://www.1gtt.com.br/app/dollar.png' width="15%"/>
-        <div className='item-card'>
-          {loadingDias && <Loading/>}
-            <span className='nome-header comissionado'>{situacao}</span>
-          </div>
-      </div>
-        </div>
-
-      <div className='card-header card-model'>
-      <div className='div-nome-card'>
-          <p className='titulo-header' style={{color: 'rgba(255,255,255,0.7)'}}>Dias Previstos</p>
-      </div>
-      <div className='bottom-card'>
-        <img src='https://www.1gtt.com.br/app/calendar.png' width="15%"/>
-        <div className='item-card'>
-          {loadingDias && <Loading/>}
-            <span className='nome-header'>{diasPrevistos}</span>
-          </div>
-      </div>
-        </div>
-
-      <div className='card-header card-model'>
-      <div className='div-nome-card'>
-          <p className='titulo-header' style={{color: 'rgba(255,255,255,0.7)'}}>Dias Realizados</p>
-      </div>
-      <div className='bottom-card'>
-        <img src='https://www.1gtt.com.br/app/appointment.png' width="15%"/>
-        <div className='item-card'>
-          {loadingDias && <Loading/>}
-            <span className='nome-header'>{diasRealizados}</span>
-          </div>
-      </div>
-        </div>
-      </div>
+    
 
   </div>
   )
