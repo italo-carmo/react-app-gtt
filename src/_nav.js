@@ -67,6 +67,12 @@ const _nav = [
                 class: 'nav-link-submenu',
                 to: '/missoes-exterior',
               },
+              {
+                component: CNavItem,
+                name: 'Exercícios',
+                class: 'nav-link-submenu',
+                to: '/exercicios',
+              },
 
               {
                 component: CNavItem,
@@ -95,6 +101,11 @@ const _nav = [
             component: CNavItem,
             name: 'Esforços Aéreos',
             to: '/esforcos-aereos',
+          },
+          {
+            component: CNavItem,
+            name: 'Pax, Carga e PQD',
+            to: '/estatistica-carga-pax',
           },
           {
             component: CNavItem,

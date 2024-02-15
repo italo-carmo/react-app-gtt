@@ -21,6 +21,18 @@ const EsforcosAereos = () => {
   const [saldo, setSaldo] = useState('')
   const [tipoSelected, setTipoSelected] = useState('')
   const [loading, setLoading] = useState(false)
+  const [jan, setJan] = useState(0)
+  const [fev, setFev] = useState(0)
+  const [mar, setMar] = useState(0)
+  const [abr, setAbr] = useState(0)
+  const [mai, setMai] = useState(0)
+  const [jun, setJun] = useState(0)
+  const [jul, setJul] = useState(0)
+  const [ago, setAgo] = useState(0)
+  const [set, setSet] = useState(0)
+  const [out, setOut] = useState(0)
+  const [nov, setNov] = useState(0)
+  const [dez, setDez] = useState(0)
   
   const Api = useApi()
 
@@ -66,6 +78,14 @@ const EsforcosAereos = () => {
 
   }
 
+  const minutosParaHorasMinutos = (minutos) => {
+    const horas = Math.floor(minutos / 60);
+    const minutosRestantes = minutos % 60;
+    const horasFormatadas = horas.toString().padStart(2, '0');
+    const minutosFormatados = minutosRestantes.toString().padStart(2, '0');
+    return `${horasFormatadas}:${minutosFormatados}`;
+  }
+
   // Função para formatar o tempo com dois dígitos
 const formatarTempo = (horas, minutos) => {
   const horasFormatadas = horas.toString().padStart(2, '0');
@@ -77,6 +97,18 @@ const formatarTempo = (horas, minutos) => {
     let somaQuantidade = 0;
   let somaVoado = 0;
   let somaSaldo = 0;
+  let jan = 0
+  let fev = 0
+  let mar = 0
+  let abr = 0
+  let mai = 0
+  let jun = 0
+  let jul = 0
+  let ago = 0
+  let set = 0
+  let out = 0
+  let nov = 0
+  let dez = 0
 
   // Iterando sobre o array
   for (let i = 0; i < dadosCopy.length; i++) {
@@ -84,11 +116,35 @@ const formatarTempo = (horas, minutos) => {
       const quantidadeArray = dadosCopy[i].quantidade.split(':');
       const voadoArray = dadosCopy[i].voado.split(':');
       const saldoArray = dadosCopy[i].saldo.split(':');
+      const janArray = dadosCopy[i].voosPorMes[0].voado
+      const fevArray = dadosCopy[i].voosPorMes[1].voado
+      const marArray = dadosCopy[i].voosPorMes[2].voado
+      const abrArray = dadosCopy[i].voosPorMes[3].voado
+      const maiArray = dadosCopy[i].voosPorMes[4].voado
+      const junArray = dadosCopy[i].voosPorMes[5].voado
+      const julArray = dadosCopy[i].voosPorMes[6].voado
+      const agoArray = dadosCopy[i].voosPorMes[7].voado
+      const setArray = dadosCopy[i].voosPorMes[8].voado
+      const outArray = dadosCopy[i].voosPorMes[9].voado
+      const novArray = dadosCopy[i].voosPorMes[10].voado
+      const dezArray = dadosCopy[i].voosPorMes[11].voado
 
       // Somando os valores convertidos
       somaQuantidade += parseInt(quantidadeArray[0]) * 60 + parseInt(quantidadeArray[1]);
       somaVoado += parseInt(voadoArray[0]) * 60 + parseInt(voadoArray[1]);
       somaSaldo += parseInt(saldoArray[0]) * 60 + parseInt(saldoArray[1]);
+      jan += janArray
+      fev += fevArray
+      mar += marArray
+      abr += abrArray
+      mai += maiArray
+      jun += junArray
+      jul += julArray
+      ago += agoArray
+      set += setArray
+      out += outArray
+      nov += novArray
+      dez += dezArray
       }
 
   
@@ -115,6 +171,18 @@ const formatarTempo = (horas, minutos) => {
         const voadoComPorcentagem = `${totalVoadoFormatado} (${porcentagemVoado}%)`;
         const saldoComPorcentagem = `${totalSaldoFormatado} (${porcentagemSaldo}%)`;
       
+      setJan(jan)
+      setFev(fev)
+      setMar(mar)
+      setAbr(abr)
+      setMai(mai)
+      setJun(jun)
+      setJul(jul)
+      setAgo(ago)
+      setSet(set)
+      setOut(out)
+      setNov(nov)
+      setDez(dez)
       setQuantidade(totalQuantidadeFormatado)
       setVoado(voadoComPorcentagem)
       setSaldo(saldoComPorcentagem)
@@ -157,6 +225,18 @@ const formatarTempo = (horas, minutos) => {
         <tr>
           <th>Tipo</th>
           <th>Nome</th>
+          <th>JAN</th>
+          <th>FEV</th>
+          <th>MAR</th>
+          <th>ABR</th>
+          <th>MAI</th>
+          <th>JUN</th>
+          <th>JUL</th>
+          <th>AGO</th>
+          <th>SET</th>
+          <th>OUT</th>
+          <th>NOV</th>
+          <th>DEZ</th>
           <th>Ano</th>
           <th>Alocado</th>
           <th>Voado</th>
@@ -175,9 +255,21 @@ const formatarTempo = (horas, minutos) => {
           {
             dadosCopy.map(it=>{
               return (
-                <tr>
+                <tr className={it.saldo.includes("-") ? 'red' : ''}>
                   <td>{it.tipo}</td>
                   <td>{it.nome}</td>
+                  <td>{minutosParaHorasMinutos(it.voosPorMes[0].voado)}</td>
+                  <td>{minutosParaHorasMinutos(it.voosPorMes[1].voado)}</td>
+                  <td>{minutosParaHorasMinutos(it.voosPorMes[2].voado)}</td>
+                  <td>{minutosParaHorasMinutos(it.voosPorMes[3].voado)}</td>
+                  <td>{minutosParaHorasMinutos(it.voosPorMes[4].voado)}</td>
+                  <td>{minutosParaHorasMinutos(it.voosPorMes[5].voado)}</td>
+                  <td>{minutosParaHorasMinutos(it.voosPorMes[6].voado)}</td>
+                  <td>{minutosParaHorasMinutos(it.voosPorMes[7].voado)}</td>
+                  <td>{minutosParaHorasMinutos(it.voosPorMes[8].voado)}</td>
+                  <td>{minutosParaHorasMinutos(it.voosPorMes[9].voado)}</td>
+                  <td>{minutosParaHorasMinutos(it.voosPorMes[10].voado)}</td>
+                  <td>{minutosParaHorasMinutos(it.voosPorMes[11].voado)}</td>
                   <td>{it.ano}</td>
                   <td>{it.quantidade}</td>
                   <td>{it.voado}</td>
@@ -187,7 +279,20 @@ const formatarTempo = (horas, minutos) => {
             })
           }
            <tr>
-                  <td colSpan={3} style={{fontWeight:'bold'}}>TOTAL</td>
+                  <td colSpan={2} style={{fontWeight:'bold'}}>TOTAL</td>
+                  <td style={{fontWeight:'bold'}}>{minutosParaHorasMinutos(jan)}</td>
+                  <td style={{fontWeight:'bold'}}>{minutosParaHorasMinutos(fev)}</td>
+                  <td style={{fontWeight:'bold'}}>{minutosParaHorasMinutos(mar)}</td>
+                  <td style={{fontWeight:'bold'}}>{minutosParaHorasMinutos(abr)}</td>
+                  <td style={{fontWeight:'bold'}}>{minutosParaHorasMinutos(mai)}</td>
+                  <td style={{fontWeight:'bold'}}>{minutosParaHorasMinutos(jun)}</td>
+                  <td style={{fontWeight:'bold'}}>{minutosParaHorasMinutos(jul)}</td>
+                  <td style={{fontWeight:'bold'}}>{minutosParaHorasMinutos(ago)}</td>
+                  <td style={{fontWeight:'bold'}}>{minutosParaHorasMinutos(set)}</td>
+                  <td style={{fontWeight:'bold'}}>{minutosParaHorasMinutos(out)}</td>
+                  <td style={{fontWeight:'bold'}}>{minutosParaHorasMinutos(nov)}</td>
+                  <td style={{fontWeight:'bold'}}>{minutosParaHorasMinutos(dez)}</td>
+                  <td></td>
                   <td style={{fontWeight:'bold'}}>{quantidade}</td>
                   <td style={{fontWeight:'bold'}}>{voado}</td>
                   <td style={{fontWeight:'bold'}}>{saldo}</td>

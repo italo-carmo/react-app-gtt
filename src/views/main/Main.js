@@ -127,6 +127,15 @@ const Dashboard = () => {
   const [aeronaveRascunho, setAeronaveRascunho] = useState('')
   const [rascunhoToShow, setRascunhoToShow] = useState('')
   const [caixaVisibleRascunho, setCaixaVisibleRascunho] = useState(false)
+  const [dataInicioExercicio, setDataInicioExercicio] = useState(new Date())
+  const [dataFimExercicio, setDataFimExercicio] = useState(new Date())
+  const [editExercicio, setEditExercicio] = useState(false)
+  const [caixaCreateVisibleExercicio, setCaixaCreateVisibleExercicio] = useState(false)
+  const [nomeExercicio, setNomeExercicio] = useState('')
+  const [localidadeExercicio, setLocalidadeExercicio] = useState('')
+  const [oberservacoesExercicio, setOberservacoesExercicio] = useState('')
+  const [idExercicio, setIdExercicio] = useState('')
+  const [exercicios, setExercicios] = useState([])
 
   const [longPressTimer, setLongPressTimer] = useState(null);
 
@@ -304,6 +313,7 @@ const Dashboard = () => {
     setSemana(dias)
     getMissoes(dias, reseta)
     getSobreavisos(dias)
+    getExercicios(dias)
     getObservacoes(dias)
     getManutencoes(dias)
     getRascunhos(dias)
@@ -314,7 +324,6 @@ const Dashboard = () => {
     let fim = dias[6]
     let res = await Api.getRascunhos({inicio, fim})
     if(!res.error) {
-      console.log(res.data)
       setRascunhos(res.data)
     }
   }
@@ -337,13 +346,21 @@ const Dashboard = () => {
     }
   }
 
+  const getExercicios = async (dias) => {
+    let inicio = dias[0]
+    let fim = dias[6]
+    let res = await Api.getExerciciosData({inicio, fim})
+    if(!res.error) {
+      setExercicios(res.data)
+    } 
+  }
+
   const getManutencoes = async (dias) => {
     let inicio = dias[0]
     let fim = dias[6]
     let res_manutencoes = await Api.getManutencoesAvioes({inicio, fim})
     if(!res_manutencoes.error) {
       setManutencoes(res_manutencoes.data)
-      console.log(res_manutencoes)
     }
   }
 
@@ -494,6 +511,16 @@ const Dashboard = () => {
     setEditSobreaviso(false)
     setCaixaCreateVisibleSobreaviso(true)
   }
+
+  const handleCreateExercicio = () => {
+    setDataInicioExercicio(new Date())
+    setDataFimExercicio(new Date())
+    setTripulacao([])
+    setEditExercicio(false)
+    setCaixaCreateVisibleExercicio(true)
+  }
+
+  
 
   const handleCreateManut = async () => {
     setTituloManutencao('')
@@ -653,7 +680,6 @@ const Dashboard = () => {
            let res_etapa = await Api.createEtapa(data_item)
          
            if(res_etapa.error) {
-            console.log(res_etapa)
              alert(res.etapa.error)
              return
            } else {
@@ -1143,6 +1169,15 @@ const Dashboard = () => {
     setDataSobreaviso(new Date())
   }
 
+  const handleLimparExercicio = () => {
+    setTripulacao([])
+    setDataInicioExercicio(new Date())
+    setDataFimExercicio(new Date())
+    setNomeExercicio('')
+    setLocalidadeExercicio('')
+    setOberservacoesExercicio('')
+  }
+
   const handleEditEtapa = async () => {
     setErrorEtapaAdd('')
     if(icaoDestinoAdd == '' || icaoOrigemAdd == '' || icaoAltAdd == '' || dataEtapa == '' || dataEtapaPouso == '') {
@@ -1399,6 +1434,25 @@ const Dashboard = () => {
     setTripulacao(trigramas_sobreaviso)
   }
 
+  const handleEditExercicio = (exercicio) => {
+    setEditExercicio(true)
+    setIdExercicio(exercicio.id)
+    let data_inicio = (exercicio.data_inicio+'T04:00:00Z')
+    let data_fim = (exercicio.data_fim+'T04:00:00Z')
+    console.log(data_inicio)
+    setDataInicioExercicio(new Date(data_inicio))
+    setDataFimExercicio(new Date(data_fim))
+    setLocalidadeExercicio(exercicio.localidade)
+    setNomeExercicio(exercicio.nome)
+    setOberservacoesExercicio(exercicio.observacoes)
+    setCaixaCreateVisibleExercicio(true)
+    let trigramas_exercicios = []
+    exercicio.usuarios.forEach(i=>{
+      trigramas_exercicios.push({id: i.id, trigrama: i.Trigrama.trigrama, funcao: i.FuncoesAbordo.nome}
+  )
+    })
+    setTripulacao(trigramas_exercicios)
+  }
   
 
   const handleEditmanut = (manut) => {
@@ -1425,6 +1479,47 @@ const Dashboard = () => {
     handleLimparSobreaviso()
     setCaixaCreateVisibleSobreaviso(false)
   }
+
+  const handleCloseModalExercicio = () => {
+    handleLimparExercicio()
+    setCaixaCreateVisibleExercicio(false)
+  }
+
+  const handleCriaExercicio = async () => {
+    var id_usuarios = []
+    if(!nomeExercicio || !localidadeExercicio) {
+      alert('Nome e Localidade são obrigatórios!')
+      return
+    }
+    tripulacao.forEach(item=>{
+      id_usuarios.push(item.id)
+    })
+    let new_data_inicio = new Date(dataInicioExercicio)
+    new_data_inicio.setHours(3, 30, 0, 0);
+
+    let new_data_fim = new Date(dataFimExercicio)
+    new_data_fim.setHours(3, 30, 0, 0);
+
+    let item = {
+      id_usuarios,
+      data_inicio:new_data_inicio.toISOString(),
+      data_fim:new_data_fim.toISOString(),
+      nome: nomeExercicio,
+      localidade: localidadeExercicio
+    }
+
+    let res = await Api.createExercicio(item)
+    if(res.error) {
+      alert(res.error)
+      return
+    } 
+
+    alert(res.msg)
+    handleLimparExercicio()
+    setCaixaCreateVisibleExercicio(false)
+    location.reload()
+  }
+  
 
 
   const handleCriaSobreaviso = async () => {
@@ -1469,6 +1564,37 @@ const Dashboard = () => {
     alert(res.msg)
     handleLimparSobreaviso()
     setCaixaCreateVisibleSobreaviso(false)
+    location.reload()
+  }
+
+  const handleEditaItemExercicio = async() =>{
+    var id_usuarios = []
+    tripulacao.forEach(item=>{
+      id_usuarios.push(item.id)
+    })
+
+    if(!localidadeExercicio || !nomeExercicio) {
+      alert("Nome e localidade são obrigatórios")
+      return
+    }
+
+    let item = {
+      id_usuarios,
+      nome: nomeExercicio,
+      data_inicio:dataInicioExercicio,
+      data_fim: dataFimExercicio,
+      localidade: localidadeExercicio,
+      observacoes: oberservacoesExercicio
+    }
+
+    let res = await Api.updateExercicio(idExercicio,item)
+    if(res.error) {
+      alert(res.error)
+      return
+    } 
+    alert(res.msg)
+    handleLimparExercicio()
+    setCaixaCreateVisibleExercicio(false)
     location.reload()
   }
   
@@ -1576,6 +1702,36 @@ const Dashboard = () => {
       handleExcluiObs()
     }
   }
+
+  const handleExcluiExercicioAviso = () => {
+    const confirmacao = window.confirm('Deseja mesmo excluir esse Exercício?');
+    if (confirmacao) {
+      handleExcluiExercicio()
+    }
+  }
+
+  const handleExcluiExercicio = async () => {
+    let id = idExercicio
+    let res = await Api.deleteExercicio(id)
+    if(res.error) {
+      alert(res.error)
+      return
+    }
+    setDataInicioExercicio(new Date())
+    setDataFimExercicio(new Date())
+    setCaixaCreateVisibleExercicio(false)
+    setEditExercicio(false)
+    setNomeExercicio('')
+    setLocalidadeExercicio('')
+    setOberservacoesExercicio('')
+    alert(res.msg)
+    location.reload()
+  }
+
+  const handleChange = (event, estado) => {
+    const inputValue = event.target.value
+    estado(inputValue);
+  };
 
   const handleExcluiSobreavisAviso = () => {
     const confirmacao = window.confirm('Deseja mesmo excluir esse Sobreaviso?');
@@ -1717,7 +1873,6 @@ const Dashboard = () => {
   }
 
   const handleBolaClick = (item) => {
-    console.log(item)
     let selecionados_copy = [...selecionados]
     let index = selecionados_copy.findIndex(i=>i.id == item.id)
     if(index > -1) {
@@ -1824,7 +1979,13 @@ const Dashboard = () => {
     location.reload()
   }
 
-  
+  const handleOcultaAviao = async (index, item) => {
+    console.log(item)
+    let data_copy =  {...data}
+    let res = await Api.ocultarAnv(item.id, {oculta: !data_copy.avioes[index].oculta})
+    data_copy.avioes[index].oculta = !data_copy.avioes[index].oculta
+    setData(data_copy)
+  }
 
   const handleMesclarItens = async () => {
     for (const [index, item] of selecionados.entries()) {
@@ -1905,6 +2066,7 @@ const Dashboard = () => {
           </div>
           <div>
             <button onClick={handleCreate} className='calendario'>Missão</button>
+            <button onClick={handleCreateExercicio} className='calendario'>Exercício</button>
             <button onClick={handleCreateSobreaviso} className='calendario'>Sobreaviso</button>
             <button onClick={handleCreateObs} className='calendario'>OBS</button>
             <button onClick={handleCreateManut} className='calendario'>Manutenção</button>
@@ -1956,7 +2118,7 @@ const Dashboard = () => {
           <div className='missao-item'> 
             <div className='missao aviao'>OBS</div>
             {semana.map(i=>{
-                return <div className='item-missao'>
+                return <div className='item-missao obs-style'>
                   {observacoes.map(it=>{
                     const [dia, mes, ano] = i.split("/");
                     const data = new Date(ano, mes - 1, dia);
@@ -1977,13 +2139,39 @@ const Dashboard = () => {
                 </div>
             })}
           </div>
-            {(data.avioes.length > 0 ) && data.avioes.map(item=>{
+          <div className='missao-item'> 
+            <div className='missao aviao'>Exercícios</div>
+            {semana.map(i=>{
+                return <div className='item-missao obs-style'>
+                  {exercicios.map(it=>{
+                    const [dia, mes, ano] = i.split("/");
+                    const data = new Date(ano, mes - 1, dia);
+                    let inicio_date = new Date(it.data_inicio)
+                    let fim_date = new Date(it.data_fim)
+
+                    if(data.getTime() <= fim_date.getTime() && data.getTime() >= inicio_date.getTime()) {
+                      return <div className='missao-white white' 
+                            onClick={()=>handleEditExercicio(it)}
+                      >
+                        
+                        {it.nome}</div>
+                    }
+                  })}
+
+                </div>
+            })}
+          </div>
+            {(data.avioes.length > 0 ) && data.avioes.map((item, index)=>{
+              console.log(item)
               return <div className='missao-item'>
                 <div className={(item.situacao == 'IN' || item.situacao == 'IS' || item.situacao == 'II') ? 'missao aviao in' : 'missao aviao'}>
                 <span style={{cursor: 'pointer'}} onClick={()=>selectAviao(item.aviao, item.id, item.ciclos, item.horas, item.situacao, item.atualizador, item.atualizado)}>{item.aviao}</span>
-                <span className='dados-aviao'>Situação: {item.situacao}</span>
+                {
+                  !item.oculta ? <><span className='dados-aviao'>Situação: {item.situacao}</span>
                 <span className='dados-aviao'>Ciclos: {item.ciclos}</span>
-                <span className='dados-aviao'>Horas: {item.horas}</span>
+                <span className='dados-aviao'>Horas: {item.horas}
+                </span></> : null}
+                {item.oculta ? <img onClick={()=>handleOcultaAviao(index, item)} style={{marginBottom: 5, cursor: 'pointer'}} width="20px" height="20px" src="https://1gtt.com.br/down-white.png"/> : <img onClick={()=>handleOcultaAviao(index, item)} style={{marginBottom: 5, cursor: 'pointer'}} width="20px" height="20px" src="https://1gtt.com.br/up-white.png"/>}
                 </div>
                 {semana.map(i=>{
                  return <div className='item-missao' style={{cursor: 'pointer'}} onClick={(e)=>handleClickAddRascunho(e, i, item.id)}>
@@ -2066,9 +2254,12 @@ const Dashboard = () => {
                         })
                       }
                       {item.eventos.length >0 && item.eventos.map(it=>{
+                        if(!it.trip_voada) {
+                          it.trip_voada = []
+                        }
                           if(it.data == i) {
                             return <div 
-                            onClick={()=>handleEditMission(item, it)} className={it.missao.tripulacao.length<=0 ? 'missao-white white' : 'missao-white green'}
+                            onClick={()=>handleEditMission(item, it)}  className={`missao-white ${it.trip_voada.length > 0 ? 'green' : it.missao.tripulacao.length <= 0 ? 'white' : 'gray'}`}
                             onMouseEnter={() => handleMouseEnter(it.missao.id, it.missao, it)}
                             onMouseLeave={handleMouseLeave}
                             >  
@@ -2601,7 +2792,174 @@ editSobreaviso ? <button className='cancelar' style={{fontSize: '1.3vw'}} onClic
 }
 
 </div>
+        </div>
+
+        <div ref={divRef} className={caixaCreateVisibleExercicio ? 'modal-create-visible' : 'modal-create'}>
+        <div style={{display: 'flex', justifyContent:'flex-end',margin:10, cursor: 'pointer'}}>
+          <div onClick={handleCloseModalExercicio} style={{color:'#fff'}}>X</div>
+        </div>
+        <div className='criar-div'>
+          <h3 style={{color:'#fff'}}>{editExercicio ? 'Editar' :  'Criar'} Exercício</h3>
+        </div>
+        <div style={{ marginTop:30}}>
+        <span style={{color:'#fff', marginRight:10}}>Nome do Exercício:</span>
+          <input style={{width:'100%'}} value={nomeExercicio} onChange={(e)=>handleChange(e, setNomeExercicio)} />
+        </div>
+        <div style={{ marginTop:10}}>
+        <span style={{color:'#fff', marginRight:10}}>Localidade:</span>
+          <input style={{width:'100%'}} value={localidadeExercicio} onChange={(e)=>handleChange(e, setLocalidadeExercicio)} />
+        </div>
+        <div className='form-area'>
+        <div className='form-add' style={{alignItems: 'center'}}>
+                   <span style={{color:'#000'}}>Data de Início: </span>
+                  <div style={{display: 'flex', alignItems: 'center'}}>
+                  {dataInicioExercicio.toLocaleString([], { year: 'numeric', month: '2-digit', day: '2-digit'})}
+                   <div className='' style={{marginLeft:10}}>
+                  <DatePicker 
+                      selected={dataInicioExercicio}
+                      timeInputLabel={dataInicioExercicio}
+                      onChange={(date) => {
+                        //var offset = date.getTimezoneOffset();
+                        // Convertendo a data para UTC
+                        //date.setMinutes(date.getMinutes() - offset);
+                        setDataInicioExercicio(date);
+                        }}
+                      customInput={<DateInputWhite />}
+                      //showTimeSelect
+                      //timeFormat="HH:mm"
+                      timeIntervals={5}
+                      //dateFormat="LLL"
+                      timeZone="Etc/UTC"
+                      timeZoneData={[{ value: 'Etc/UTC', label: 'Zulu (GMT 0)' }]}
+                      />    
+                      </div>
+                  </div>
+                 </div>
+        </div>
+        <div className='form-area'>
+        <div className='form-add' style={{alignItems: 'center'}}>
+                   <span style={{color:'#000'}}>Data de Término: </span>
+                  <div style={{display: 'flex', alignItems: 'center'}}>
+                  {dataFimExercicio.toLocaleString([], { year: 'numeric', month: '2-digit', day: '2-digit'})}
+                   <div className='' style={{marginLeft:10}}>
+                  <DatePicker 
+                      selected={dataFimExercicio}
+                      timeInputLabel={dataFimExercicio}
+                      onChange={(date) => {
+                        //var offset = date.getTimezoneOffset();
+                        // Convertendo a data para UTC
+                        //date.setMinutes(date.getMinutes() - offset);
+                        setDataFimExercicio(date);
+                        }}
+                      customInput={<DateInputWhite />}
+                      //showTimeSelect
+                      //timeFormat="HH:mm"
+                      timeIntervals={5}
+                      //dateFormat="LLL"
+                      timeZone="Etc/UTC"
+                      timeZoneData={[{ value: 'Etc/UTC', label: 'Zulu (GMT 0)' }]}
+                      />    
+                      </div>
+                  </div>
+                 </div>
+        </div>
+        <div style={{ marginTop:30}}>
+        <span style={{color:'#fff', marginRight:10}}>Observações:</span>
+          <input style={{width:'100%'}} value={oberservacoesExercicio} onChange={(e)=>handleChange(e, setOberservacoesExercicio)} />
+        </div>
+
+        <div className='add-trip'>
+        <span style={{color:'#fff'}}>Tripulação:</span>
+        <MaskedInputTrigrama maxLength={3} value={trigrama} onChange={setTrigrama} onKeyPress={handleKeyPressTripulante} />
+
+        {errorTripulante &&
+        <div style={{marginTop:10}} class="alert alert-danger" role="alert">
+        {errorTripulante}
+        </div>}
+        <div className='tripulante-row'>
+        <span style={{color:'#fff'}} className='tripulante'>Pilotos:</span>
+        </div>
+        <div className='caixa-tripulante'>
+        {tripulacao.map(item=>{
+        if (item.funcao == 'Piloto') {
+        return (
+        <div className='tripulante-item' >
+        {item.trigrama}
+        <img style={{marginLeft:5, cursor: 'pointer'}} onClick={()=>handleDeleteTrip(item.id)} src='https://www.1gtt.com.br/app/close.png' width='15px'/>
+        </div>
+        )
+        }
+        })}
+        </div>
+
+        <div className='tripulante-row'>
+        <span style={{color:'#fff'}} className='tripulante'>Mecânicos:</span>
+        </div>
+        <div className='caixa-tripulante'>
+        {tripulacao.map(item=>{
+        if (item.funcao == 'Mecânico de Voo') {
+        return (
+        <div className='tripulante-item' >
+        {item.trigrama}
+        <img style={{marginLeft:5, cursor: 'pointer'}} onClick={()=>handleDeleteTrip(item.id)} src='https://www.1gtt.com.br/app/close.png' width='15px'/>
+        </div>
+        )
+        }
+        })}
+        </div>
+
+        <div className='tripulante-row'>
+        <span style={{color:'#fff'}} className='tripulante'>Loadmasters:</span>
+        </div>
+        <div className='caixa-tripulante'>
+        {tripulacao.map(item=>{
+        if (item.funcao == 'Loadmaster') {
+        return (
+        <div className='tripulante-item' >
+        {item.trigrama}
+        <img style={{marginLeft:5, cursor: 'pointer'}} onClick={()=>handleDeleteTrip(item.id)} src='https://www.1gtt.com.br/app/close.png' width='15px'/>
+        </div>
+        )
+        }
+        })}
+        </div>
+
+        <div className='tripulante-row'>
+        <span style={{color:'#fff'}} className='tripulante'>Comissários:</span>
+        </div>
+        <div className='caixa-tripulante'>
+        {tripulacao.map(item=>{
+        if (item.funcao == 'Comissário') {
+        return (
+        <div className='tripulante-item' >
+        {item.trigrama}
+        <img style={{marginLeft:5, cursor: 'pointer'}} onClick={()=>handleDeleteTrip(item.id)} src='https://www.1gtt.com.br/app/close.png' width='15px'/>
+        </div>
+        )
+        }
+        })}
+        </div>
+
+
 </div>
+
+
+<div className='botoes-add-etapa' style={{marginTop:30}}>
+<button className='cancelar' style={{fontSize: '1vw'}} onClick={()=>{
+  setTripulacao([])
+}}>Limpar</button>
+{loadingSave ? <LoadingSpinner/> : <button className='adicionar' style={{fontSize: '1vw'}} onClick={editExercicio ? handleEditaItemExercicio :handleCriaExercicio}>{editExercicio ? 'Editar Exercício' : 'Criar Exercício'}</button>}
+</div>
+
+<div className='botoes-add-etapa' style={{marginTop:30, justifyContent:'center'}}>
+{loadingExcluir && <LoadingSpinner />}
+{
+editExercicio ? <button className='cancelar' style={{fontSize: '1.3vw'}} onClick={handleExcluiExercicioAviso}>Excluir Exercício</button>
+:  <></>
+}
+
+</div>
+        </div>
     
       </CCard>
 

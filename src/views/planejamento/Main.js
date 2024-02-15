@@ -534,13 +534,13 @@ const Etapas = () => {
                 <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
                   <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: 10}}>
                     <span style={{fontWeight: 'bold', marginRight: 10}}>DIA {idx + 1}</span>
-                    <img onClick={()=>{
+                    <img style={{cursor: 'pointer'}} onClick={()=>{
                       setEdit(true)
                       setIndexEdit(idx)
                       setRota(item.rota)
                       let data = new Date(item[0].DEP)
                       setDataInicio(data)
-                    }} width="15" height="15" src='https://www.1gtt.com.br/app/pen.png' />
+                    }} width="20" height="20" src='https://www.1gtt.com.br/app/pen.png' />
                   </div>
               <table style={{marginBottom:20, zIndex: 2, width: '90%'}}>
               <thead className='tabela-cabecalho'>

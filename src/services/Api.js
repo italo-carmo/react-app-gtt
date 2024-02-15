@@ -530,6 +530,56 @@ export default () => {
             let json = await request('POST', `/notam` , body, token)
             return json
         },
+        ocultarAnv: async (id, body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('PUT', `/aeronaves/oculta/${id}` , body, token)
+            return json
+        },
+        getExercicios: async () => {
+            let token = localStorage.getItem('token')
+            let json = await request('GET', `/exercicios` , null, token)
+            return json
+        },
+        createExercicio: async (body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('POST', `/exercicios` , body, token)
+            return json
+        },
+        createExercicioUsuarios: async (body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('POST', `/exercicios/users` , body, token)
+            return json
+        },
+        excluirExercicio: async (id) => {
+            let token = localStorage.getItem('token')
+            let json = await request('DELETE', `/exercicios/${id}` , null, token)
+            return json
+        },
+        editExercicio: async (id, body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('PUT', `/exercicios/${id}` , body, token)
+            return json
+        },
+        editExercicioUsuarios: async (id, body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('PUT', `/exercicios/usuarios/${id}` , body, token)
+            return json
+        },
+        deleteExercicio: async (id) => {
+            let token = localStorage.getItem('token')
+            let json = await request('DELETE', `/exercicios/${id}` , null, token)
+            return json
+        },
+        getExerciciosData: async (body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('POST', `/exercicios/data` , body, token)
+            return json
+        },
+        updateExercicio: async (id, body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('PUT', `/exercicios/${id}` , body, token)
+            return json
+        },
     }
 
 }

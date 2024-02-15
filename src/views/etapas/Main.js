@@ -430,6 +430,7 @@ const Etapas = () => {
               <th>TEV</th>
               <th>IFR</th>
               <th>Noturno</th>
+              <th>Pousos</th>
               <th>NVG?</th>
               <th>Procedimentos</th>
               <th>Esforço Aéreo</th>
@@ -519,6 +520,7 @@ const Etapas = () => {
                   <td>{transformTime(item.tempo_de_voo)}</td>
                   <td>{transformMinutesToTime(item.horas_instrumento)}</td>
                   <td>{transformMinutesToTime(item.horas_noturnas)}</td>
+                  <td>{item.pousos}</td>
                   <td>{item.nvg ? 'SIM' : 'NÃO'}</td>
                   <td>
                     {

@@ -15,82 +15,12 @@
     display: flex;
 }
 
-.trigrama-sobreaviso {
-    font-size: 0.8vw;
-    color:#fff;
-    
+td {
+    background-color:#eaebf5;
 }
 
-.rascunho {
-    border: 1px solid #000 !important;
-    margin-left:0 !important;
-    position: relative;
-}
-.rascunho-dashed {
-    border: 1px dashed #000 !important;
-}
-
-.item-rascunho {
-    font-size: 0.7vw;
-    border-bottom: 1px solid #000;
-    width:100%;
-    text-align: center;
-    min-height:15px;
-}
-
-.right-rascunho {
-    display: flex;
-    justify-content: flex-end;
-    align-items: flex-end;
-    width: 100%;
-}
-
-.left-rascunho {
-    flex:1;
-    width: 100%;
-}
-
-.bola {
-    background-color: #000;
-    width:14px;
-    height:14px;
-    border-radius:7px;
-    margin-left:5px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.vermelho {
-    background-color: #c4302b !important;
-    border-color:#c4302b !important;
-}
-
-.verde {
-    background-color: #28a745 !important;
-    border-color:#28a745 !important;
-}
-
-.bola-interna {
-    background-color: #fff;
-    width:6px;
-    height:6px;
-    border-radius:3px;
-    z-index: 99;
-}
-
-.div-trigramas-sobreaviso {
-    background-color: #555;
-    border: 1px solid #fff;
-    border-radius: 10px;
-    margin:5px;
-    padding:5px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    flex:1;
-    width:90%;
-    cursor: pointer;
+th {
+    background-color: #b6c5e7;
 }
 
 .aviao-item-topo {
@@ -143,7 +73,6 @@
 }
 
 
-
 .item-missao {
     display: flex;
     align-items: center;
@@ -152,12 +81,10 @@
     height: auto;
     display: flex;
     flex-direction: column;
-    background-color: #bbb;
+    background-color: #999;
     border-right: 1px solid #fff;
     border-bottom: 1px solid #fff;
-    min-height:50px;
-    padding-top:5px;
-    padding-bottom:5px;
+    min-height:100px;
 }
 
 .input-obs {
@@ -251,15 +178,14 @@ option {
 }
 
 .white {
-    background-color: #ddb92a;
+    background-color: #fff;
     margin: 5px;
     padding: 5px;
     font-size: 0.6vw;
     border-radius: 5px;
     position: relative;
     cursor: pointer;
-    border: 1px solid #fff;
-    color: #fff;
+    border: 1px solid #000;
 }
 
 .data {
@@ -271,19 +197,7 @@ option {
 
 .green {
     background-color:  #28a745;
-    margin: 2px;
-    padding: 5px;
-    border: 1px solid #fff;
-    font-size: 0.6vw;
-    border-radius: 5px;
-    position: relative;
-    cursor: pointer;
-    color:#fff;
-}
-
-.gray {
-    background-color:  #1299ad;
-    margin: 2px;
+    margin: 5px;
     padding: 5px;
     border: 1px solid #fff;
     font-size: 0.6vw;
@@ -392,29 +306,17 @@ option {
     .modal-create-visible {
         width: 40%;
     }
-    .item-rascunho {
-        font-size: 0.7vw;
-    }
 }
 
 @media (max-width:870px) {
     .modal-create-visible {
         width: 50%;
     }
-    .item-rascunho {
-        font-size: 0.7vw;
-        margin-top:2px;
-        min-height:10px
-    }
 }
 
 @media (max-width:690px) {
     .modal-create-visible {
         width: 60%;
-    }
-
-    .rascunho {
-        padding: 3px !important;
     }
     .aviao {
         font-size: 2vw;
@@ -476,7 +378,7 @@ option {
 
 .calendario {
     background-color: #191c24;
-    /* padding: 5px; */
+    padding: 5px;
     color:#fff;
     border-radius: 5px;
     cursor: pointer;
@@ -498,6 +400,7 @@ option {
     align-items: center;
     color:#fff;
     border-radius: 5px;
+    padding: 5px;
     cursor: pointer;
 }
 
@@ -640,4 +543,68 @@ input {
     border:0;
     border-radius: 10px;
     margin-bottom: 5px;
+}
+
+table {
+    border-collapse: collapse; /* Combina as bordas das células */
+}
+
+/* Define o estilo das bordas das células */
+th, td {
+    border: 1px solid black; /* Borda preta de 1 pixel */
+    padding: 8px; /* Espaçamento interno para o conteúdo das células */
+    text-align: left; /* Alinhamento do texto à esquerda */
+    font-size:12px;
+    text-align: center; 
+}
+
+.tabela-cabecalho {
+    position: sticky;
+    top: 0;
+    background-color: #fff; /* Defina a cor de fundo desejada */
+    z-index: 1; /* Garante que o cabeçalho fique acima do conteúdo da tabela */
+  }
+
+
+tr:nth-child(odd) {
+    background-color: #ddd; /* Cor de fundo para linhas pares */
+}
+
+.bold {
+    font-weight: bold;
+}
+
+.buttons {
+    flex:1;
+    flex-direction: column;
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+}
+
+.check {
+    width:20px;
+    height:20px;
+    border-radius:10px;
+    margin:0;
+    border:2px solid #000;
+}
+
+.date {
+    font-size: 10px;
+}
+
+.check-green {
+    background-color: #28a745;
+    width:20px;
+    height:20px;
+    border-radius:10px;
+    margin:0;
+    border:2px solid #000;
+}
+
+.correct {
+    width:20px;
+    height:20px;
+    cursor: pointer;
 }
