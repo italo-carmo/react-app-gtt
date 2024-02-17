@@ -140,7 +140,7 @@ const Dashboard = () => {
   const [longPressTimer, setLongPressTimer] = useState(null);
 
   const situacoes = ["DI", "DO", "IN", "IS", "II"]
-  const cores = [{label: 'Planejamento', value: '#fff000'}, {label: 'PRPO', value: '#00ffff'}, {label: 'OPFM', value: '#FC0FC0'}]
+  const cores = [{label: 'Planejamento', value: '#fff000'},{label: 'Executada', value: '#28a745'}, {label: 'PRPO', value: '#00ffff'}, {label: 'OPFM', value: '#FC0FC0'}]
   const inputPousoRef = useRef(null)
   const inputAltRef = useRef(null)
   const divRef = useRef(null);
@@ -149,6 +149,7 @@ const Dashboard = () => {
 
   const handleMouseEnter = (id,etapa, missao) => {
     setId(id)
+    etapa.tripulacao.sort((a,b)=>a.antiguidade - b.antiguidade)
     let trip_show = etapa.tripulacao.map(item=>{
       return item.trigrama
     })
@@ -1439,7 +1440,6 @@ const Dashboard = () => {
     setIdExercicio(exercicio.id)
     let data_inicio = (exercicio.data_inicio+'T04:00:00Z')
     let data_fim = (exercicio.data_fim+'T04:00:00Z')
-    console.log(data_inicio)
     setDataInicioExercicio(new Date(data_inicio))
     setDataFimExercicio(new Date(data_fim))
     setLocalidadeExercicio(exercicio.localidade)
@@ -1980,7 +1980,6 @@ const Dashboard = () => {
   }
 
   const handleOcultaAviao = async (index, item) => {
-    console.log(item)
     let data_copy =  {...data}
     let res = await Api.ocultarAnv(item.id, {oculta: !data_copy.avioes[index].oculta})
     data_copy.avioes[index].oculta = !data_copy.avioes[index].oculta
@@ -2162,7 +2161,6 @@ const Dashboard = () => {
             })}
           </div>
             {(data.avioes.length > 0 ) && data.avioes.map((item, index)=>{
-              console.log(item)
               return <div className='missao-item'>
                 <div className={(item.situacao == 'IN' || item.situacao == 'IS' || item.situacao == 'II') ? 'missao aviao in' : 'missao aviao'}>
                 <span style={{cursor: 'pointer'}} onClick={()=>selectAviao(item.aviao, item.id, item.ciclos, item.horas, item.situacao, item.atualizador, item.atualizado)}>{item.aviao}</span>
