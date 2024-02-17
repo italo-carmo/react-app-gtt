@@ -32,8 +32,9 @@
 
 .item-rascunho {
     font-size: 0.7vw;
-    border-bottom: 1px solid #000;
+    border-bottom: 1px solid #fff;
     width:100%;
+    color: #fff;
     text-align: center;
     min-height:15px;
 }
