@@ -43,9 +43,9 @@ const AppHeader = () => {
       setDiasRealizados(dados_filter[0]['Dias Totais'])
       if(dados_filter[0]['Situação'] == 'COMISSIONADO') {
         if(dados_filter[0]['Modulo'] == 'SIM') {
-          setSituacao('COMISSIONADO COM MÓDULO')
+          setSituacao('COMISSIONADO')
         } else {
-          setSituacao('COMISSIONADO SEM MÓDULO')
+          setSituacao('COMISSIONADO')
         }
       } else {
         setSituacao('DIÁRIA')
