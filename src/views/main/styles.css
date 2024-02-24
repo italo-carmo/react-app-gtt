@@ -15,6 +15,11 @@
     display: flex;
 }
 
+.seta {
+    width: 20px;
+    height: 20px;
+}
+
 .trigrama-sobreaviso {
     font-size: 0.8vw;
     color:#fff;
@@ -458,7 +463,12 @@ option {
 
 @media (max-width:580px) {
     .white, .red {
-        font-size: 0.9vw;
+        font-size: 0.48vw;
+    }
+
+    .seta {
+        width:10px;
+        height: 10px;
     }
 
     .text-missao {

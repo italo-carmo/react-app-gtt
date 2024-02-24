@@ -39,6 +39,7 @@ const AppHeader = () => {
     let trigrama = localStorage.getItem("trigrama")
     if(!res.error) {
       let dados_filter = res.data.filter(item=>item.Trigrama == trigrama)
+      console.log(dados_filter[0])
       setDiasPrevistos(dados_filter[0]['Dias Previstos'])
       setDiasRealizados(dados_filter[0]['Dias Totais'])
       if(dados_filter[0]['Situação'] == 'COMISSIONADO') {
@@ -93,10 +94,10 @@ const AppHeader = () => {
         </CHeaderToggler>
         <AppBreadcrumb />
         
-          <div className="d-md-flex me-auto">
+          <div className="d-md-flex me-auto" style={{alignItems: 'flex-end'}}>
           <div className='teste'>
             <span style={{color: 'rgba(255,255,255)', padding:2, borderRadius:3}}>
-              <img src="https://www.1gtt.com.br/app/plane.png" width="25px" height="25px" style={{padding: 2}}/>  Horas:</span>
+              <img src="https://www.1gtt.com.br/app/plane.png" className='icone-header' width="25px" height="25px" style={{padding: 2}}/>  Horas:</span>
           </div>
           <div className='teste'>
             {loadingHoras && <Loading width='30px'/>}
@@ -105,7 +106,7 @@ const AppHeader = () => {
           <div class="vertical-bar"></div>
           <div className='teste'>
             <span style={{color: 'rgba(255,255,255)', padding:2, borderRadius:3}}>
-              <img src="https://www.1gtt.com.br/app/dollar.png" width="25px" height="25px" style={{padding: 2}}/>  Situação:</span>
+              <img src="https://www.1gtt.com.br/app/dollar.png" className='icone-header' width="25px" height="25px" style={{padding: 2}}/>  Situação:</span>
           </div>
           <div className='teste'>
             {loadingDias && <Loading width='30px'/>}
@@ -114,7 +115,7 @@ const AppHeader = () => {
           <div class="vertical-bar"></div>
           <div className='teste'>
             <span style={{color: 'rgba(255,255,255)', padding:2, borderRadius:3, marginRight: 2}}>
-              <img src="https://www.1gtt.com.br/app/calendar.png" width="25px" height="25px" style={{padding: 2}}/>  Dias Previstos:</span>
+              <img src="https://www.1gtt.com.br/app/calendar.png" className='icone-header' width="25px" height="25px" style={{padding: 2}}/>  Dias Previstos:</span>
           </div>
           <div className='teste'>
             {loadingDias && <Loading width='30px'/>}
@@ -123,7 +124,7 @@ const AppHeader = () => {
           <div class="vertical-bar"></div>
           <div className='teste'>
             <span style={{color: 'rgba(255,255,255)', padding:2, borderRadius:3}}>
-              <img src="https://www.1gtt.com.br/app/appointment.png" width="25px" height="25px" style={{padding: 2}}/>  Dias Realizados:</span>
+              <img src="https://www.1gtt.com.br/app/appointment.png" className='icone-header' width="25px" height="25px" style={{padding: 2}}/>  Dias Realizados:</span>
           </div>
           <div className='teste'>
             {loadingDias && <Loading width='30px'/>}

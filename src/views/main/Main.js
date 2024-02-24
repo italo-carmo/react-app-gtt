@@ -2169,7 +2169,7 @@ const Dashboard = () => {
                 <span className='dados-aviao'>Ciclos: {item.ciclos}</span>
                 <span className='dados-aviao'>Horas: {item.horas}
                 </span></> : null}
-                {item.oculta ? <img onClick={()=>handleOcultaAviao(index, item)} style={{marginBottom: 5, cursor: 'pointer'}} width="20px" height="20px" src="https://1gtt.com.br/down-white.png"/> : <img onClick={()=>handleOcultaAviao(index, item)} style={{marginBottom: 5, cursor: 'pointer'}} width="20px" height="20px" src="https://1gtt.com.br/up-white.png"/>}
+                {item.oculta ? <img onClick={()=>handleOcultaAviao(index, item)} className='seta' style={{marginBottom: 5, cursor: 'pointer'}} src="https://1gtt.com.br/down-white.png"/> : <img onClick={()=>handleOcultaAviao(index, item)} className='seta' style={{marginBottom: 5, cursor: 'pointer'}} src="https://1gtt.com.br/up-white.png"/>}
                 </div>
                 {semana.map(i=>{
                  return <div className='item-missao' style={{cursor: 'pointer'}} onClick={(e)=>handleClickAddRascunho(e, i, item.id)}>
