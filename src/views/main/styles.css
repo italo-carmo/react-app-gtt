@@ -463,7 +463,7 @@ option {
 
 @media (max-width:580px) {
     .white, .red {
-        font-size: 0.48vw;
+        font-size: 0.7vw;
     }
 
     .seta {
@@ -484,6 +484,31 @@ option {
         font-size: 3vw;
     }
 }
+
+@media (max-width:430px) { 
+    .white, .red {
+        font-size: 0.6vw;
+    }
+}
+
+@media (max-width:390px) { 
+    .white, .red {
+        font-size: 0.55vw;
+    }
+}
+
+@media (max-width:370px) { 
+    .white, .red {
+        font-size: 0.5vw;
+    }
+}
+
+@media (max-width:355px) { 
+    .white, .red {
+        font-size: 0.40vw;
+    }
+}
+
 
 .calendario {
     background-color: #191c24;

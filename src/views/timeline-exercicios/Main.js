@@ -40,6 +40,15 @@ const Etapas = () => {
     return numeroFormatado;
   }
 
+  const splitData = (stringData) => {
+    // Dividir a string em partes (ano, mês, dia)
+    const partesData = stringData.split("-");
+    const ano = parseInt(partesData[0], 10);
+    const mes = parseInt(partesData[1], 10) - 1; // Subtraia 1 do mês (0 para janeiro, 1 para fevereiro, etc.)
+    const dia = parseInt(partesData[2], 10);
+    return [ano, mes, dia]
+  }
+
   const getExercicios = async () => {
     let res = await Api.getExercicios();
     if (!res.error) {
@@ -52,31 +61,19 @@ const Etapas = () => {
         const dataFim = new Date(exercicio.data_fim + 'T06:00:00Z');
   
         // Verifica se o exercício abrange mais de um mês
-        if (dataInicio.getMonth() !== dataFim.getMonth()) {
-          const primeiroMes = dataInicio.getMonth();
-          const ultimoMes = dataFim.getMonth();
+        const primeiroMes = dataInicio.getMonth();
+        const ultimoMes = dataFim.getMonth();
   
-          // Adiciona o exercício ao primeiro mês
-          exerciciosPorMesCopy[primeiroMes].push(exercicio);
-  
-          // Adiciona o exercício aos meses intermediários (se houver)
-          for (let i = primeiroMes + 1; i < ultimoMes; i++) {
-            exerciciosPorMesCopy[i].push(exercicio);
-          }
-  
-          // Adiciona o exercício ao último mês
-          exerciciosPorMesCopy[ultimoMes].push(exercicio);
-        } else {
-          // Se o exercício não abrange mais de um mês, adiciona-o ao mês correspondente
-          const mes = dataInicio.getMonth();
-          exerciciosPorMesCopy[mes].push(exercicio);
+        // Adiciona o exercício a cada mês entre o primeiro e o último (inclusive)
+        for (let i = primeiroMes; i <= ultimoMes; i++) {
+          exerciciosPorMesCopy[i].push(exercicio);
         }
       });
   
-      console.log(exerciciosPorMesCopy);
       setExerciciosPorMes(exerciciosPorMesCopy);
     }
   };
+  
   
 
   function gerarCorAleatoria() {
@@ -108,7 +105,7 @@ const Etapas = () => {
 
   return (
     <>
-      <CCard className="mb-6" style={{flexDirection: 'column', maxHeight:700 }}>
+      <CCard className="mb-6" style={{flexDirection: 'column' }}>
     <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
     <div style={{maxWidth: '95%', overflowX: 'auto', marginTop:30}}>
     <table style={{marginBottom: 20}}>
@@ -139,9 +136,10 @@ const Etapas = () => {
           let cor = gerarCorAleatoria();
 
           // Converte as datas de início e fim do exercício para objetos Date
-          const dataInicio = new Date(exercicio.data_inicio);
-          const dataFim = new Date(exercicio.data_fim);
-
+          let [ano_inicio, mes_inicio, dia_inicio] = splitData(exercicio.data_inicio)
+          let [ano_fim, mes_fim, dia_fim] = splitData(exercicio.data_fim)
+          const dataInicio = new Date(Date.UTC(ano_inicio, mes_inicio, dia_inicio))
+          const dataFim = new Date(Date.UTC(ano_fim, mes_fim, dia_fim));
           return (
             <React.Fragment key={idx}>
               {/* Renderiza apenas se o exercício estiver dentro do intervalo do mês */}
@@ -150,9 +148,21 @@ const Etapas = () => {
                   {idx === 0 && <td style={{backgroundColor: '#d6dce9'}} rowSpan={rowspan}>{mes}</td>}
                   <td style={{ backgroundColor: cor, fontWeight: 'bold' }}>{exercicio.nome}</td>
                   {dias.map(dia => {
-                    const dentroDoIntervalo =
-                      (dataInicio <= new Date(dataInicio.getFullYear(), index, dia)) &&
-                      (new Date(dataFim.getFullYear(), index, dia) <= dataFim);
+                    let date = new Date()
+                    let data_inicio_dia = new Date(Date.UTC(date.getFullYear(),index, dia, 0, 0, 0))
+                    let data_fim_dia = new Date(Date.UTC(date.getFullYear(),index, dia, 23, 59, 59))
+                    if(data_inicio_dia <= dataFim && data_fim_dia >= dataInicio) {
+                      var dentroDoIntervalo = true
+                    }
+                    if(dia == 6) {
+                      console.log(exercicio.nome)
+                      console.log('Inicio Dia: '+data_inicio_dia.toISOString())
+                      console.log(dataFim.toISOString())
+                      console.log('Fim Dia: '+data_fim_dia.toISOString())
+                      console.log(dataInicio.toISOString())
+                      console.log(dentroDoIntervalo)
+                    }
+                      
                     return (
                       <td key={dia} style={{ fontSize: '0.6vw', fontWeight: 'bold', backgroundColor: dentroDoIntervalo ? cor : '' }}>
                         {dentroDoIntervalo ? dia : ''}

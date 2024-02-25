@@ -2144,7 +2144,7 @@ const Dashboard = () => {
                 return <div className='item-missao obs-style'>
                   {exercicios.map(it=>{
                     const [dia, mes, ano] = i.split("/");
-                    const data = new Date(ano, mes - 1, dia);
+                    const data = new Date(Date.UTC(ano, mes - 1, dia));
                     let inicio_date = new Date(it.data_inicio)
                     let fim_date = new Date(it.data_fim)
 
@@ -2180,7 +2180,7 @@ const Dashboard = () => {
                         return manutencoesAeronave.map((manutencao) => {
                           if ((aeronave == item.aviao) && data == i) {
                             return <div className='missao-red red' key={manutencao.id} onClick={()=>handleEditmanut(manutencao)}>
-                            {manutencao.titulo}
+                            <span className='teste-font'>{manutencao.titulo}</span>
                           </div>
                           }
                         });
