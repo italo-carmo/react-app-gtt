@@ -28,6 +28,7 @@ const Etapas = () => {
   const [horasTotais, setHorasTotais] = useState(0);
   const [loading, setLoading] = useState(false)
   const [limite, setLimite] = useState(20)
+  const [horasNoturnasTotais, setHorasNoturnasTotais] = useState('')
 
   const Api = useApi()
 
@@ -41,6 +42,8 @@ const Etapas = () => {
       let res_filtered = res.data
       var horas_totais = 0
 
+      var minutos_noturnos_totais = 0
+
       res_filtered = res_filtered.map(it=>{
         if(it.Usuarios.length == 0) {
           it.tempo_de_voo = '00:00'
@@ -52,12 +55,17 @@ const Etapas = () => {
         let [horasStr, minutosStr] = item.tempo_de_voo.split(':');
         const horas = parseInt(horasStr, 10);
         const minutos = parseInt(minutosStr, 10);
-        
         const minutosTotais = horas * 60 + minutos;
+
         horas_totais += minutosTotais;
+
+        let minutos_noturnos = item.horas_noturnas ? item.horas_noturnas : 0
+
+        minutos_noturnos_totais += minutos_noturnos
       });
 
       setHorasTotais(horas_totais)
+      setHorasNoturnasTotais(minutos_noturnos_totais)
       setEtapas(res_filtered)
       setEtapasFiltered(res_filtered)
     }
@@ -580,7 +588,7 @@ const Etapas = () => {
                   <td></td>
                   <td>{minutosParaHorasMinutos(horasTotais)}</td>
                   <td></td>
-                  <td></td>
+                  <td>{minutosParaHorasMinutos(horasNoturnasTotais)}</td>
                   <td></td>
                   <td></td>
                   <td></td>
