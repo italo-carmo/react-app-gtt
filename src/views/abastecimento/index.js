@@ -60,7 +60,7 @@ const Dashboard = () => {
   return (
     <>     
         <iframe src="https://umap.openstreetmap.fr/pt-br/map/abastecimento-fab-1o-gtt_919701#4/-11.65/-57.04"
-            width="100%" height="700vm" frameborder="5"
+            width="100%" height="1000vh" frameborder="5"
             allowfullscreen sandbox></iframe>
     </>
   )
