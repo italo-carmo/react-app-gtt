@@ -1,5 +1,5 @@
 const baseUrl = 'https://servidor-app-gtt.herokuapp.com'
-
+//'http://127.0.0.1:4444'
 //https://servidor-app-gtt.herokuapp.com
 
 const request = async (method, endpoint, params, token = null) => {

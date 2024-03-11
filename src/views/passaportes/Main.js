@@ -12,66 +12,30 @@ import LoadingSpinner from 'src/components/Loading'
 import { Alert } from '@coreui/coreui';
 import { Date } from 'core-js'
 
-
 const Passaportes = () => {
 
-  const [dataZ, setDataZ] = useState('');
-  const [horaZ, setHoraZ] = useState('');
-  const [horaLocal, setHoraLocal] = useState(0);
   const [dataInicio, setDataInicio] = useState('');
-  const [dataLocal, setDataLocal] = useState('');
-  const [icao, setIcao] = useState('');
-  const [abbreviation, setAbbreviation] = useState('');
-  const [zone_name, setZone_name] = useState('');
-  const [gmt_offset, setGmt_offset] = useState(0);
-  const [dst, setDst] = useState(0)
-  const [rota, setRota] = useState('')
-  const [openHora, setOpenHora] = useState(false)
-/*   const [hora, setHora] = useState(new Date()) */
+  const [dataFim, setDataFim] = useState('');
   const [data,setData] = useState([])
   const [loading, setLoading] = useState(false)
-  const [tripulacao, setTripulacao] = useState('Simples')
-  const [soloInicial, setSoloInicial] = useState(7200000)
+  const [trigrama, setTrigrama] = useState('');
 
+  const [etapas, setEtapas] = useState([])
+  const [etapasFiltered, setEtapasFiltered] = useState([])
+  const [omis, setOmis] = useState('');
+  const [ofrag, setOfrag] = useState('');
+  const [esforcoAereo, setEsforcoAereo] = useState('');
+  const [aeronave, setAeronave] = useState('');
+  const [icao, setIcao] = useState('');
+  const [esforcos, setEsforcos] = useState([]);
+  const [aeronaves, setAeronaves] = useState([]);
+  const [horasTotais, setHorasTotais] = useState(0);
+  const [limite, setLimite] = useState(20)
+  const [horasNoturnasTotais, setHorasNoturnasTotais] = useState('')
+  
   const Api = useApi()
 
-  const transformHora = (date) => {
-   /*  let [data, horas] =  date.split('T') */
-    let [hora, minuto, segundo] = date.split(':')
-    return [Number(hora*60) + Number(minuto)]
-   }
-
-   const transformData = (date) => {
-    let [data, horas] =  date.split('T')
-    let [ano, mes, dia] = data.split('-')
-    return dia+'/'+mes+'/'+ano
-   }
-
-   const transformTime = (time) => {
-    let [hora, minuto, segundo] = time.split(':')
-    return hora+':'+minuto
-   }
-
-   const transformOfrag = (texto) => {
-    const padrao = /(\d+)/; // Expressão regular para extrair dígitos consecutivos
-    const correspondencia = texto.match(padrao); // Procura a correspondência na string
-      if (correspondencia) {
-        const numeroExtraido = correspondencia[0]; // O primeiro grupo capturado (dígitos)
-        return (numeroExtraido)
-      } else {
-        return 'S/N'
-      }
-   }
-
-   const somaCargas = (item) => {
-    var cargas = 0
-    item.forEach(it=>{
-      cargas += it.peso
-    })
-    return cargas
-   }
-
-   const inputStyle = {
+ const inputStyle = {
     padding: '5px',
     borderRadius: '10px',
     border: '1px solid #000',
@@ -101,61 +65,28 @@ const Passaportes = () => {
   
   };
 
-  
-
   const inputStyleLow = {
     width:100
   };
-  
-   // Funções de ação para atualizar os estados quando os valores dos filtros mudarem
-   const handleDataZChange = (e) => {
-    setDataZ(e.target.value);
-  };
-  const handleHoraZChange = (e) => {
-    setHoraZ(e.target.value);
-  };
-  const handleHoraLocalChange = (e) => {
-    setHoraZ(e.target.value);
-  };
-
-  const handleDataLocalChange = (e) => {
-    setDataLocal(e.target.value);
-  };
-
-  const handleAbbreviationChange = (e) => {
-    setAbbreviation(e.target.value);
-  };
-
-  const handleZone_nameChange = (e) => {
-    setZone_name(e.target.value);
-  };
-
-  const handleGmt_offsetChange = (e) => {
-    setGmt_offset(e.target.value);
-  };
-
-  const handleIcaoChange = (e) => {
-    setIcao(e.target.value);
-  };
-
-  const handleDstChange = (e) => {
-    setDst(e.target.value);
-  };
-
+  // Funções de ação para atualizar os estados quando os valores dos filtros mudarem
   const handleDataInicioChange = (e) => {
-    setDst(e.target.value);
-  };
-  const handleSetRota = (e) => {
-    setRota(e.target.value);
+    setDataInicio(e.target.value);
   };
 
-  const handleSoloInicialChange = (e) => {
-    setSoloInicial(e.target.value);
+  const handleDataFimChange = (e) => {
+    setDataFim(e.target.value);
   };
 
+  const limites = [10,20,50,100,200,1000,10000]
 
+  const handleChangeLimit = (e) => {
+    setLimite(e.target.value);
+  };
 
- 
+  const handleTrigramaChange = (e) => {
+    setTrigrama(e.target.value);
+  };
+
   const handleLimpar = () => {
     setDataInicio('');
     setDataFim('');
@@ -168,136 +99,187 @@ const Passaportes = () => {
     setEtapasFiltered(etapas)
   }
 
-  const minutosParaHorasMinutos = (minutos) => {
-    const horas = Math.floor(minutos / 60);
-    const minutosRestantes = Math.round(Math.ceil(minutos % 60), 10);
-    const horasFormatadas = horas.toString().padStart(2, '0');
-    const minutosFormatados = minutosRestantes.toString().padStart(2, '0');
-    return `${horasFormatadas}:${minutosFormatados}`;
-  }
 
-  const horasParaMinutos = (hora) => {
-    const horas = Math.floor(minutos / 60);
-    const minutosRestantes = Math.round(Math.ceil(minutos % 60), 10);
-    const horasFormatadas = horas.toString().padStart(2, '0');
-    const minutosFormatados = minutosRestantes.toString().padStart(2, '0');
-    return `${horasFormatadas}:${minutosFormatados}`;
-  }
+  const handleOmisChange = (e) => {
+    setOmis(e.target.value);
+  };
 
- 
-  const handleTZ = async () => {
-    let res = await Api.retornarTimeZone(dados)
-    if(res.error) {
-      console.log(dados)
-      alert(res.error)
-      return
-    } else {
-      setAbbreviation(res.data[0].abbreviation)
-      setGmt_offset(res.data[0].gmt_offset)
-      setDst(res.data[0].dst)
-      setDataLocal(horaZ + gmt_offset)
-      setZone_name(res.data[0].zone_name)
-      setHoraLocal(minutosParaHorasMinutos(Number(transformHora(horaZ))+Number(gmt_offset/60)))
-    }
-  }
-  const getDados = async () => {
-    setLoading(true)
-    setData([])
-    if(rota == '') {
-        alert('Preencha a rota!')
-        return
-    }
+  const handleOfragChange = (e) => {
+    setOfrag(e.target.value);
+  };
 
-    const dados = []
+  const handleEsforcoAereoChange = (e) => {
+    setEsforcoAereo(e.target.value);
+  };
 
-    let rota_split = rota.split(' ')
+  const handleIcaoChange = (e) => {
+    setIcao(e.target.value);
+  };
 
-    let res = await Api.getPlanejamento({rota:rota_split})
-    if(res.error) {
-        alert(res.error)
-        setLoading(false)
-        return
-    }
-    await res.data.forEach((item,index)=>{
-        res.data[index].solo = 7200000
-    })
-    console.log(res.data)
-    setData(res.data)
-    setLoading(false)
-}
+  const handleAeronaveChange = (e) => {
+    setAeronave(e.target.value);
+  };
 
-
-  // Função de ação para lidar com o clique no botão "Filtrar"
-  var dados = {
-    "icao": icao,
-    "data": dataZ + " " + horaZ
-  }
-
-  let verao = dst === "0" ? "" : "+";
-
- 
-
-  function obterSinal(numero) {
-    if (numero > 0) {
-        return '+';
+  const handleFiltrarClick = () => {
+    let new_etapas = [...etapas]
+   setData([
+		{
+			"nome_guerra": "Assis",
+			"nome_completo": "Lucas Araújo Lisboa Assis",
+			"Passaportes": [
+				{
+					"id": 1,
+					"id_user": 214,
+					"numero_pass": "agoravai",
+					"valid_pass": "2024-05-03T00:00:00.000Z",
+					"numero_visa": "asdasdasd",
+					"valid_visa": "2024-03-05T00:00:00.000Z"
+				},
+				{
+					"id": 2,
+					"id_user": 214,
+					"numero_pass": "SB045424",
+					"valid_pass": "2024-05-03T00:00:00.000Z",
+					"numero_visa": "A2145457",
+					"valid_visa": "2024-03-05T00:00:00.000Z"
+				}
+			],
+			"Posto": {
+				"id": 7,
+				"nome": "CP"
+			},
+			"Trigrama": {
+				"id": 224,
+				"trigrama": "AIS",
+				"id_user": 214
+			}
+		}
+	])
     
-    } else {
-        return '';
+    if (omis != '') {
+       new_etapas = new_etapas.filter(i=>{
+        if(i.Missao && (i.Missao.numero).toString().includes(omis)) {
+          return i
+        }
+      })
     }
+
+    if (ofrag != '') {
+      new_etapas = new_etapas.filter(i=>{
+       if(i.Missao && (i.Missao.Ofrag.numero).toString().includes(ofrag)) {
+         return i
+       }
+     })
+   }
+
+   if (esforcoAereo != '') {
+    new_etapas = new_etapas.filter(i=>{
+     if(i.esforco_aereo && (i.esforco_aereo) == esforcoAereo) {
+       return i
+     }
+   })
+ }
+
+  if (aeronave != '') {
+    new_etapas = new_etapas.filter(i=>{
+    if(i.Aeronave && (i.Aeronave.aeronave) == aeronave) {
+      return i
+    }
+  })
   }
 
+    if (dataInicio != '') {
+      new_etapas = new_etapas.filter(i=>{
+        let dataInicioDate = new Date(`${dataInicio}T23:59:59.000Z`)
+        dataInicioDate.setHours(0, 0, 1);
+        if(new Date(i.dep) >= dataInicioDate) {
+          return i
+        }
+      })
+    }
 
-  var horas_iniciais = 0
+    if (dataFim != '') {
+      new_etapas = new_etapas.filter(i=>{
+        let dataFimDate = new Date(`${dataFim}T23:59:59.000Z`)
+        dataFimDate.setHours(23, 59, 59);
+        if(new Date(i.dep) <= dataFimDate) {
+          return i
+        }
+      })
+    }
+
+    if(trigrama != '') {
+      new_etapas = new_etapas.filter(i=>{
+        let index = i.Usuarios.findIndex(it=>(it.Trigrama.trigrama).toUpperCase() == (trigrama).toUpperCase())
+        if(index > -1) {
+          return i
+        }
+      })
+    }
+
+    if(icao != '') {
+      new_etapas = new_etapas.filter(i=>{
+        if(i.Dep.icao.includes(icao.toUpperCase()) || i.Pouso.icao.includes(icao.toUpperCase())) {
+          return i
+        }
+      })
+    }
+
+    var horas_totais = 0
+    new_etapas.forEach(item => {
+      let [horasStr, minutosStr] = item.tempo_de_voo.split(':');
+      const horas = parseInt(horasStr, 10);
+      const minutos = parseInt(minutosStr, 10);
+      
+      const minutosTotais = horas * 60 + minutos;
+      horas_totais += minutosTotais;
+    });
+
+    setHorasTotais(horas_totais)
+
+    setEtapasFiltered(new_etapas)
+  };
+
   return (
     <>
       <CCard className="mb-6" style={{flexDirection: 'column', overflowX: 'auto', maxHeight:700 }}>
       <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px', marginLeft:10, marginRight:10 }}>
       {/* Filtro de Data */}
       <div style={{ marginRight: '20px' }}>
-        <label>Data:</label>
-        <input type="date" value={dataZ} onChange={handleDataZChange} />
+        <label>Data Início:</label>
+        <input type="date" value={dataInicio} onChange={handleDataInicioChange} />
       </div>
       <div style={{ marginRight: '20px' }}>
-        <label>Hora Z:</label>
-        <input type="time" value={horaZ} onChange={handleHoraZChange} />
+        <label>Data Fim:</label>
+        <input type="date" value={dataFim} onChange={handleDataFimChange} />
       </div>
-      {/* Filtro de ICAO */}
-      <div style={{ marginRight: '20px' }}>
-        <label>ICAO:</label>
-        <input type="text" value={icao} onChange={handleIcaoChange} style={inputStyleLow}/>
-        <input type="text" value={rota} onChange={handleSetRota} style={inputStyleLow}/>
+
+      {/* Filtro de Trigrama */}
+      <div>
+        <label>Trigrama:</label>
+        <input type="text" maxLength="3" value={trigrama} onChange={handleTrigramaChange} style={inputStyleLow}/>
       </div>
-      {/* Filtro de tz */}
-      <div style={{ marginRight: '20px' }}>
-        <label>TZ:</label>
-        <input type="text" value={abbreviation} /*onChange={handleAbbreviationChange}*/ style={inputStyleLow}/>
-      </div>
-      {/* Filtro de ICAO */}
-      <div style={{ marginRight: '20px' }}>
-        <label>OFFSET:</label>
-        <input type="text" value={obterSinal(gmt_offset)+(gmt_offset)/3600+"h"} /*onChange={handleGmt_offsetChange} */style={inputStyleLow}/>
-      </div>
-      {/* Filtro de ICAO */}
-      <div style={{ marginRight: '20px' }}>
-        <label>DST:</label>
-        <input type="text" value={verao} /* onChange={handleDstChange}*/ style={inputStyleLow}/>
-      </div>
-      {/* Filtro de Data */}
-      <div style={{ marginRight: '20px' }}>
-        <label>Localização:</label>
-        <input type="text" value={zone_name} /*onChange={handleDataLocalChange}*/ />
-      </div>
-      <div style={{ marginRight: '20px' }}>
-        <label>Hora Local:</label>
-        <input type="time" value={horaLocal} /*onChange={handleHoraZChange}*/ />
-      </div>
-      {/* Botão "Computar Fuso" */}
+        {/* Botão "Filtrar" */}
         <div className='buttons'>
-          <button style={botaoStyleRed} onClick={handleTZ}>Computar Fuso</button>
-          <button style={botaoStyleRed} onClick={getDados}>FADIGA</button>
+          <button style={botaoStyle} onClick={handleFiltrarClick}>Filtrar</button>
+          <button style={botaoStyleRed} onClick={handleLimpar}>Limpar</button>
         </div>
 
-     </div>
+    </div>
+    <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px', marginLeft:10, marginRight:10 }}>
+    <div style={{ marginRight: '20px' }}>
+        <label style={{marginRight: 5}}>Últimos:</label>
+        <select style={inputStyle} value={limite} onChange={handleChangeLimit}>
+          <option value="">Selecione</option>
+          {limites.map(i=>{
+            return (
+              <option value={i}>{i}</option>
+            )
+          })}
+        </select>
+      </div>   
+
+    </div>
          <table style={{marginBottom:50}}>
           <thead className='tabela-cabecalho'>
             <tr>
@@ -318,11 +300,11 @@ const Passaportes = () => {
           {data.map((item)=>{
              return (
               <tr className='tabelinha'>
-              <td>CP</td>
-              <td>LUCAS ARAUJO LISBOA ASSIS</td>
-              <td>ASSIS</td>
+              <td>{item.Posto.nome}</td>
+              <td>{item.nome_completo}</td>
+              <td>{item.nome_guerra}</td>
               <td>27/03/1991</td> 
-              <td>SB123456</td>
+              <td>{item.Passaportes[0].numero_pass}</td>
               <td>20/05/2024</td>
               <td>A123456789</td>
               <td>30/06/2024</td>
@@ -330,140 +312,7 @@ const Passaportes = () => {
             )
           })}
                     </thead>
-          {/* {data.map((item, index)=>{
-            if(index == 0) {
-              horas_iniciais = 0
-            }
-             let index_1p = item.Usuarios.findIndex(i=>i.posicao == '1P')
-             let index_2p = item.Usuarios.findIndex(i=>i.posicao == '2P')
-             let index_in = item.Usuarios.findIndex(i=>i.posicao == 'IN')
-             let index_al = item.Usuarios.findIndex(i=>i.posicao == 'AL')
-             let index_mc = item.Usuarios.findIndex(i=>i.posicao == 'MC')
-             let index_ic = item.Usuarios.findIndex(i=>i.posicao == 'IC')
-             let index_ac = item.Usuarios.findIndex(i=>i.posicao == 'AC')
-             let index_lm = item.Usuarios.findIndex(i=>i.posicao == 'LM')
-             let index_lm2 = item.Usuarios.findIndex(i=>i.posicao == 'LM2')
-             let index_lm3 = item.Usuarios.findIndex(i=>i.posicao == 'LM3')
-             let index_lm4 = item.Usuarios.findIndex(i=>i.posicao == 'LM4')
-             let index_ag = item.Usuarios.findIndex(i=>i.posicao == 'AG')
-             let index_ag2 = item.Usuarios.findIndex(i=>i.posicao == 'AG2')
-             let index_ag3 = item.Usuarios.findIndex(i=>i.posicao == 'AG3')
-             let index_ag4 = item.Usuarios.findIndex(i=>i.posicao == 'AG4')
-             let index_ig = item.Usuarios.findIndex(i=>i.posicao == 'IG')
-             let index_ig2 = item.Usuarios.findIndex(i=>i.posicao == 'IG2')
-             let index_ig3 = item.Usuarios.findIndex(i=>i.posicao == 'IG3')
-             let index_ig4 = item.Usuarios.findIndex(i=>i.posicao == 'IG4')
-             let index_tf = item.Usuarios.findIndex(i=>i.posicao == 'TF')
-             let index_tf2 = item.Usuarios.findIndex(i=>i.posicao == 'TF2')
-             let index_tf3 = item.Usuarios.findIndex(i=>i.posicao == 'TF3')
-             let index_tf4 = item.Usuarios.findIndex(i=>i.posicao == 'TF4')
-             let index_o3 = item.Usuarios.findIndex(i=>i.posicao == 'O3')
-             let index_i3 = item.Usuarios.findIndex(i=>i.posicao == 'I3')
-             let index_a3 = item.Usuarios.findIndex(i=>i.posicao == 'A3')
-            return (
-              <tr>
-                  <td>
-                    {!item.checada ? <button onClick={()=>handleCheck(item.id, !item.checada)} className='check'/> : 
-                    <img onClick={()=>handleCheck(item.id, !item.checada)} className='correct' src='https://www.1gtt.com.br/correct.png' />
-                     }
-                    </td>
-                  <td>{transformData(item.dep)}</td>
-                  <td>{item.Missao.Ofrag.numero ? transformOfrag(item.Missao.Ofrag.numero) : ''}</td>
-                  <td>{item.Missao.numero}</td>
-                  <td>{item.Dep.icao}</td>
-                  <td>{item.Pouso.icao}</td>
-                  <td>{transformHora(item.dep)}</td>
-                  <td>{transformHora(item.pouso)}</td>
-                  <td>{transformTime(item.tempo_de_voo)}</td>
-                  <td>{item.esforco_aereo}</td>
-                  <td>{item.Aeronave.aeronave}</td>
-                  <td>{index_1p > -1 ? item.Usuarios[index_1p].Trigrama.trigrama : ''}</td>
-                  <td>{index_2p > -1 ? item.Usuarios[index_2p].Trigrama.trigrama : ''}</td>
-                  <td>{index_al > -1 ? item.Usuarios[index_al].Trigrama.trigrama : ''}</td>
-                  <td>{index_in > -1 ? item.Usuarios[index_in].Trigrama.trigrama : ''}</td>
-                  <td>{index_mc > -1 ? item.Usuarios[index_mc].Trigrama.trigrama : ''}</td>
-                  <td>{index_ic > -1 ? item.Usuarios[index_ic].Trigrama.trigrama : ''}</td>
-                  <td>{index_ac > -1 ? item.Usuarios[index_ac].Trigrama.trigrama : ''}</td>
-                  <td>{index_lm > -1 ? item.Usuarios[index_lm].Trigrama.trigrama : ''}</td>
-                  <td>{index_lm2 > -1 ? item.Usuarios[index_lm2].Trigrama.trigrama : ''}</td>
-                  <td>{index_lm3 > -1 ? item.Usuarios[index_lm3].Trigrama.trigrama : ''}</td>
-                  <td>{index_lm4 > -1 ? item.Usuarios[index_lm4].Trigrama.trigrama : ''}</td>
-                  <td>{index_ag > -1 ? item.Usuarios[index_ag].Trigrama.trigrama : ''}</td>
-                  <td>{index_ag2 > -1 ? item.Usuarios[index_ag2].Trigrama.trigrama : ''}</td>
-                  <td>{index_ag3 > -1 ? item.Usuarios[index_ag3].Trigrama.trigrama : ''}</td>
-                  <td>{index_ag4 > -1 ? item.Usuarios[index_ag4].Trigrama.trigrama : ''}</td>
-                  <td>{index_ig > -1 ? item.Usuarios[index_ig].Trigrama.trigrama : ''}</td>
-                  <td>{index_ig2 > -1 ? item.Usuarios[index_ig2].Trigrama.trigrama : ''}</td>
-                  <td>{index_ig3 > -1 ? item.Usuarios[index_ig3].Trigrama.trigrama : ''}</td>
-                  <td>{index_ig4 > -1 ? item.Usuarios[index_ig4].Trigrama.trigrama : ''}</td>
-                  <td>{index_tf > -1 ? item.Usuarios[index_tf].Trigrama.trigrama : ''}</td>
-                  <td>{index_tf2 > -1 ? item.Usuarios[index_tf2].Trigrama.trigrama : ''}</td>
-                  <td>{index_tf3 > -1 ? item.Usuarios[index_tf3].Trigrama.trigrama : ''}</td>
-                  <td>{index_tf4 > -1 ? item.Usuarios[index_tf4].Trigrama.trigrama : ''}</td>
-                  <td>{index_o3 > -1 ? item.Usuarios[index_o3].Trigrama.trigrama : ''}</td>
-                  <td>{index_i3 > -1 ? item.Usuarios[index_i3].Trigrama.trigrama : ''}</td>
-                  <td>{index_a3 > -1 ? item.Usuarios[index_a3].Trigrama.trigrama : ''}</td>
-                  <td>{item.pax}</td>
-                  <td>{somaCargas(item.Cargas)}</td>
-                  <td>{item.combustivel}</td>
-                  <td>{item.lubrificante}</td>
-              </tr>
-            )
-          })}
-          <tr className='bold'>
-                  <td>TOTAL</td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td>{minutosParaHorasMinutos(horasTotais)}</td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-        </tr> */}
-        </table> 
-        {/*{loading &&
-                <div  style={{
-                  position: 'absolute',
-                  left: '50%',
-                  top: '80%',
-                  transform: 'translate(-50%, -50%)',
-                  zIndex:99
-                }}>
-                  <LoadingSpinner black={true} width="50px" />
-                </div>
-        }*/}
+          </table> 
       </CCard>
      
     </>

@@ -11,6 +11,7 @@ import { forwardRef } from 'react'
 import LoadingSpinner from 'src/components/Loading'
 
 
+
 const Etapas = () => {
 
   const [etapas, setEtapas] = useState([])
@@ -29,6 +30,13 @@ const Etapas = () => {
   const [loading, setLoading] = useState(false)
   const [limite, setLimite] = useState(20)
   const [horasNoturnasTotais, setHorasNoturnasTotais] = useState('')
+  const [combTotais, setCombTotais] = useState(0)
+  const [lubTotais, setLubTotais] = useState(0)
+  const [paxTotais, setPaxTotais] = useState(0)
+  const [horasIfrTotais, setHorasIfrTotais] = useState('')
+  const [cargasTotais, setCargasTotais] = useState(0)
+  const [pouosTotais, setPousosTotais] = useState(0)
+  const [procedimentosTotais, setProcedimentosTotais] = useState(0)
 
   const Api = useApi()
 
@@ -41,8 +49,14 @@ const Etapas = () => {
       res.data.reverse()
       let res_filtered = res.data
       var horas_totais = 0
-
       var minutos_noturnos_totais = 0
+      var comb_totais = 0
+      var lub_totais = 0
+      var pax_totais = 0
+      var minutos_ifr_totais = 0
+      var cargas_totais = 0
+      var pousos_totais = 0
+      var procedimentos_totais = 0
 
       res_filtered = res_filtered.map(it=>{
         if(it.Usuarios.length == 0) {
@@ -56,18 +70,33 @@ const Etapas = () => {
         const horas = parseInt(horasStr, 10);
         const minutos = parseInt(minutosStr, 10);
         const minutosTotais = horas * 60 + minutos;
-
         horas_totais += minutosTotais;
 
         let minutos_noturnos = item.horas_noturnas ? item.horas_noturnas : 0
-
         minutos_noturnos_totais += minutos_noturnos
-      });
+
+        let minutos_ifr = item.horas_instrumento ? item.horas_instrumento : 0
+        minutos_ifr_totais += minutos_ifr
+        
+        comb_totais += item.combustivel
+        lub_totais += item.lubrificante
+        pax_totais += item.pax
+        cargas_totais += somaCargas(item.Cargas)
+        pousos_totais += item.pousos
+        procedimentos_totais += somaProcedimentos(item.Procedimentos)
+      })
 
       setHorasTotais(horas_totais)
       setHorasNoturnasTotais(minutos_noturnos_totais)
       setEtapas(res_filtered)
       setEtapasFiltered(res_filtered)
+      setCombTotais(comb_totais)
+      setLubTotais(lub_totais)
+      setPaxTotais(pax_totais)
+      setHorasIfrTotais(minutos_ifr_totais)
+      setCargasTotais(cargas_totais)
+      setPousosTotais(pousos_totais)
+      setProcedimentosTotais(procedimentos_totais)
     }
     setLoading(false)
   }
@@ -130,6 +159,14 @@ const Etapas = () => {
       cargas += it.peso
     })
     return cargas
+   }
+
+   const somaProcedimentos = (item) => {
+    var procedimentos = 0
+    item.forEach(it=>{
+      procedimentos += it.quantidade
+    })
+    return procedimentos
    }
 
    const inputStyle = {
@@ -325,19 +362,49 @@ const Etapas = () => {
     }
 
     var horas_totais = 0
+    var minutos_noturnos_totais = 0
+    var comb_totais = 0
+    var lub_totais = 0
+    var pax_totais = 0
+    var minutos_ifr_totais = 0
+    var cargas_totais = 0
+    var pousos_totais = 0
+    var procedimentos_totais = 0
+
     new_etapas.forEach(item => {
-      let [horasStr, minutosStr] = item.tempo_de_voo.split(':');
-      const horas = parseInt(horasStr, 10);
-      const minutos = parseInt(minutosStr, 10);
+        let [horasStr, minutosStr] = item.tempo_de_voo.split(':');
+        const horas = parseInt(horasStr, 10);
+        const minutos = parseInt(minutosStr, 10);
+        const minutosTotais = horas * 60 + minutos;
+        horas_totais += minutosTotais;
+
+        let minutos_noturnos = item.horas_noturnas ? item.horas_noturnas : 0
+        minutos_noturnos_totais += minutos_noturnos
+
+        let minutos_ifr = item.horas_instrumento ? item.horas_instrumento : 0
+        minutos_ifr_totais += minutos_ifr
+        
+        comb_totais += item.combustivel
+        lub_totais += item.lubrificante
+        pax_totais += item.pax
+        cargas_totais += somaCargas(item.Cargas)
+        pousos_totais += item.pousos
+        procedimentos_totais += somaProcedimentos(item.Procedimentos)
+      })
+
+      setHorasTotais(horas_totais)
+      setHorasNoturnasTotais(minutos_noturnos_totais)
       
-      const minutosTotais = horas * 60 + minutos;
-      horas_totais += minutosTotais;
-    });
+      setEtapasFiltered(new_etapas)
+      setCombTotais(comb_totais)
+      setLubTotais(lub_totais)
+      setPaxTotais(pax_totais)
+      setHorasIfrTotais(minutos_ifr_totais)
+      setCargasTotais(cargas_totais)
+      setPousosTotais(pousos_totais)
+      setProcedimentosTotais(procedimentos_totais)
+    };
 
-    setHorasTotais(horas_totais)
-
-    setEtapasFiltered(new_etapas)
-  };
 
   var horas_iniciais = 0
   return (
@@ -426,7 +493,7 @@ const Etapas = () => {
     </div>
         <table style={{marginBottom:50}}>
           <thead className='tabela-cabecalho'>
-            <tr>
+            <tr className='tabela-cabecalho'>
               <th>Checado</th>
               <th>Data</th>
               <th>OFRAG</th>
@@ -472,7 +539,7 @@ const Etapas = () => {
               <th>I3</th>
               <th>A3</th>
               <th>PAX</th>
-              <th>CRG</th>
+              <th>CARGA</th>
               <th>COMB</th>
               <th>LUB</th>
             </tr>
@@ -577,14 +644,15 @@ const Etapas = () => {
                   <td>{index_i3 > -1 ? item.Usuarios[index_i3].Trigrama.trigrama : ''}</td>
                   <td>{index_a3 > -1 ? item.Usuarios[index_a3].Trigrama.trigrama : ''}</td>
                   <td>{item.pax}</td>
-                  <td>{somaCargas(item.Cargas)}</td>
+                  <td>{somaCargas(item.Cargas).toFixed(2)}</td>
                   <td>{item.combustivel}</td>
                   <td>{item.lubrificante}</td>
               </tr>
             )
           })}
-          <tr className='bold'>
-                  <td>TOTAL</td>
+          <thead className='tabela-cabecalho'>
+          <tr className='bold tabela-total'>
+                  <th>TOTAIS</th>
                   <td></td>
                   <td></td>
                   <td></td>
@@ -593,8 +661,11 @@ const Etapas = () => {
                   <td></td>
                   <td></td>
                   <td>{minutosParaHorasMinutos(horasTotais)}</td>
-                  <td></td>
+                  <td>{minutosParaHorasMinutos(horasIfrTotais)}</td>
                   <td>{minutosParaHorasMinutos(horasNoturnasTotais)}</td>
+                  <td>{pouosTotais}</td>
+                  <td></td>
+                  <td>{procedimentosTotais}</td>
                   <td></td>
                   <td></td>
                   <td></td>
@@ -625,14 +696,12 @@ const Etapas = () => {
                   <td></td>
                   <td></td>
                   <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
+                  <td>{paxTotais}</td>
+                  <td>{cargasTotais.toFixed(2)}</td>
+                  <td>{combTotais.toFixed(0)}</td>
+                  <td>{lubTotais.toFixed(1)}</td>
               </tr>
+              </thead>
         </table>
         {loading &&
                 <div  style={{
