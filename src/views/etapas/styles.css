@@ -565,6 +565,13 @@ th, td {
     z-index: 1; /* Garante que o cabeçalho fique acima do conteúdo da tabela */
   }
 
+  .final-fixo {
+   /* position: sticky;*/
+   right: 0;
+   /* z-index: 1; /*Garante que o cabeçalho fique acima do conteúdo da tabela */
+  }
+
+
 th {
     background-color: #ddd;
     margin: 0;
