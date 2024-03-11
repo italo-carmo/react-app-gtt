@@ -161,11 +161,11 @@ const _nav = [
             name: 'Abastecimento',
             to: '/abastecimento',
           },
-          {
-            component: CNavItem,
-            name: 'Passaportes',
-            to: '/passaportes',
-          },
+          //{
+          // component: CNavItem,
+          //name: 'Passaportes',
+          //to: '/passaportes',
+          //},
         ]
   },
   {
