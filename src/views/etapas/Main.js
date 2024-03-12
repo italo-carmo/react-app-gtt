@@ -37,6 +37,7 @@ const Etapas = () => {
   const [cargasTotais, setCargasTotais] = useState(0)
   const [pouosTotais, setPousosTotais] = useState(0)
   const [procedimentosTotais, setProcedimentosTotais] = useState(0)
+  const [pqdsTotais, setPqdsTotais] = useState(0)
 
   const Api = useApi()
 
@@ -57,6 +58,7 @@ const Etapas = () => {
       var cargas_totais = 0
       var pousos_totais = 0
       var procedimentos_totais = 0
+      var pqds_totais = 0
 
       res_filtered = res_filtered.map(it=>{
         if(it.Usuarios.length == 0) {
@@ -85,6 +87,7 @@ const Etapas = () => {
         cargas_totais += somaCargas(item.Cargas)
         pousos_totais += item.pousos
         procedimentos_totais += somaProcedimentos(item.Procedimentos)
+        pqds_totais += somaPqds(item.Assaets)
       })
 
       setHorasTotais(horas_totais)
@@ -97,6 +100,7 @@ const Etapas = () => {
       setCargasTotais(cargas_totais)
       setPousosTotais(pousos_totais)
       setProcedimentosTotais(procedimentos_totais)
+      setPqdsTotais(pqds_totais)
     }
     setLoading(false)
   }
@@ -159,6 +163,14 @@ const Etapas = () => {
       cargas += it.peso
     })
     return cargas
+   }
+
+   const somaPqds = (item) => {
+    var pqds = 0
+    item.forEach(it=>{
+      pqds += it.quantidade_paraquedistas
+    })
+    return pqds
    }
 
    const somaProcedimentos = (item) => {
@@ -370,6 +382,7 @@ const Etapas = () => {
     var cargas_totais = 0
     var pousos_totais = 0
     var procedimentos_totais = 0
+    var pqds_totais = 0
 
     new_etapas.forEach(item => {
         let [horasStr, minutosStr] = item.tempo_de_voo.split(':');
@@ -390,6 +403,7 @@ const Etapas = () => {
         cargas_totais += somaCargas(item.Cargas)
         pousos_totais += item.pousos
         procedimentos_totais += somaProcedimentos(item.Procedimentos)
+        pqds_totais += somaPqds(item.Assaets)
       })
 
       setHorasTotais(horas_totais)
@@ -403,6 +417,7 @@ const Etapas = () => {
       setCargasTotais(cargas_totais)
       setPousosTotais(pousos_totais)
       setProcedimentosTotais(procedimentos_totais)
+      setPqdsTotais(pqds_totais)
     };
 
 
@@ -529,6 +544,8 @@ const Etapas = () => {
               <th>IG2</th>
               <th>IG3</th>
               <th>IG4</th>
+              <th>AF</th>
+              <th>IF</th>
               <th>TF</th>
               <th>TF2</th>
               <th>TF3</th>
@@ -536,10 +553,11 @@ const Etapas = () => {
               <th>O3</th>
               <th>I3</th>
               <th>A3</th>
-              <th className='final-fixo'>PAX</th>
-              <th className='final-fixo'>CARGA</th>
-              <th className='final-fixo'>COMB</th>
-              <th className='final-fixo'>LUB</th>
+              <th>PAX</th>
+              <th>PQD</th>
+              <th>CARGA</th>
+              <th>COMB</th>
+              <th>LUB</th>
             </tr>
           </thead>
           {etapasFiltered.map((item, index)=>{
@@ -571,6 +589,8 @@ const Etapas = () => {
              let index_ig2 = item.Usuarios.findIndex(i=>i.posicao == 'IG2')
              let index_ig3 = item.Usuarios.findIndex(i=>i.posicao == 'IG3')
              let index_ig4 = item.Usuarios.findIndex(i=>i.posicao == 'IG4')
+             let index_af = item.Usuarios.findIndex(i=>i.posicao == 'AF')
+             let index_if = item.Usuarios.findIndex(i=>i.posicao == 'IF')
              let index_tf = item.Usuarios.findIndex(i=>i.posicao == 'TF')
              let index_tf2 = item.Usuarios.findIndex(i=>i.posicao == 'TF2')
              let index_tf3 = item.Usuarios.findIndex(i=>i.posicao == 'TF3')
@@ -630,6 +650,8 @@ const Etapas = () => {
                   <td>{index_ig2 > -1 ? item.Usuarios[index_ig2].Trigrama.trigrama : ''}</td>
                   <td>{index_ig3 > -1 ? item.Usuarios[index_ig3].Trigrama.trigrama : ''}</td>
                   <td>{index_ig4 > -1 ? item.Usuarios[index_ig4].Trigrama.trigrama : ''}</td>
+                  <td>{index_af > -1 ? item.Usuarios[index_af].Trigrama.trigrama : ''}</td>
+                  <td>{index_if > -1 ? item.Usuarios[index_if].Trigrama.trigrama : ''}</td>
                   <td>{index_tf > -1 ? item.Usuarios[index_tf].Trigrama.trigrama : ''}</td>
                   <td>{index_tf2 > -1 ? item.Usuarios[index_tf2].Trigrama.trigrama : ''}</td>
                   <td>{index_tf3 > -1 ? item.Usuarios[index_tf3].Trigrama.trigrama : ''}</td>
@@ -637,10 +659,11 @@ const Etapas = () => {
                   <td>{index_o3 > -1 ? item.Usuarios[index_o3].Trigrama.trigrama : ''}</td>
                   <td>{index_i3 > -1 ? item.Usuarios[index_i3].Trigrama.trigrama : ''}</td>
                   <td>{index_a3 > -1 ? item.Usuarios[index_a3].Trigrama.trigrama : ''}</td>
-                  <td className='final-fixo'>{item.pax}</td>
-                  <td className='final-fixo'>{somaCargas(item.Cargas).toFixed(2)}</td>
-                  <td className='final-fixo'>{item.combustivel}</td>
-                  <td className='final-fixo'>{item.lubrificante}</td>
+                  <td>{item.pax}</td>
+                  <td>{somaPqds(item.Assaets)}</td>
+                  <td>{somaCargas(item.Cargas).toFixed(2)}</td>
+                  <td>{item.combustivel}</td>
+                  <td>{item.lubrificante}</td>
               </tr>
             )
           })}
@@ -683,10 +706,11 @@ const Etapas = () => {
                   <td></td>
                   <td></td>
                   <td></td>
-                  <th className='final-fixo'>{paxTotais}</th>
-                  <th className='final-fixo'>{cargasTotais.toFixed(2)}</th>
-                  <th className='final-fixo'>{combTotais.toFixed(0)}</th>
-                  <th className='final-fixo'>{lubTotais.toFixed(1)}</th>
+                  <th>{paxTotais}</th>
+                  <th>{pqdsTotais}</th>
+                  <th>{cargasTotais.toFixed(2)}</th>
+                  <th>{combTotais.toFixed(0)}</th>
+                  <th>{lubTotais.toFixed(1)}</th>
               </tr>
               </thead>
         </table>

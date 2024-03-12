@@ -16,7 +16,7 @@ const Etapas = () => {
   const [etapas, setEtapas] = useState([])
   const [etapasFiltered, setEtapasFiltered] = useState([])
   const [loading, setLoading] = useState(false)
-  const [limite, setLimite] = useState(100)
+  const [limite, setLimite] = useState(1000)
   const [dados, setDados] = useState([])
   
 

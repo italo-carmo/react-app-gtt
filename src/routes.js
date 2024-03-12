@@ -9,6 +9,7 @@ import LancarManobras from './views/manobras/Main'
 import LancarMissoesExterior from './views/missoes-exterior/Main'
 import ListaPauDeSebo from './views/pau-de-sebo/Main'
 import RevisarOms from './views/revisar_oms/Main'
+import Passaportes from './views/passaportes/Main'
 const Main = React.lazy(() => import('./views/main/Main'))
 const Graficos = React.lazy(() => import('./views/graficos/index'))
 const PauDeSebo = React.lazy(() => import('./views/grafico-pau-de-sebo/index'))
@@ -48,6 +49,7 @@ const routes = [
   { path: '/planejamento', name: 'Planejamento', element:  Planejamento},
   { path: '/estatistica-carga-pax', name: 'Estatística de Carga e PAX', element:  EstatisticaCargaPax},
   { path: '/exercicios', name: 'Exercícios', element:  Exercicios},
+  { path: '/passaportes', name: 'Passaportes', element:  Passaportes},
 ]
 
 export default routes

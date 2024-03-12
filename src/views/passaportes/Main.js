@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useRef, DatePicker, DateInput } from 'react'
 import styles from './styles.css'
-import MaskedInputIcao from '../../components/masked-input-icao'
 import {
   CButton,
   CCard,
@@ -18,7 +17,7 @@ const Passaportes = () => {
   const [dataFim, setDataFim] = useState('');
   const [data,setData] = useState([])
   const [loading, setLoading] = useState(false)
-  const [trigrama, setTrigrama] = useState('');
+  const [trigramas, setTrigramas] = useState('');
 
   const [etapas, setEtapas] = useState([])
   const [etapasFiltered, setEtapasFiltered] = useState([])
@@ -32,6 +31,8 @@ const Passaportes = () => {
   const [horasTotais, setHorasTotais] = useState(0);
   const [limite, setLimite] = useState(20)
   const [horasNoturnasTotais, setHorasNoturnasTotais] = useState('')
+  const [passaportes, setPassaportes] = useState([])
+  const [passaportesFiltered, setPassaportesFiltered] = useState([])
   
   const Api = useApi()
 
@@ -66,7 +67,7 @@ const Passaportes = () => {
   };
 
   const inputStyleLow = {
-    width:100
+    width:'100%'
   };
   // Funções de ação para atualizar os estados quando os valores dos filtros mudarem
   const handleDataInicioChange = (e) => {
@@ -77,119 +78,40 @@ const Passaportes = () => {
     setDataFim(e.target.value);
   };
 
-  const limites = [10,20,50,100,200,1000,10000]
+  const limites = [30,60,90,120]
 
   const handleChangeLimit = (e) => {
     setLimite(e.target.value);
   };
 
   const handleTrigramaChange = (e) => {
-    setTrigrama(e.target.value);
+    setTrigramas(e.target.value);
   };
 
   const handleLimpar = () => {
     setDataInicio('');
     setDataFim('');
-    setOmis('');
-    setOfrag('');
-    setEsforcoAereo('');
-    setAeronave('');
-    setTrigrama('');
-    setIcao('');
-    setEtapasFiltered(etapas)
+    setTrigramas('');
+    setPassaportesFiltered(passaportes)
   }
 
+  const getPassaportes = async () => {
+    let res = await Api.getPassaportes()
+    if(!res.error) {
+    setPassaportes(res.data)}
+    }
+  
 
-  const handleOmisChange = (e) => {
-    setOmis(e.target.value);
-  };
+  useEffect(()=>{
+    getPassaportes()},
+    [])
 
-  const handleOfragChange = (e) => {
-    setOfrag(e.target.value);
-  };
-
-  const handleEsforcoAereoChange = (e) => {
-    setEsforcoAereo(e.target.value);
-  };
-
-  const handleIcaoChange = (e) => {
-    setIcao(e.target.value);
-  };
-
-  const handleAeronaveChange = (e) => {
-    setAeronave(e.target.value);
-  };
-
+  
   const handleFiltrarClick = () => {
-    let new_etapas = [...etapas]
-   setData([
-		{
-			"nome_guerra": "Assis",
-			"nome_completo": "Lucas Araújo Lisboa Assis",
-			"Passaportes": [
-				{
-					"id": 1,
-					"id_user": 214,
-					"numero_pass": "agoravai",
-					"valid_pass": "2024-05-03T00:00:00.000Z",
-					"numero_visa": "asdasdasd",
-					"valid_visa": "2024-03-05T00:00:00.000Z"
-				},
-				{
-					"id": 2,
-					"id_user": 214,
-					"numero_pass": "SB045424",
-					"valid_pass": "2024-05-03T00:00:00.000Z",
-					"numero_visa": "A2145457",
-					"valid_visa": "2024-03-05T00:00:00.000Z"
-				}
-			],
-			"Posto": {
-				"id": 7,
-				"nome": "CP"
-			},
-			"Trigrama": {
-				"id": 224,
-				"trigrama": "AIS",
-				"id_user": 214
-			}
-		}
-	])
+    let new_passaportes = [...passaportes]
     
-    if (omis != '') {
-       new_etapas = new_etapas.filter(i=>{
-        if(i.Missao && (i.Missao.numero).toString().includes(omis)) {
-          return i
-        }
-      })
-    }
-
-    if (ofrag != '') {
-      new_etapas = new_etapas.filter(i=>{
-       if(i.Missao && (i.Missao.Ofrag.numero).toString().includes(ofrag)) {
-         return i
-       }
-     })
-   }
-
-   if (esforcoAereo != '') {
-    new_etapas = new_etapas.filter(i=>{
-     if(i.esforco_aereo && (i.esforco_aereo) == esforcoAereo) {
-       return i
-     }
-   })
- }
-
-  if (aeronave != '') {
-    new_etapas = new_etapas.filter(i=>{
-    if(i.Aeronave && (i.Aeronave.aeronave) == aeronave) {
-      return i
-    }
-  })
-  }
-
     if (dataInicio != '') {
-      new_etapas = new_etapas.filter(i=>{
+      new_passaportes = passaportes.filter(i=>{
         let dataInicioDate = new Date(`${dataInicio}T23:59:59.000Z`)
         dataInicioDate.setHours(0, 0, 1);
         if(new Date(i.dep) >= dataInicioDate) {
@@ -199,7 +121,7 @@ const Passaportes = () => {
     }
 
     if (dataFim != '') {
-      new_etapas = new_etapas.filter(i=>{
+      new_passaportes = passaportes.filter(i=>{
         let dataFimDate = new Date(`${dataFim}T23:59:59.000Z`)
         dataFimDate.setHours(23, 59, 59);
         if(new Date(i.dep) <= dataFimDate) {
@@ -208,67 +130,40 @@ const Passaportes = () => {
       })
     }
 
-    if(trigrama != '') {
-      new_etapas = new_etapas.filter(i=>{
-        let index = i.Usuarios.findIndex(it=>(it.Trigrama.trigrama).toUpperCase() == (trigrama).toUpperCase())
+    if(trigramas != '') {
+      new_passaportes = passaportes.filter(i=>{
+        let index = passaportes.findIndex(it=>(it.Trigrama.trigrama).toUpperCase() == (trigramas).toUpperCase())
         if(index > -1) {
           return i
         }
       })
     }
 
-    if(icao != '') {
-      new_etapas = new_etapas.filter(i=>{
-        if(i.Dep.icao.includes(icao.toUpperCase()) || i.Pouso.icao.includes(icao.toUpperCase())) {
-          return i
-        }
-      })
-    }
-
-    var horas_totais = 0
-    new_etapas.forEach(item => {
-      let [horasStr, minutosStr] = item.tempo_de_voo.split(':');
-      const horas = parseInt(horasStr, 10);
-      const minutos = parseInt(minutosStr, 10);
-      
-      const minutosTotais = horas * 60 + minutos;
-      horas_totais += minutosTotais;
-    });
-
-    setHorasTotais(horas_totais)
-
-    setEtapasFiltered(new_etapas)
+    setPassaportesFiltered(new_passaportes)
   };
 
   return (
     <>
       <CCard className="mb-6" style={{flexDirection: 'column', overflowX: 'auto', maxHeight:700 }}>
       <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px', marginLeft:10, marginRight:10 }}>
-      {/* Filtro de Data */}
+      {/* Filtro de Data */}   
       <div style={{ marginRight: '20px' }}>
-        <label>Data Início:</label>
-        <input type="date" value={dataInicio} onChange={handleDataInicioChange} />
-      </div>
-      <div style={{ marginRight: '20px' }}>
-        <label>Data Fim:</label>
+      
+        <label>Data limite de vencimento:</label>
         <input type="date" value={dataFim} onChange={handleDataFimChange} />
       </div>
-
-      {/* Filtro de Trigrama */}
-      <div>
-        <label>Trigrama:</label>
-        <input type="text" maxLength="3" value={trigrama} onChange={handleTrigramaChange} style={inputStyleLow}/>
-      </div>
+   
         {/* Botão "Filtrar" */}
         <div className='buttons'>
           <button style={botaoStyle} onClick={handleFiltrarClick}>Filtrar</button>
           <button style={botaoStyleRed} onClick={handleLimpar}>Limpar</button>
+          <button style={botaoStyleRed} onClick={getPassaportes}>Atualizar</button>
         </div>
 
     </div>
     <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px', marginLeft:10, marginRight:10 }}>
     <div style={{ marginRight: '20px' }}>
-        <label style={{marginRight: 5}}>Últimos:</label>
+        <label style={{marginRight: 5}}>Número de dias para o vencimento:</label>
         <select style={inputStyle} value={limite} onChange={handleChangeLimit}>
           <option value="">Selecione</option>
           {limites.map(i=>{
@@ -277,16 +172,18 @@ const Passaportes = () => {
             )
           })}
         </select>
+        <input type="text" value={trigramas} placeholder="Digite os trigramas separados por vírgula..." /*onKeyPress={handleKeyPress}*/ onChange={handleTrigramaChange} style={inputStyleLow}/>
       </div>   
 
     </div>
          <table style={{marginBottom:50}}>
           <thead className='tabela-cabecalho'>
             <tr>
-            <th colSpan={8}>PASSAPORTES</th>
+            <th colSpan={9}>PASSAPORTES</th>
             </tr>
             <tr className='bold'>
-              <td>POSTO/GRAD</td>
+              <td>TRIG</td>
+              <td>P/G</td>
               <td>NOME COMPLETO</td>
               <td>NOME DE GUERRA</td>
               <td>DATA DE NASCIMENTO</td> 
@@ -297,17 +194,18 @@ const Passaportes = () => {
             </tr>
                                    
 
-          {data.map((item)=>{
+          {passaportesFiltered.map((item)=>{
              return (
               <tr className='tabelinha'>
+              <td>{item.Trigrama.trigrama}</td> 
               <td>{item.Posto.nome}</td>
               <td>{item.nome_completo}</td>
               <td>{item.nome_guerra}</td>
-              <td>27/03/1991</td> 
+              <td></td> 
               <td>{item.Passaportes[0].numero_pass}</td>
-              <td>20/05/2024</td>
-              <td>A123456789</td>
-              <td>30/06/2024</td>
+              <td>{item.Passaportes[0].valid_pass}</td>
+              <td>{item.Passaportes[0].numero_visa}</td>
+              <td>{item.Passaportes[0].valid_visa}</td>
               </tr> 
             )
           })}

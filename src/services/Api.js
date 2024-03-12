@@ -580,6 +580,13 @@ export default () => {
             let json = await request('PUT', `/exercicios/${id}` , body, token)
             return json
         },
+        getPassaportes: async () => {
+            let token = localStorage.getItem('token')
+            let json = await request('GET', `/passaportes/` , null, token)
+            return json
+        },
+    
+
     }
 
 }
