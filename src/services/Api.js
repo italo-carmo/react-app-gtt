@@ -580,16 +580,6 @@ export default () => {
             let json = await request('PUT', `/exercicios/${id}` , body, token)
             return json
         },
-        retornarTimeZone: async (body) => {
-            let token = localStorage.getItem('token')
-            let json = await request('POST', `/timezone` , body, token)
-            return json
-        },
-        getPlanejamento: async (body) => {
-            let token = localStorage.getItem('token')
-            let json = await request('POST', `/planejamento/lista` , body, token)
-            return json
-        },
     }
 
 }

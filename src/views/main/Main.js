@@ -140,7 +140,7 @@ const Dashboard = () => {
   const [longPressTimer, setLongPressTimer] = useState(null);
 
   const situacoes = ["DI", "DO", "IN", "IS", "II"]
-  const cores = [{label: 'Planejamento', value: '#fff000'},{label: 'Executada', value: '#28a745'}, {label: 'PRPO', value: '#00ffff'}, {label: 'OPFM', value: '#FC0FC0'}]
+  const cores = [{label: 'Planejamento', value: '#fff000'}, {label: 'PRPO', value: '#00ffff'}, {label: 'OPFM', value: '#FC0FC0'}]
   const inputPousoRef = useRef(null)
   const inputAltRef = useRef(null)
   const divRef = useRef(null);
@@ -149,7 +149,6 @@ const Dashboard = () => {
 
   const handleMouseEnter = (id,etapa, missao) => {
     setId(id)
-    etapa.tripulacao.sort((a,b)=>a.antiguidade - b.antiguidade)
     let trip_show = etapa.tripulacao.map(item=>{
       return item.trigrama
     })
@@ -1440,6 +1439,7 @@ const Dashboard = () => {
     setIdExercicio(exercicio.id)
     let data_inicio = (exercicio.data_inicio+'T04:00:00Z')
     let data_fim = (exercicio.data_fim+'T04:00:00Z')
+    console.log(data_inicio)
     setDataInicioExercicio(new Date(data_inicio))
     setDataFimExercicio(new Date(data_fim))
     setLocalidadeExercicio(exercicio.localidade)
@@ -1980,6 +1980,7 @@ const Dashboard = () => {
   }
 
   const handleOcultaAviao = async (index, item) => {
+    console.log(item)
     let data_copy =  {...data}
     let res = await Api.ocultarAnv(item.id, {oculta: !data_copy.avioes[index].oculta})
     data_copy.avioes[index].oculta = !data_copy.avioes[index].oculta
@@ -2144,7 +2145,7 @@ const Dashboard = () => {
                 return <div className='item-missao obs-style'>
                   {exercicios.map(it=>{
                     const [dia, mes, ano] = i.split("/");
-                    const data = new Date(Date.UTC(ano, mes - 1, dia));
+                    const data = new Date(ano, mes - 1, dia);
                     let inicio_date = new Date(it.data_inicio)
                     let fim_date = new Date(it.data_fim)
 
@@ -2161,6 +2162,7 @@ const Dashboard = () => {
             })}
           </div>
             {(data.avioes.length > 0 ) && data.avioes.map((item, index)=>{
+              console.log(item)
               return <div className='missao-item'>
                 <div className={(item.situacao == 'IN' || item.situacao == 'IS' || item.situacao == 'II') ? 'missao aviao in' : 'missao aviao'}>
                 <span style={{cursor: 'pointer'}} onClick={()=>selectAviao(item.aviao, item.id, item.ciclos, item.horas, item.situacao, item.atualizador, item.atualizado)}>{item.aviao}</span>
@@ -2169,7 +2171,7 @@ const Dashboard = () => {
                 <span className='dados-aviao'>Ciclos: {item.ciclos}</span>
                 <span className='dados-aviao'>Horas: {item.horas}
                 </span></> : null}
-                {item.oculta ? <img onClick={()=>handleOcultaAviao(index, item)} className='seta' style={{marginBottom: 5, cursor: 'pointer'}} src="https://1gtt.com.br/down-white.png"/> : <img onClick={()=>handleOcultaAviao(index, item)} className='seta' style={{marginBottom: 5, cursor: 'pointer'}} src="https://1gtt.com.br/up-white.png"/>}
+                {item.oculta ? <img onClick={()=>handleOcultaAviao(index, item)} style={{marginBottom: 5, cursor: 'pointer'}} width="20px" height="20px" src="https://1gtt.com.br/down-white.png"/> : <img onClick={()=>handleOcultaAviao(index, item)} style={{marginBottom: 5, cursor: 'pointer'}} width="20px" height="20px" src="https://1gtt.com.br/up-white.png"/>}
                 </div>
                 {semana.map(i=>{
                  return <div className='item-missao' style={{cursor: 'pointer'}} onClick={(e)=>handleClickAddRascunho(e, i, item.id)}>
@@ -2180,7 +2182,7 @@ const Dashboard = () => {
                         return manutencoesAeronave.map((manutencao) => {
                           if ((aeronave == item.aviao) && data == i) {
                             return <div className='missao-red red' key={manutencao.id} onClick={()=>handleEditmanut(manutencao)}>
-                            <span className='teste-font'>{manutencao.titulo}</span>
+                            {manutencao.titulo}
                           </div>
                           }
                         });
