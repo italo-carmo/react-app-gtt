@@ -466,8 +466,6 @@ const Etapas = () => {
               <th>TF2</th>
               <th>TF3</th>
               <th>TF4</th>
-              <th>IF</th>
-              <th>AF</th>
               <th>O3</th>
               <th>I3</th>
               <th>A3</th>
@@ -510,8 +508,6 @@ const Etapas = () => {
              let index_tf2 = item.Usuarios.findIndex(i=>i.posicao == 'TF2')
              let index_tf3 = item.Usuarios.findIndex(i=>i.posicao == 'TF3')
              let index_tf4 = item.Usuarios.findIndex(i=>i.posicao == 'TF4')
-             let index_if = item.Usuarios.findIndex(i=>i.posicao == 'IF')
-             let index_af = item.Usuarios.findIndex(i=>i.posicao == 'AF')
              let index_o3 = item.Usuarios.findIndex(i=>i.posicao == 'O3')
              let index_i3 = item.Usuarios.findIndex(i=>i.posicao == 'I3')
              let index_a3 = item.Usuarios.findIndex(i=>i.posicao == 'A3')
@@ -571,8 +567,6 @@ const Etapas = () => {
                   <td>{index_tf2 > -1 ? item.Usuarios[index_tf2].Trigrama.trigrama : ''}</td>
                   <td>{index_tf3 > -1 ? item.Usuarios[index_tf3].Trigrama.trigrama : ''}</td>
                   <td>{index_tf4 > -1 ? item.Usuarios[index_tf4].Trigrama.trigrama : ''}</td>
-                  <td>{index_if > -1 ? item.Usuarios[index_if].Trigrama.trigrama : ''}</td>
-                  <td>{index_af > -1 ? item.Usuarios[index_af].Trigrama.trigrama : ''}</td>
                   <td>{index_o3 > -1 ? item.Usuarios[index_o3].Trigrama.trigrama : ''}</td>
                   <td>{index_i3 > -1 ? item.Usuarios[index_i3].Trigrama.trigrama : ''}</td>
                   <td>{index_a3 > -1 ? item.Usuarios[index_a3].Trigrama.trigrama : ''}</td>
@@ -595,14 +589,6 @@ const Etapas = () => {
                   <td>{minutosParaHorasMinutos(horasTotais)}</td>
                   <td></td>
                   <td>{minutosParaHorasMinutos(horasNoturnasTotais)}</td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
                   <td></td>
                   <td></td>
                   <td></td>

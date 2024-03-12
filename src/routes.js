@@ -9,9 +9,6 @@ import LancarManobras from './views/manobras/Main'
 import LancarMissoesExterior from './views/missoes-exterior/Main'
 import ListaPauDeSebo from './views/pau-de-sebo/Main'
 import RevisarOms from './views/revisar_oms/Main'
-import Navega from './views/navega/Main'
-import Passaportes from './views/passaportes/Main'
-
 const Main = React.lazy(() => import('./views/main/Main'))
 const Graficos = React.lazy(() => import('./views/graficos/index'))
 const PauDeSebo = React.lazy(() => import('./views/grafico-pau-de-sebo/index'))
@@ -22,7 +19,6 @@ const Cois = React.lazy(() => import('./views/cois/Main'))
 const Planejamento = React.lazy(() => import('./views/planejamento/Main'))
 const EstatisticaCargaPax = React.lazy(() => import('./views/estatistica_carga_pax/Main'))
 const Exercicios = React.lazy(() => import('./views/timeline-exercicios/Main'))
-
 
 
 // Notifications
@@ -44,8 +40,14 @@ const routes = [
   { path: '/lancar-quadrinhos', name: 'Lançar Quadrinhos', element: LancarQuadrinhos },
   { path: '/lista-quadrinhos', name: 'Lista Quadrinhos', element: ListaQuadrinhos },
   { path: '/manobras', name: 'Manobras', element: LancarManobras },
-  { path: '/navega', name: 'Navega', element: Navega },
-  { path: '/passaportes', name: 'Passaportes', element: Passaportes},
+  { path: '/missoes-exterior', name: 'Missões Exterior', element: LancarMissoesExterior },
+  { path: '/turmas-de-chegada', name: 'Turmas de Chegada', element: TurmasDeChegada },
+  { path: '/alterar-operacionalidades', name: 'Alterar Operacionalidades', element: AlterarOperacionalidades },
+  { path: '/cois', name: 'Conselhos de Instrução', element:  Cois},
+  { path: '/esforcos-aereos', name: 'Esforços Aéreos', element:  EsforcosAereos},
+  { path: '/planejamento', name: 'Planejamento', element:  Planejamento},
+  { path: '/estatistica-carga-pax', name: 'Estatística de Carga e PAX', element:  EstatisticaCargaPax},
+  { path: '/exercicios', name: 'Exercícios', element:  Exercicios},
 ]
 
 export default routes
