@@ -59,6 +59,7 @@ const Etapas = () => {
       var pousos_totais = 0
       var procedimentos_totais = 0
       var pqds_totais = 0
+      
 
       res_filtered = res_filtered.map(it=>{
         if(it.Usuarios.length == 0) {
@@ -97,6 +98,7 @@ const Etapas = () => {
       setLubTotais(lub_totais)
       setPaxTotais(pax_totais)
       setHorasIfrTotais(minutos_ifr_totais)
+      setHorasNoturnasTotais(minutos_noturnos_totais)
       setCargasTotais(cargas_totais)
       setPousosTotais(pousos_totais)
       setProcedimentosTotais(procedimentos_totais)
@@ -254,7 +256,7 @@ const Etapas = () => {
   };
 
   const getEsforcos = async () => {
-    let res = await Api.getEsforcoAereo()
+    let res = await Api.getEsforcos()
     if(!res.error) {
       setEsforcos(res.data)
     }
@@ -277,6 +279,7 @@ const Etapas = () => {
     setTrigrama('');
     setIcao('');
     setEtapasFiltered(etapas)
+    getEtapas();
   }
 
   const minutosParaHorasMinutos = (minutos) => {
@@ -558,6 +561,7 @@ const Etapas = () => {
               <th>CARGA</th>
               <th>COMB</th>
               <th>LUB</th>
+              <th>Assaets</th>
             </tr>
           </thead>
           {etapasFiltered.map((item, index)=>{
@@ -664,6 +668,19 @@ const Etapas = () => {
                   <td>{somaCargas(item.Cargas).toFixed(2)}</td>
                   <td>{item.combustivel}</td>
                   <td>{item.lubrificante}</td>
+                  <td style={{display: 'flex', flexDirection: 'row', justifyContent: 'center', height: '100px'}}>
+                    {
+                      item.Assaets.map(it=>{
+                        return (
+                          <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', margin: 5, border: '1px solid #000', padding:5, borderRadius: 5}}>
+                          <span>{it.metodo}</span>
+                          <span>{it.processo}</span>
+                          <span>PSGs: {it.quantidade_passagens}</span>
+                          <span>PQDs: {it.quantidade_paraquedistas}</span>
+                          </div>
+                        )
+                      })
+                    }</td>
               </tr>
             )
           })}
@@ -674,43 +691,15 @@ const Etapas = () => {
                   <th>{minutosParaHorasMinutos(horasIfrTotais)}</th>
                   <th>{minutosParaHorasMinutos(horasNoturnasTotais)}</th>
                   <th>{pouosTotais}</th>
-                  <td></td>
+                  <th></th>
                   <th>{procedimentosTotais}</th>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
+                  <th colSpan={30} style={{textAlign: 'center !imprtant'}}></th>               
                   <th>{paxTotais}</th>
                   <th>{pqdsTotais}</th>
                   <th>{cargasTotais.toFixed(2)}</th>
                   <th>{combTotais.toFixed(0)}</th>
                   <th>{lubTotais.toFixed(1)}</th>
+                  <th></th>
               </tr>
               </thead>
         </table>
