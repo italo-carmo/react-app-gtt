@@ -35,6 +35,10 @@ export default () => {
             let json = await request('POST', '/users/login', {email, senha}, null)
             return json
         },
+        esquecisenha: async (user_email) => {
+            let json = await request('POST', '/users/esquecisenha', {user_email}, null)
+            return json
+        },
         getDias: async () => {
             let token = localStorage.getItem('token')
             let json = await request('GET', '/comissionamento/dias' , null, token)
