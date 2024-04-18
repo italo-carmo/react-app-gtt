@@ -170,6 +170,8 @@ const Omis = ({match}) => {
   }
 
   let index_saude = tripulacao.findIndex(i=>i.funcao == 'Médico' || i.funcao == 'Enfermeiro')
+  let index_oe3 = tripulacao.findIndex(i=>i.funcao == 'O3' )
+  let index_comissario = tripulacao.findIndex(i=>i.funcao == 'Comissário' )
 
 
   return (
@@ -227,7 +229,7 @@ const Omis = ({match}) => {
           if(item.funcao == 'Piloto') {
             return (
               <div className='div-tripulante'> 
-                <span className='tripulante'>{item.posto} {item.nome_completo} - IDENTIDADE ({item.identidade}) - SARAM ({item.saram})</span>
+                <span className='tripulante'>[{item.trigrama}] - <strong>{item.posto} {item.nome_guerra.toUpperCase()}</strong> - {item.nome_completo} - IDENTIDADE ({item.identidade}) - SARAM ({item.saram})</span>
               </div>
             )
           }
@@ -245,7 +247,7 @@ const Omis = ({match}) => {
           if(item.funcao == 'Mecânico de Voo') {
             return (
               <div className='div-tripulante'> 
-                <span className='tripulante'>{item.posto} {item.nome_completo} - IDENTIDADE ({item.identidade}) - SARAM ({item.saram})</span>
+                <span className='tripulante'>[{item.trigrama}] - <strong>{item.posto} {item.nome_guerra.toUpperCase()}</strong> - {item.nome_completo} - IDENTIDADE ({item.identidade}) - SARAM ({item.saram})</span>
               </div>
             )
           }
@@ -263,7 +265,7 @@ const Omis = ({match}) => {
           if(item.funcao == 'Loadmaster') {
             return (
               <div className='div-tripulante'> 
-                <span className='tripulante'>{item.posto} {item.nome_completo} - IDENTIDADE ({item.identidade}) - SARAM ({item.saram})</span>
+                <span className='tripulante'>[{item.trigrama}] - <strong>{item.posto} {item.nome_guerra.toUpperCase()}</strong> - {item.nome_completo} - IDENTIDADE ({item.identidade}) - SARAM ({item.saram})</span>
               </div>
             )
           }
@@ -273,6 +275,8 @@ const Omis = ({match}) => {
         </div>
       </div>
 
+      {
+        index_comissario > -1 ?
       <div className='div-tripulacao'>
         <div className='div-pilotos'>
           <span className='data-bold'>Comissários</span>
@@ -281,7 +285,7 @@ const Omis = ({match}) => {
           if(item.funcao == 'Comissário') {
             return (
               <div className='div-tripulante'> 
-                <span className='tripulante'>{item.posto} {item.nome_completo} - IDENTIDADE ({item.identidade}) - SARAM ({item.saram})</span>
+                <span className='tripulante'>[{item.trigrama}] - <strong>{item.posto} {item.nome_guerra.toUpperCase()}</strong> - {item.nome_completo} - IDENTIDADE ({item.identidade}) - SARAM ({item.saram})</span>
               </div>
             )
           }
@@ -289,7 +293,8 @@ const Omis = ({match}) => {
         <div>
 
         </div>
-      </div>
+      </div>:null
+      }
 
       {
         index_saude > -1 ?
@@ -301,7 +306,7 @@ const Omis = ({match}) => {
           if(item.funcao == 'Médico' || item.funcao == 'Enfermeiro') {
             return (
               <div className='div-tripulante'> 
-                <span className='tripulante'>{item.posto} {item.nome_completo} - IDENTIDADE ({item.identidade}) - SARAM ({item.saram})</span>
+                <span className='tripulante'>[{item.trigrama}] - <strong>{item.posto} {item.nome_guerra.toUpperCase()}</strong> - {item.nome_completo} - IDENTIDADE ({item.identidade}) - SARAM ({item.saram})</span>
               </div>
             )
           }
@@ -312,6 +317,8 @@ const Omis = ({match}) => {
       </div> : null
       }
 
+      {
+        index_oe3 > -1 ?
       <div className='div-tripulacao'>
         <div className='div-pilotos'>
           <span className='data-bold'>OE-3</span>
@@ -320,7 +327,7 @@ const Omis = ({match}) => {
           if(item.funcao == 'O3') {
             return (
               <div className='div-tripulante'> 
-                <span className='tripulante'>{item.posto} {item.nome_completo} - IDENTIDADE ({item.identidade}) - SARAM ({item.saram})</span>
+                <span className='tripulante'>[{item.trigrama}] - <strong>{item.posto} {item.nome_guerra.toUpperCase()}</strong> - {item.nome_completo} - IDENTIDADE ({item.identidade}) - SARAM ({item.saram})</span>
               </div>
             )
           }
@@ -328,7 +335,8 @@ const Omis = ({match}) => {
         <div>
 
         </div>
-      </div>
+      </div>: null
+      }
 
       <div className='tripulantes-title'>
         <h6 style={{fontWeight:'bold'}}>Rota</h6>
@@ -344,7 +352,7 @@ const Omis = ({match}) => {
           <th>ETA (Z)</th>
           <th>ARR</th>
           <th>TEV</th>
-          <th>TEMP SOLO</th>
+          <th>TEMPO DE SOLO</th>
           <th>ALT</th>
           <th>TEV ALT</th>
           <th>COMB</th>
