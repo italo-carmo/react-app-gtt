@@ -144,6 +144,12 @@ const _nav = [
           },
           {
             component: CNavItem,
+            name: 'Cursos',
+            class: 'nav-link-submenu',
+            to: '/add-cursos',
+          },
+          {
+            component: CNavItem,
             name: 'Operacionalidades',
             class: 'nav-link-submenu',
             to: '/alterar-operacionalidades',

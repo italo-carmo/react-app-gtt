@@ -585,8 +585,23 @@ export default () => {
             let json = await request('GET', `/passaportes/` , null, token)
             return json
         },
-    
-
+        getCursos: async () => {
+            let token = localStorage.getItem('token')
+            let json = await request('GET', `/cursos/` , null, token)
+            return json
+        },
+        updateCurso: async (id, body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('PUT', `/cursos/${id}` , body, token)
+            return json
+        },
+        createCurso: async (body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('POST', `/cursos` , body, token)
+            return json
+        },
+        
+        
     }
 
 }
