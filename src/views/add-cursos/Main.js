@@ -16,8 +16,15 @@ const AddCursos = () => {
   const [cursoSiglaAdd, setCursoSiglaAdd] = useState('')
   const [cursoDescricaoAdd, setCursoDescricaoAdd] = useState('')
   const [cursoGestorAdd, setCursoGestorAdd] = useState('')
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
+  const [loadingCurso, setLoadingCurso] = useState(false)
   const [add, setAdd] = useState(false)
+  const [verCurso, setVerCurso] = useState(false)
+  const [idCursoVerMilitares, setIdCursoVerMilitares] = useState(0)
+  const [militaresCurso, setMilitaresCurso] = useState([])
+  const [users, setUsers] = useState([])
+  const [militarSelected,setMilitarSelected] = useState('')
+
   const Api = useApi()
 
   const getCursos = async () => {
@@ -27,6 +34,43 @@ const AddCursos = () => {
         setCursos(res.data)
       }
       setLoading(false)
+  }
+
+  const inputStyle = {
+    borderRadius: '10px',
+    border: '1px solid #000',
+    marginRight: '10px'
+  };
+
+
+  const getUsers = async () => {
+      let res = await Api.getUsers()
+      if(!res.error) {
+        setUsers(res.data)
+      }
+  }
+
+  const getCursosUsuarios = async (id_cursos) => {
+    setLoadingCurso(true)
+    let res = await Api.getCursosUsuarios({id_cursos,nome: 'todos',filter_type: 'yes'})
+      if(!res.error) {
+        setMilitaresCurso(res.data)
+      }
+      setLoadingCurso(false)
+  }
+
+  const excluirMilitar = async (item) => {
+    const confirmacao = window.confirm('Deseja mesmo excluir o '+item.item+' deste curso?')
+    if (confirmacao) {
+      let res = await Api.deleteCursosUsuario(idCursoVerMilitares,{id_user: item.id})
+      if(res.error) {
+        alert(res.error)
+        return
+      } else {
+        alert(res.msg)
+        getCursosUsuarios(idCursoVerMilitares)
+      }
+    }
   }
 
   const handleSalvar = async () => {
@@ -62,21 +106,47 @@ const AddCursos = () => {
     }
   }
 
+  const handleAdicionarMilitar = async () => {
+    if(militarSelected == '') {
+      alert('Selecione o militar a ser adicionado')
+      return
+    }
+    let index = militaresCurso.findIndex(i=>i.id == militarSelected)
+    if(index >=0) {
+      alert('Esse militar já possui esse curso!')
+      return
+    }
+    let res = await Api.createCursosUsuarios({id_cursos: idCursoVerMilitares, id_user: militarSelected})
+    if(res.error) {
+      alert(res.error)
+      return
+    } else {
+      alert(res.msg)
+      getCursosUsuarios(idCursoVerMilitares)
+    }
+  }
+
+  const handleChangeMilitarSelected = (e) => {
+    setMilitarSelected(e.target.value)
+  }
+
   useEffect(()=>{
-    getCursos()},[])
+    getCursos()
+    getUsers()
+  },[])
 
 
 
   return (
     <>
-      <CCard className="mb-6" style={{flexDirection: 'column', overflowX: 'auto', maxHeight:700 }}>
+      <CCard className="mb-6" style={{flexDirection: 'column', overflowX: 'auto' }}>
       <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px', marginLeft:10, marginRight:10 }}>
 
     </div>
-    <div style={{ display: 'flex', flexDirection: 'column', marginBottom: '20px', marginLeft:10, marginRight:10 }}>
+    <div style={{ display: 'flex', height:'100%', flexDirection: 'column', marginBottom: '20px', marginLeft:10, marginRight:10 }}>
     {
       loading &&
-      <LoadingSpinner black={true} width='200px'/>
+      <div><LoadingSpinner black={true} width='200px'/></div>
     }
     <div>
     <div className='add-curso-div'>
@@ -105,6 +175,7 @@ const AddCursos = () => {
     cursos.map(i=>{
       return (
         <div className='curso'>
+          <div className='curso-topo'>
           <div className='curso-div'>
             <span>
               <span style={{fontWeight: 'bold'}}>Sigla:</span> 
@@ -135,15 +206,53 @@ const AddCursos = () => {
                 <button className='excluir' onClick={()=>setCursoEdit(0)}>Cancelar</button>
                 <button className='salvar' onClick={handleSalvar}>Salvar</button>
               </> :
+              <>
               <img onClick={()=>{
                 setCursoEdit(i.id)
                 setCursoSigla(i.sigla)
                 setCursoDescricao(i.descricao)
                 setCursoGestor(i.gestor)
               }} src="https://www.1gtt.com.br/app/pen.png" width="20px" height="20px"/>
+              {
+                idCursoVerMilitares == i.id ?
+                <img onClick={()=>{
+                  setIdCursoVerMilitares(0)
+                  setMilitaresCurso([])
+                }} src="https://www.1gtt.com.br/down.png" style={{marginTop:10, cursor: 'pointer'}} width="20px" height="20px"/> :
+                <img onClick={()=>{
+                  setIdCursoVerMilitares(i.id)
+                  getCursosUsuarios(i.id)
+                }} src="https://www.1gtt.com.br/up.png" style={{marginTop:10, cursor: 'pointer'}} width="20px" height="20px"/>
+              }
+              
+              </>
             }
 
           </div>
+        </div>
+        {idCursoVerMilitares == i.id &&
+        <div className='cursos-bottom'>
+           {loadingCurso && <div><LoadingSpinner black={true} width='100px'/></div>}
+          <div style={{display: 'flex', justifyContent: 'flex-end'}}>
+          <select style={inputStyle} value={militarSelected} onChange={handleChangeMilitarSelected}>
+                  <option value="">Selecione</option>
+                  {users.map(i=>{
+                    return (
+                      <option value={i.id}>{i.Posto.nome+' '+i.nome_guerra}</option>
+                    )
+                  })}
+            </select>
+            <button className='salvar-militar' onClick={handleAdicionarMilitar}>Adicionar Militar</button>
+          </div>
+          {militaresCurso.map(i=>{
+            return  (
+              <span className='item-curso'>
+                <span>{i.item}</span>
+                <button className='excluir-militar' onClick={()=>excluirMilitar(i)}>Excluir</button>
+              </span>
+            )
+          })}
+        </div>}
         </div>
       )
     })

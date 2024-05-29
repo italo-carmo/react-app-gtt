@@ -600,7 +600,27 @@ export default () => {
             let json = await request('POST', `/cursos` , body, token)
             return json
         },
-        
+        getCursosUsuarios: async (body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('POST', `/cursosusuarios/filter/id` , body, token)
+            return json
+        },
+        getUsers: async () => {
+            let token = localStorage.getItem('token')
+            let json = await request('GET', `/users/` , null, token)
+            return json
+        },
+        createCursosUsuarios: async (body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('POST', `/cursosusuarios/` , body, token)
+            return json
+        },
+        deleteCursosUsuario: async (id, body) => {
+            let token = localStorage.getItem('token')
+            let json = await request('DELETE', `/cursosusuarios/${id}` , body, token)
+            return json
+        },
+
         
     }
 

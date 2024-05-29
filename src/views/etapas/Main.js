@@ -424,7 +424,7 @@ const Etapas = () => {
   var horas_iniciais = 0
   return (
     <>
-      <CCard className="mb-6" style={{flexDirection: 'column', overflowX: 'auto', maxHeight:700 }}>
+      <CCard className="mb-6" style={{flexDirection: 'column', overflowX: 'auto'}}>
       <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px', marginLeft:10, marginRight:10 }}>
       {/* Filtro de Data */}
       <div style={{ marginRight: '20px' }}>
